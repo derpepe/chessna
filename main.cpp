@@ -1,24 +1,22 @@
 #include <iostream>
-using namespace std;
-
-class board
+class Board
 {
 public:
-	long blacks;
-	long whites;
+	long long blacks;
+	long long whites;
 	
-	long kings;
-	long queens;
-	long rooks;
-	long bishops;
-	long knights;
-	long pawns;
+	long long kings;
+	long long queens;
+	long long rooks;
+	long long bishops;
+	long long knights;
+	long long pawns;
 };
 
 
-int main()
+int main(int argc, char** args)
 {
-	board b;
-	cout << b.kings;
+	Board *board = new Board();
+	std::cout << sizeof(board->kings) << " (should be 8 byte)";
 	return 0;
 }
