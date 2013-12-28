@@ -69,6 +69,16 @@ void Uci::parse(std::string p_parameters)
 			this->comm->engineExecuteMove(*tokenIterator);
 		}
 	}
+	
+	// custom commands
+	else if (command.compare("help") == 0)
+	{
+		this->sendString("dodebug  Displays debug output.");
+	}
+	else if (command.compare("dodebug") == 0)
+	{
+		this->comm->engineDebug();
+	}
 	else
 	{
 		// ignore unknown command
