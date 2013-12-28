@@ -4,9 +4,21 @@
 Engine::Engine(Comm *comm)
 {
 	this->comm = comm;
-	this->comm->registerEngineCallback( [this](std::string message) { this->commCallback(message); } );
+	this->comm->registerEngineGoCallback( [this] { this->go(); } );
+	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
+	this->comm->registerEngineExecuteMovesCallback( [this](std::vector<std::string> moves) { this->executeMoves(moves); } );
 	
 	this->board = new Board();
+}
+
+void Engine::setPosition(std::string position)
+{
+	//TODO
+}
+
+void Engine::executeMoves(std::vector<std::string> moves)
+{
+	//TODO
 }
 
 void Engine::commCallback(std::string message)
@@ -31,5 +43,5 @@ void Engine::run()
 
 void Engine::go()
 {
-	this->comm->uci("bestmove e2e4");
+	this->comm->uciOutput("bestmove e2e4");
 }

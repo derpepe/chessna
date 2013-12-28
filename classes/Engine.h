@@ -3,6 +3,8 @@
 
 #include "Board.h"
 #include "Comm.h"
+#include <vector>
+#include <string>
 
 class Engine
 {
@@ -14,6 +16,8 @@ public:
 	
 	// commands sent via UCI
 	void go();
+	void setPosition(std::string);
+	void executeMoves(std::vector<std::string>);
 	
 private:
 	Board *board;

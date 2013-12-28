@@ -5,12 +5,7 @@ Uci::Uci(Comm *comm)
 {
 	this->comm = comm;
 
-	this->comm->registerUciCallback( [this](std::string message) { this->commCallback(message); } );
-}
-
-void Uci::commCallback(std::string message)
-{
-	this->sendString(message);
+	this->comm->registerUciOutputCallback( [this](std::string message) { this->sendString(message); } );
 }
 
 void Uci::run()
@@ -20,7 +15,6 @@ void Uci::run()
 	while(true)
 	{
 		std::getline(std::cin,input);
-		std::cout << "echo: \"" << input << "\"" << std::endl;
 		this->parse(input);
 	}
 }
@@ -48,7 +42,7 @@ void Uci::parse(std::string p_parameters)
 	}
 	else if (command.compare("go") == 0)
 	{
-		this->comm->engine("go");
+		this->comm->engineGo();
 	}
 	else if (command.compare("stop") == 0)
 	{
@@ -60,46 +54,23 @@ void Uci::parse(std::string p_parameters)
 		++tokenIterator; // skip command
 		std::string position = *tokenIterator; // get second word
 		
-		std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+		std::string fen = Fen::startPos;
 		if (position.compare("fen") == 0)
 		{
 			++tokenIterator; // skip 'fen'
 			fen = *tokenIterator;
 		}
 		++tokenIterator; // skip fenstring or 'startpos'
-		
+	
 		std::vector<std::string> moves;
 		for ( ; tokenIterator != parameters.end(); ++tokenIterator)
 		{
 			moves.push_back(*tokenIterator);
 		}
-		
-		// this->comm->engineSetposition(fen, parameters);
-		std::cout << "fen: " << fen << std::endl;
-		std::cout << "moves: ";
-		for( std::vector<std::string>::iterator i = moves.begin(); i != moves.end(); ++i)
-		{
-		    std::cout << *i << ' ';
-		}
-		std::cout << std::endl;
-		
-			/*
-		
-		* position [fen <fenstring> | startpos ]  moves <move1> .... <movei>
-			set up the position described in fenstring on the internal board and
-			play the moves on the internal chess board.
-			if the game was played  from the start position the string "startpos" will be sent
-			Note: no "new" command is needed. However, if this position is from a different game than
-			the last position sent to the engine, the GUI should have sent a "ucinewgame" inbetween.
-		
-		
-			*/
-	}
 	
-	// following internal commands
-	else if (command.compare("fentest") == 0)
-	{
-		this->comm->engine("fentest");
+		// send position-set-command to engine
+		this->comm->engineSetPosition(fen);
+		this->comm->engineExecuteMoves(moves);
 	}
 	else
 	{
