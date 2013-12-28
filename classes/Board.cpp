@@ -23,5 +23,4 @@ void Board::loadFen(std::string fen)
 	std::istringstream fenstream(fen);
 	std::vector<std::string> fields{std::istream_iterator<std::string>{fenstream}, std::istream_iterator<std::string>{}};
 	// fields = Figurenstellung " " Am Zug " " Rochade " " en passant " " Halbzüge " " Zugnummer
-	std::cout << "Am Zug: " << fields[1];
 }

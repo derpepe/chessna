@@ -41,6 +41,10 @@ void Uci::parse(std::string command)
 	{
 		this->comm->engine("go");
 	}
+	else if (command.compare("stop") == 0)
+	{
+		this->sendBestmove("e2e4", "");
+	}
 	else if (command.compare("fentest") == 0)
 	{
 		this->comm->engine("fentest");
@@ -70,4 +74,14 @@ void Uci::sendUciok()
 void Uci::sendReadyok()
 {
 	std::cout << "readyok" << std::endl;
+}
+
+void Uci::sendBestmove(std::string move, std::string ponder)
+{
+	std::cout << "bestmove " << move;
+	if (ponder.compare("") != 0)
+	{
+		std::cout << " ponder " << ponder;
+	}
+	std::cout << std::endl;
 }

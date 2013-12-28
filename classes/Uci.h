@@ -19,6 +19,7 @@ public:
 	void sendId(std::string, std::string);
 	void sendUciok();
 	void sendReadyok();
+	void sendBestmove(std::string, std::string);
 
 private:
 	Comm *comm;
