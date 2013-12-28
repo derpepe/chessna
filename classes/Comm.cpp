@@ -11,8 +11,8 @@ void Comm::engineGo() { this->engineGoCallback(); }
 void Comm::registerEngineSetPositionCallback(std::function<void(std::string)> engineSetPositionCallback) { this->engineSetPositionCallback = engineSetPositionCallback; }
 void Comm::engineSetPosition(std::string fen) { this->engineSetPositionCallback(fen); }
 
-void Comm::registerEngineExecuteMovesCallback(std::function<void(std::vector<std::string>)> engineExecuteMovesCallback) { this->engineExecuteMovesCallback = engineExecuteMovesCallback; }
-void Comm::engineExecuteMoves(std::vector<std::string> moves) { this->engineExecuteMovesCallback(moves); }
+void Comm::registerEngineExecuteMoveCallback(std::function<void(std::string)> engineExecuteMoveCallback) { this->engineExecuteMoveCallback = engineExecuteMoveCallback; }
+void Comm::engineExecuteMove(std::string move) { this->engineExecuteMoveCallback(move); }
 
 void Comm::registerEngineDebugCallback(std::function<void()> engineDebugCallback) { this->engineDebugCallback = engineDebugCallback; }
 void Comm::engineDebug() { this->engineDebugCallback(); }

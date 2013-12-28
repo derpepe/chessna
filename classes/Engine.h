@@ -15,7 +15,7 @@ public:
 	// commands sent via UCI
 	void go();
 	void setPosition(std::string);
-	void executeMoves(std::vector<std::string>);
+	void executeMove(std::string);
 	void debug();
 	
 private:

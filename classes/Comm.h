@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 class Comm
 {
@@ -15,8 +14,8 @@ public:
 	void engineGo();
 	void registerEngineSetPositionCallback(std::function<void(std::string)>);
 	void engineSetPosition(std::string);
-	void registerEngineExecuteMovesCallback(std::function<void(std::vector<std::string>)>);
-	void engineExecuteMoves(std::vector<std::string>);
+	void registerEngineExecuteMoveCallback(std::function<void(std::string)>);
+	void engineExecuteMove(std::string);
 	void registerEngineDebugCallback(std::function<void()>);
 	void engineDebug();
 	
@@ -25,7 +24,7 @@ private:
 
 	std::function<void()> engineGoCallback;
 	std::function<void(std::string)> engineSetPositionCallback;
-	std::function<void(std::vector<std::string>)> engineExecuteMovesCallback;
+	std::function<void(std::string)> engineExecuteMoveCallback;
 	std::function<void()> engineDebugCallback;
 };
 #endif

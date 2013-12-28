@@ -6,8 +6,8 @@ Engine::Engine(Comm *comm)
 	this->comm = comm;
 	this->comm->registerEngineGoCallback( [this] { this->go(); } );
 	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
-	this->comm->registerEngineExecuteMovesCallback( [this](std::vector<std::string> moves) { this->executeMoves(moves); } );
-	this->comm->registerDebugCallback( [this] { this->debug(); } );
+	this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
+	this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
 	
 	this->board = new Board();
 }
@@ -17,7 +17,7 @@ void Engine::setPosition(std::string position)
 	// TODO
 }
 
-void Engine::executeMoves(std::vector<std::string> moves)
+void Engine::executeMove(std::string move)
 {
 	// TODO
 }

@@ -46,13 +46,13 @@ void Uci::parse(std::string p_parameters)
 	}
 	else if (command.compare("stop") == 0)
 	{
-		this->sendBestmove("e2e4", "");
+		this->sendBestmove("e2e4", ""); // TODO: get best move from engine
 	}
 	else if (command.compare("position") == 0)
 	{
 		std::vector<std::string>::iterator tokenIterator = parameters.begin();
 		++tokenIterator; // skip command
-		std::string position = *tokenIterator; // get second word
+		std::string position = *tokenIterator; // get second word (startpos | fen)
 		
 		std::string fen = Fen::startPos;
 		if (position.compare("fen") == 0)
@@ -62,15 +62,12 @@ void Uci::parse(std::string p_parameters)
 		}
 		++tokenIterator; // skip fenstring or 'startpos'
 	
-		std::vector<std::string> moves;
+		this->comm->engineSetPosition(fen);
+
 		for ( ; tokenIterator != parameters.end(); ++tokenIterator)
 		{
-			moves.push_back(*tokenIterator);
+			this->comm->engineExecuteMove(*tokenIterator);
 		}
-	
-		// send position-set-command to engine
-		this->comm->engineSetPosition(fen);
-		this->comm->engineExecuteMoves(moves);
 	}
 	else
 	{
