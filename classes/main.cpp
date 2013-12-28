@@ -1,5 +1,5 @@
 #include <thread>
-#include "Board.h"
+#include "Engine.h"
 #include "Uci.h"
 
 
@@ -11,8 +11,8 @@ int main(int argc, char** args)
 	std::thread comm( [uci] { uci->commLoop(); } );
 
 	// start main program here
-	Board *board = new Board();
-	uci->sendString("hello");
+	Engine *engine = new Engine(uci);
+	engine->run();
 	
 	comm.join();
 	return 0;
