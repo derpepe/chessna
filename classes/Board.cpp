@@ -20,8 +20,8 @@ void Board::clear()
 
 void Board::loadFen(std::string fen)
 {
-	std::istringstream fields(fen);
-	std::vector<std::string> tokens{std::istream_iterator<std::string>{fields}, std::istream_iterator<std::string>{}};
-	// tokens = Figurenstellung " " Am Zug " " Rochade " " en passant " " Halbzüge " " Zugnummer
-	std::cout << tokens[0];
+	std::istringstream fenstream(fen);
+	std::vector<std::string> fields{std::istream_iterator<std::string>{fenstream}, std::istream_iterator<std::string>{}};
+	// fields = Figurenstellung " " Am Zug " " Rochade " " en passant " " Halbzüge " " Zugnummer
+	std::cout << "Am Zug: " << fields[1];
 }

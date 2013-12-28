@@ -41,6 +41,10 @@ void Uci::parse(std::string command)
 	{
 		this->comm->engine("go");
 	}
+	else if (command.compare("fentest") == 0)
+	{
+		this->comm->engine("fentest");
+	}
 	else
 	{
 		// ignore unknown command
