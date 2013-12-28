@@ -1,5 +1,21 @@
 #include "Uci.h"
 
+void Uci::mainLoop()
+{
+	std::string input = "";
+	
+	while(true)
+	{
+		std::cin >> input;
+		this->parse(input);
+	}
+}
+
+void Uci::engineSays(std::string message)
+{
+	std::cout << message << std::endl;
+}
+
 void Uci::parse(std::string command)
 {
 	if (command.compare("uci") == 0)

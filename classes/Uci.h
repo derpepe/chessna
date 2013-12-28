@@ -6,7 +6,9 @@
 class Uci
 {
 public:
+	void mainLoop();
 	void parse(std::string);
+	void engineSays(std::string);
 	
 	void sendId(std::string, std::string);
 	void sendUciok();
