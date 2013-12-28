@@ -6,10 +6,11 @@
 class Uci
 {
 public:
-	void mainLoop();
+	void commLoop();
+
 	void parse(std::string);
-	void engineSays(std::string);
 	
+	void sendString(std::string);
 	void sendId(std::string, std::string);
 	void sendUciok();
 	void sendReadyok();

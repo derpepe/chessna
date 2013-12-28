@@ -1,6 +1,6 @@
 #include "Uci.h"
 
-void Uci::mainLoop()
+void Uci::commLoop()
 {
 	std::string input = "";
 	
@@ -11,10 +11,6 @@ void Uci::mainLoop()
 	}
 }
 
-void Uci::engineSays(std::string message)
-{
-	std::cout << message << std::endl;
-}
 
 void Uci::parse(std::string command)
 {
@@ -28,6 +24,12 @@ void Uci::parse(std::string command)
 	{
 		// ignore unknown command
 	}
+}
+
+
+void Uci::sendString(std::string message)
+{
+	std::cout << message << std::endl;
 }
 
 void Uci::sendId(std::string key, std::string value)
