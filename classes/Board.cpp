@@ -1,5 +1,10 @@
 #include "Board.h"
 
+Board::Board()
+{
+	this->clear();
+}
+
 void Board::clear()
 {
 	blacks = 0;

@@ -4,6 +4,10 @@
 class Board
 {
 public:
+	Board();
+	void clear();
+	
+private:
 	long long blacks;
 	long long whites;
 	
@@ -13,8 +17,6 @@ public:
 	long long bishops;
 	long long knights;
 	long long pawns;
-	
-	void clear();
 };
 
 #endif
