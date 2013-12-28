@@ -11,6 +11,11 @@ void Uci::commLoop()
 	}
 }
 
+void Uci::registerEngine(Engine *engine)
+{
+	this->engine = engine;
+}
+
 
 void Uci::parse(std::string command)
 {
@@ -19,6 +24,11 @@ void Uci::parse(std::string command)
 		this->sendId("name", "CHESSna 2 Version 0.01 alpha");
 		this->sendId("author", "Peter Schneider");
 		this->sendUciok();
+	}
+	else if (command.compare("isready") == 0)
+	{
+		while (this->engine == NULL) {}
+		this->sendReadyok();
 	}
 	else
 	{
