@@ -17,3 +17,11 @@ void Board::clear()
 	knights = 0;
 	pawns = 0;
 }
+
+void Board::loadFen(std::string fen)
+{
+	std::istringstream fields(fen);
+	std::vector<std::string> tokens{std::istream_iterator<std::string>{fields}, std::istream_iterator<std::string>{}};
+	// tokens = Figurenstellung " " Am Zug " " Rochade " " en passant " " Halbzüge " " Zugnummer
+	std::cout << tokens[0];
+}
