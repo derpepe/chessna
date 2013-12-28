@@ -1,6 +1,5 @@
 #include <iostream>
 #include <thread>
-#include <functional>
 #include "Board.h"
 #include "Communication.h"
 
@@ -10,7 +9,7 @@ int main(int argc, char** args)
 	Communication *comm = new Communication();
 
 	// initialize asynchronous communication
-	std::thread iothread(std::bind(&Communication::mainLoop, comm));
+	std::thread iothread( [comm] { comm->mainLoop(); } );
 
 	Board *board = new Board();
 	while(true) {
