@@ -21,8 +21,7 @@ void Engine::run()
 {
 	while(true)
 	{
-		for (int i = 0; i < 100000; i++) {}
-		this->comm->uci("hello");
+		// compute whatever
 	}
 }
 
