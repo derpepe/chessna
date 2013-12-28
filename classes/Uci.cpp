@@ -28,7 +28,13 @@ void Uci::run()
 void Uci::parse(std::string p_parameters)
 {
 	std::vector<std::string> parameters = Lib::split(p_parameters, ' ');
-	std::string command = parameters.at(0);
+	if (parameters.size() == 0)
+	{
+		return;
+	}
+	
+	// parse command
+	std::string command = parameters[0];
 	
 	if (command.compare("uci") == 0)
 	{
@@ -50,22 +56,28 @@ void Uci::parse(std::string p_parameters)
 	}
 	else if (command.compare("position") == 0)
 	{
-		/**/std::cout << "parameters size: " << parameters.size() << std::endl;
-		parameters.erase(parameters.begin());
-		/**/std::cout << "front parameters: " << parameters.front() << std::endl;
+		std::vector<std::string>::iterator tokenIterator = parameters.begin();
+		++tokenIterator; // skip command
+		std::string position = *tokenIterator; // get second word
+		
 		std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-		if (parameters.front().compare("fen") == 0)
+		if (position.compare("fen") == 0)
 		{
-		/**/std::cout << "front parameters: " << parameters.front() << std::endl;
-			parameters.erase(parameters.begin());
-			fen = parameters.front();
+			++tokenIterator; // skip 'fen'
+			fen = *tokenIterator;
 		}
-		/**/std::cout << "front parameters: " << parameters.front() << std::endl;
+		++tokenIterator; // skip fenstring or 'startpos'
+		
+		std::vector<std::string> moves;
+		for ( ; tokenIterator != parameters.end(); ++tokenIterator)
+		{
+			moves.push_back(*tokenIterator);
+		}
 		
 		// this->comm->engineSetposition(fen, parameters);
 		std::cout << "fen: " << fen << std::endl;
 		std::cout << "moves: ";
-		for( std::vector<std::string>::iterator i = parameters.begin(); i != parameters.end(); ++i)
+		for( std::vector<std::string>::iterator i = moves.begin(); i != moves.end(); ++i)
 		{
 		    std::cout << *i << ' ';
 		}
@@ -85,12 +97,6 @@ void Uci::parse(std::string p_parameters)
 	}
 	
 	// following internal commands
-	else if (command.compare("split") == 0)
-	{
-		std::cout << "parameters size: " << parameters.size() << std::endl;
-		std::cout << "parameters front: " << parameters.front() << std::endl;
-		std::cout << "parameters back: " << parameters.back() << std::endl;
-	}
 	else if (command.compare("fentest") == 0)
 	{
 		this->comm->engine("fentest");
