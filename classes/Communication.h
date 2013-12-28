@@ -7,7 +7,8 @@ class Communication
 {
 public:
 	Communication();
-
+	void engineSays(std::string);
+	
 	void mainLoop();
 
 private:

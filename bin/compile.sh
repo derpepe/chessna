@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ -Werror classes/*.cpp -o bin/chessna
+g++ -Werror -std=c++11 classes/*.cpp -o bin/chessna

@@ -16,3 +16,8 @@ void Communication::mainLoop()
 		this->uci->parse(input);
 	}
 }
+
+void Communication::engineSays(std::string message)
+{
+	std::cout << message << std::endl;
+}
