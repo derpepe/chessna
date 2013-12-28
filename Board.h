@@ -1,3 +1,6 @@
+#ifndef BOARD_H
+#define BOARD_H
+
 class Board
 {
 public:
@@ -10,4 +13,8 @@ public:
 	long long bishops;
 	long long knights;
 	long long pawns;
+	
+	void clear();
 };
+
+#endif
