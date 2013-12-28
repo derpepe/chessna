@@ -1,7 +1,7 @@
 #include "Communication.h"
 #include <iostream>
 
-Communication::Communication
+Communication::Communication()
 {
 	this->uci = new Uci();
 }

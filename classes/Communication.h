@@ -7,6 +7,9 @@ class Communication
 {
 public:
 	Communication();
+
+	void mainLoop();
+
 private:
 	Uci *uci;
 };

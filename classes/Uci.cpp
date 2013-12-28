@@ -1,5 +1,19 @@
 #include "Uci.h"
 
+void Uci::parse(std::string command)
+{
+	if (command.compare("uci") == 0)
+	{
+		this->sendId("name", "CHESSna 2 Version 0.01 alpha");
+		this->sendId("author", "Peter Schneider");
+		this->sendUciok();
+	}
+	else
+	{
+		// ignore unknown command
+	}
+}
+
 void Uci::sendId(std::string key, std::string value)
 {
 	std::cout << "id " << key << " " << value << std::endl;
