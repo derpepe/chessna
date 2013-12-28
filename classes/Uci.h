@@ -2,7 +2,11 @@
 #define UCI_H
 
 #include <iostream>
+#include <sstream>
+#include <iterator>
+#include <vector>
 #include "Comm.h"
+#include "Lib.h"
 
 class Uci
 {

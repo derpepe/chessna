@@ -19,14 +19,17 @@ void Uci::run()
 	
 	while(true)
 	{
-		std::cin >> input;
+		std::getline(std::cin,input);
+		std::cout << "echo: \"" << input << "\"" << std::endl;
 		this->parse(input);
 	}
 }
 
-
-void Uci::parse(std::string command)
+void Uci::parse(std::string p_parameters)
 {
+	std::vector<std::string> parameters = Lib::split(p_parameters, ' ');
+	std::string command = parameters.at(0);
+	
 	if (command.compare("uci") == 0)
 	{
 		this->sendId("name", "CHESSna 2 Version 0.01 alpha");
@@ -44,6 +47,49 @@ void Uci::parse(std::string command)
 	else if (command.compare("stop") == 0)
 	{
 		this->sendBestmove("e2e4", "");
+	}
+	else if (command.compare("position") == 0)
+	{
+		/**/std::cout << "parameters size: " << parameters.size() << std::endl;
+		parameters.erase(parameters.begin());
+		/**/std::cout << "front parameters: " << parameters.front() << std::endl;
+		std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+		if (parameters.front().compare("fen") == 0)
+		{
+		/**/std::cout << "front parameters: " << parameters.front() << std::endl;
+			parameters.erase(parameters.begin());
+			fen = parameters.front();
+		}
+		/**/std::cout << "front parameters: " << parameters.front() << std::endl;
+		
+		// this->comm->engineSetposition(fen, parameters);
+		std::cout << "fen: " << fen << std::endl;
+		std::cout << "moves: ";
+		for( std::vector<std::string>::iterator i = parameters.begin(); i != parameters.end(); ++i)
+		{
+		    std::cout << *i << ' ';
+		}
+		std::cout << std::endl;
+		
+			/*
+		
+		* position [fen <fenstring> | startpos ]  moves <move1> .... <movei>
+			set up the position described in fenstring on the internal board and
+			play the moves on the internal chess board.
+			if the game was played  from the start position the string "startpos" will be sent
+			Note: no "new" command is needed. However, if this position is from a different game than
+			the last position sent to the engine, the GUI should have sent a "ucinewgame" inbetween.
+		
+		
+			*/
+	}
+	
+	// following internal commands
+	else if (command.compare("split") == 0)
+	{
+		std::cout << "parameters size: " << parameters.size() << std::endl;
+		std::cout << "parameters front: " << parameters.front() << std::endl;
+		std::cout << "parameters back: " << parameters.back() << std::endl;
 	}
 	else if (command.compare("fentest") == 0)
 	{
