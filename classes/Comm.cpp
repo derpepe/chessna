@@ -13,3 +13,6 @@ void Comm::engineSetPosition(std::string fen) { this->engineSetPositionCallback(
 
 void Comm::registerEngineExecuteMovesCallback(std::function<void(std::vector<std::string>)> engineExecuteMovesCallback) { this->engineExecuteMovesCallback = engineExecuteMovesCallback; }
 void Comm::engineExecuteMoves(std::vector<std::string> moves) { this->engineExecuteMovesCallback(moves); }
+
+void Comm::registerEngineDebugCallback(std::function<void()> engineDebugCallback) { this->engineDebugCallback = engineDebugCallback; }
+void Comm::engineDebug() { this->engineDebugCallback(); }

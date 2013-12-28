@@ -12,11 +12,13 @@ public:
 	void uciOutput(std::string);
 
 	void registerEngineGoCallback(std::function<void()>);
-	void engineGo();	
+	void engineGo();
 	void registerEngineSetPositionCallback(std::function<void(std::string)>);
 	void engineSetPosition(std::string);
 	void registerEngineExecuteMovesCallback(std::function<void(std::vector<std::string>)>);
 	void engineExecuteMoves(std::vector<std::string>);
+	void registerEngineDebugCallback(std::function<void()>);
+	void engineDebug();
 	
 private:
 	std::function<void(std::string)> uciOutputCallback;
@@ -24,5 +26,6 @@ private:
 	std::function<void()> engineGoCallback;
 	std::function<void(std::string)> engineSetPositionCallback;
 	std::function<void(std::vector<std::string>)> engineExecuteMovesCallback;
+	std::function<void()> engineDebugCallback;
 };
 #endif

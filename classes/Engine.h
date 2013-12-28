@@ -9,15 +9,14 @@
 class Engine
 {
 public:
-	Engine(Comm* comm);
-	void commCallback(std::string);
-	
+	Engine(Comm* comm);	
 	void run();
 	
 	// commands sent via UCI
 	void go();
 	void setPosition(std::string);
 	void executeMoves(std::vector<std::string>);
+	void debug();
 	
 private:
 	Board *board;
