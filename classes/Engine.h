@@ -2,17 +2,22 @@
 #define ENGINE_H
 
 #include "Board.h"
-#include "Uci.h"
+#include "Comm.h"
 
 class Engine
 {
 public:
-	Engine(Uci* uci);
+	Engine(Comm* comm);
+	void commCallback(std::string);
+	
 	void run();
+	
+	// commands sent via UCI
+	void go();
 	
 private:
 	Board *board;
-	Uci *uci;
+	Comm *comm;
 };
 
 #endif

@@ -1,19 +1,22 @@
 #include <thread>
-#include "Engine.h"
 #include "Uci.h"
+#include "Engine.h"
+#include "Comm.h"
 
 
 int main(int argc, char** args)
 {
-	Uci *uci = new Uci();
+	Comm *comm = new Comm();
+	
+	Uci *uci = new Uci(comm);
+	Engine *engine = new Engine(comm);
 
 	// initialize asynchronous communication
-	std::thread comm( [uci] { uci->commLoop(); } );
+	std::thread uci_thread( [uci] { uci->run(); } );
+	std::thread engine_thread( [engine] { engine->run(); } );
 
-	// start main program here
-	Engine *engine = new Engine(uci);
-	engine->run();
-	
-	comm.join();
+	// wait for both threads
+	uci_thread.join();
+	engine_thread.join();
 	return 0;
 }

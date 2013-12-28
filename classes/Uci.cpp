@@ -1,6 +1,19 @@
 #include "Uci.h"
 
-void Uci::commLoop()
+
+Uci::Uci(Comm *comm)
+{
+	this->comm = comm;
+
+	this->comm->registerUciCallback( [this](std::string message) { this->commCallback(message); } );
+}
+
+void Uci::commCallback(std::string message)
+{
+	this->sendString(message);
+}
+
+void Uci::run()
 {
 	std::string input = "";
 	
@@ -9,11 +22,6 @@ void Uci::commLoop()
 		std::cin >> input;
 		this->parse(input);
 	}
-}
-
-void Uci::registerEngine(Engine *engine)
-{
-	this->engine = engine;
 }
 
 
@@ -27,8 +35,11 @@ void Uci::parse(std::string command)
 	}
 	else if (command.compare("isready") == 0)
 	{
-		while (this->engine == NULL) {}
 		this->sendReadyok();
+	}
+	else if (command.compare("go") == 0)
+	{
+		this->comm->engine("go");
 	}
 	else
 	{
