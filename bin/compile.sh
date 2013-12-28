@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ -Werror main.cpp
+g++ -Werror classes/*.cpp -o bin/chessna
