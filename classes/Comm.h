@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include <function>
+#include <functional>
 
 class Comm
 {
