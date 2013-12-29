@@ -13,6 +13,7 @@ public:
 	void clear();
 	
 	void loadFen(std::string);
+	std::string getDump();
 	
 private:
 	long long blacks;
