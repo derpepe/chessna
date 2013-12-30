@@ -29,9 +29,20 @@ void Board::loadFen(std::string fen)
 
 std::string Board::getDump()
 {
+	std::string prefix = "info string ";
 	std::ostringstream result;
 	unsigned long long figures = (this->whites | this->blacks);
+	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
+	if (all == figures)
+	{
+		result << prefix << "board information is consistent." << std::endl;
+	}
+	else
+	{
+		result << prefix << "board information is INCONSISTENT." << std::endl;
+	}
 	for (int y = 0; y < 8; y++) {
+		result << prefix;
 		for (int x = 0; x < 8; x++) {
 			std::string f = "?";
 			int bit = (7 - y) * 8 + (7 - x);

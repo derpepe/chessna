@@ -24,7 +24,6 @@ void Engine::executeMove(std::string move)
 
 void Engine::debug()
 {
-	this->comm->uciOutput("current board:"); // TODO
 	std::string boardDump = this->board->getDump();
 	this->comm->uciOutput(boardDump);
 }
@@ -39,5 +38,7 @@ void Engine::run()
 
 void Engine::go()
 {
-	this->comm->uciOutput("bestmove e2e4"); // TODO
+	std::ostringstream output;
+	output << "bestmove e2e4" << std::endl;
+	this->comm->uciOutput(output.str()); // TODO
 }

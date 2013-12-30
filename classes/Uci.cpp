@@ -73,7 +73,9 @@ void Uci::parse(std::string p_parameters)
 	// custom commands
 	else if (command.compare("help") == 0)
 	{
-		this->sendString("dodebug  Displays debug output.");
+		std::ostringstream help;
+		help << "info string   dodebug  Displays debug output." << std::endl;
+		this->sendString(help.str());
 	}
 	else if (command.compare("dodebug") == 0)
 	{
@@ -88,7 +90,7 @@ void Uci::parse(std::string p_parameters)
 
 void Uci::sendString(std::string message)
 {
-	std::cout << message << std::endl;
+	std::cout << message;
 }
 
 void Uci::sendId(std::string key, std::string value)
