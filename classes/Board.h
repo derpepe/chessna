@@ -28,6 +28,11 @@ private:
 	unsigned long long pawns;
 	
 	char playerToMove;
+	
+	bool casteling_K;
+	bool casteling_k;
+	bool casteling_Q;
+	bool casteling_q;
 };
 
 #endif

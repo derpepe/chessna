@@ -18,6 +18,11 @@ void Board::clear()
 	this->pawns   = 0x00ff00000000ff00;
 	
 	this->playerToMove = 'w';
+
+	this->casteling_K = true;
+	this->casteling_Q = true;
+	this->casteling_k = true;
+	this->casteling_q = true;
 }
 
 void Board::loadFen(std::string fen)
@@ -88,6 +93,15 @@ std::string Board::getDump()
 		emptycount = 0;
 	}
 	result << prefix << std::endl;
-	result << prefix << "FEN: " << fen.str() << " " << this->playerToMove << std::endl;
+
+	// casteling for FEN
+	std::ostringstream casteling;
+	if (this->casteling_K) casteling << 'K';
+	if (this->casteling_Q) casteling << 'Q';
+	if (this->casteling_k) casteling << 'k';
+	if (this->casteling_q) casteling << 'q';
+	if (casteling.str().length() == 0) casteling << '-';
+
+	result << prefix << "FEN: " << fen.str() << " " << this->playerToMove << " " << casteling.str() << std::endl;
 	return result.str();
 }
