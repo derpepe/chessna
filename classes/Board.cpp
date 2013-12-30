@@ -119,6 +119,16 @@ void Board::executeMove(std::string move)
 			}
 		}
 	}
+	
+	// update player
+	this->playerToMove = this->playerToMove == 'w' ? 's' : 'w';
+	
+	// update moves counter
+	this->halfmoves++;
+	if (this->playerToMove == 'w') // increment after move of black
+	{
+		this->currentMove++;
+	}
 }
 
 void Board::loadFen(std::string fen)
