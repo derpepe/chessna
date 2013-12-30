@@ -80,14 +80,14 @@ std::string Board::getDump()
 	std::ostringstream result;
 	std::ostringstream fen;
 
-	result << prefix << "   a b c d e f g h" << std::endl;
+	result << prefix << "   A B C D E F G H" << std::endl;
 	result << prefix << std::endl;
 
 	unsigned long long figures = (this->whites | this->blacks);
 
 	int emptycount = 0;
 	for (int y = 0; y < 8; y++) {
-		result << prefix << (y + 1) << "  ";
+		result << prefix << (8 - y) << "  ";
 		for (int x = 0; x < 8; x++) {
 			std::string f = "?";
 			int bit = (7 - y) * 8 + (7 - x);
@@ -120,7 +120,7 @@ std::string Board::getDump()
 			emptycount = 0;
 		}
 		if (y < 7) fen << '/';
-		result << "  " << (y + 1) << std::endl;
+		result << "  " << (8 - y) << std::endl;
 	}
 	if (emptycount > 0)
 	{
@@ -128,7 +128,7 @@ std::string Board::getDump()
 		emptycount = 0;
 	}
 	result << prefix << std::endl;
-	result << prefix << "   a b c d e f g h" << std::endl;
+	result << prefix << "   A B C D E F G H" << std::endl;
 
 	// casteling for FEN
 	std::ostringstream casteling;
