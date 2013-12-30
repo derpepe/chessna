@@ -30,13 +30,16 @@ void Board::clear()
 	this->currentMove = 1;
 }
 
-void Board::loadFen(std::string fen)
+void Board::loadFen(std::string figures, char playerToMove, std::string casteling, std::string enPassant,
+	long halfmoves, long currentMove)
 {
-	std::istringstream fenstream(fen);
-	std::vector<std::string> fields{std::istream_iterator<std::string>{fenstream}, std::istream_iterator<std::string>{}};
-	// fields = Figurenstellung " " Am Zug " " Rochade " " en passant " " Halbzüge " " Zugnummer
-	
-	// TODO: load fen
+	// TODO: load figures from parameter string
+	this->playerToMove = playerToMove;
+	// TODO: load casteling from parameter string
+	this->enPassant = enPassant;
+	// TODO: verify enPassant variable
+	this->halfmoves = halfmoves;
+	this->currentMove = currentMove;
 }
 
 std::string Board::getDump()

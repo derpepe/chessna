@@ -13,7 +13,7 @@ public:
 	Board();
 	void clear();
 	
-	void loadFen(std::string);
+	void Board::loadFen(std::string, char, std::string, std::string, long, long);
 	std::string getDump();
 	
 private:
