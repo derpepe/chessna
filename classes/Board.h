@@ -5,6 +5,7 @@
 #include <iterator>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 class Board
 {
@@ -16,15 +17,15 @@ public:
 	std::string getDump();
 	
 private:
-	long long blacks;
-	long long whites;
+	unsigned long long blacks;
+	unsigned long long whites;
 	
-	long long kings;
-	long long queens;
-	long long rooks;
-	long long bishops;
-	long long knights;
-	long long pawns;
+	unsigned long long kings;
+	unsigned long long queens;
+	unsigned long long rooks;
+	unsigned long long bishops;
+	unsigned long long knights;
+	unsigned long long pawns;
 };
 
 #endif

@@ -7,15 +7,15 @@ Board::Board()
 
 void Board::clear()
 {
-	blacks = 0;
-	whites = 0;
+	this->blacks  = 0xffff000000000000;
+	this->whites  = 0x000000000000ffff;
 	
-	kings = 0;
-	queens = 0;
-	rooks = 0;
-	bishops = 0;
-	knights = 0;
-	pawns = 0;
+	this->kings   = 0x0800000000000008;
+	this->queens  = 0x1000000000000010;
+	this->rooks   = 0x8100000000000081;
+	this->bishops = 0x2400000000000024;
+	this->knights = 0x4200000000000042;
+	this->pawns   = 0x00ff00000000ff00;
 }
 
 void Board::loadFen(std::string fen)
@@ -30,12 +30,12 @@ void Board::loadFen(std::string fen)
 std::string Board::getDump()
 {
 	std::ostringstream result;
-	long long figures = this->whites | this->blacks;
-	for (int x = 0; x < 8; x++) {
-		for (int y = 0; y < 8; y++) {
+	unsigned long long figures = (this->whites | this->blacks);
+	for (int y = 0; y < 8; y++) {
+		for (int x = 0; x < 8; x++) {
 			std::string f = "?";
-			int bit = y*8 + x;
-			long long position = 1 << bit;
+			int bit = (7 - y) * 8 + (7 - x);
+			unsigned long long position = 1ULL << bit;
 			if (position & figures) {
 				if (position & kings) f = "K";
 				if (position & queens) f = "Q";
