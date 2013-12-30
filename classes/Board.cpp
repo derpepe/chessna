@@ -49,7 +49,7 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	this->checkConsistency();
 	
 	// update casteling if rook was moved
-	if ((this->rooks & (1ULL << to)) != 0)
+	if ((this->rooks & ((1ULL << from) | (1ULL << to))) != 0)
 	{
 		// invalidate casteling
 		switch(from)
@@ -68,6 +68,26 @@ void Board::executeMove(std::string move, bool incrementCounters)
 				break;
 			case 63:
 				std::cout << "info string [Board::executeMove] Black rook a8 moved. Invlaidate casteling." << std::endl;
+				casteling_q = false;
+				break;
+			
+		}
+		switch(to)
+		{
+			case 0:
+				std::cout << "info string [Board::executeMove] White rook h1 captured. Invlaidate casteling." << std::endl;
+				casteling_K = false;
+				break;
+			case 7:
+				std::cout << "info string [Board::executeMove] White rook a1 captured. Invlaidate casteling." << std::endl;
+				casteling_Q = false;
+				break;
+			case 56:
+				std::cout << "info string [Board::executeMove] Black rook h8 captured. Invlaidate casteling." << std::endl;
+				casteling_k = false;
+				break;
+			case 63:
+				std::cout << "info string [Board::executeMove] Black rook a8 captured. Invlaidate casteling." << std::endl;
 				casteling_q = false;
 				break;
 			
