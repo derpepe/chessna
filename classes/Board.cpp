@@ -31,6 +31,7 @@ std::string Board::getDump()
 {
 	std::string prefix = "info string ";
 	std::ostringstream result;
+	std::ostringstream fen;
 	unsigned long long figures = (this->whites | this->blacks);
 	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
 	if (all == figures)
@@ -41,6 +42,8 @@ std::string Board::getDump()
 	{
 		result << prefix << "board information is INCONSISTENT." << std::endl;
 	}
+	result << prefix << std::endl;
+	int emptycount = 0;
 	for (int y = 0; y < 8; y++) {
 		result << prefix;
 		for (int x = 0; x < 8; x++) {
@@ -55,14 +58,34 @@ std::string Board::getDump()
 				if (position & bishops) f = "B";
 				if (position & pawns) f = "P";
 				if (position & blacks) std::transform(f.begin(), f.end(), f.begin(), ::tolower);
+				if (emptycount > 0)
+				{
+					fen << emptycount;
+					emptycount = 0;
+				}
+				fen << f;
 			}
 			else
 			{
 				f = ".";
+				emptycount++;
 			}
 			result << f;
 		}
+		if (emptycount > 0)
+		{
+			fen << emptycount;
+			emptycount = 0;
+		}
+		if (y < 7) fen << '/';
 		result << std::endl;
 	}
+	if (emptycount > 0)
+	{
+		fen << emptycount;
+		emptycount = 0;
+	}
+	result << prefix << std::endl;
+	result << prefix << "FEN: " << fen.str() << std::endl;
 	return result.str();
 }
