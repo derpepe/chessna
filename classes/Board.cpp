@@ -25,6 +25,9 @@ void Board::clear()
 	this->casteling_q = true;
 
 	this->enPassant = "-";
+	
+	this->halfmoves = 0;
+	this->currentMove = 1;
 }
 
 void Board::loadFen(std::string fen)
@@ -108,6 +111,8 @@ std::string Board::getDump()
 		<< " " << this->playerToMove
 		<< " " << casteling.str()
 		<< " " << this->enPassant
+		<< " " << this->halfmoves
+		<< " " << this->currentMove
 		<< std::endl;
 	return result.str();
 }

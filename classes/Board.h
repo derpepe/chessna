@@ -35,6 +35,9 @@ private:
 	bool casteling_q;
 
 	std::string enPassant;
+
+	long halfmoves;
+	long currentMove;
 };
 
 #endif
