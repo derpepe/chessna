@@ -39,6 +39,13 @@ void Board::loadFen(std::string fen)
 void Board::loadFen(std::string figures, char playerToMove, std::string casteling, std::string enPassant,
 	long halfmoves, long currentMove)
 {
+	std::cout << "Lade FEN-String:" << std::endl;
+	std::cout << "figures: " << figures << std::endl;
+	std::cout << "playerToMove: " << playerToMove << std::endl;
+	std::cout << "casteling: " << casteling << std::endl;
+	std::cout << "enPassant: " << enPassant << std::endl;
+	std::cout << "halfmoves: " << halfmoves << std::endl;
+	std::cout << "currentMove: " << currentMove << std::endl;
 	// TODO: load figures from parameter string
 	this->playerToMove = playerToMove;
 	// TODO: load casteling from parameter string

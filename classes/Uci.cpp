@@ -58,9 +58,21 @@ void Uci::parse(std::string p_parameters)
 		if (position.compare("fen") == 0)
 		{
 			++tokenIterator; // skip 'fen'
-			fen = *tokenIterator;
+			std::ostringstream f;
+			f << *tokenIterator; // position
+			++tokenIterator;
+			f << " " << *tokenIterator; // player to move
+			++tokenIterator;
+			f << " " << *tokenIterator; // casteling
+			++tokenIterator;
+			f << " " << *tokenIterator; // en passant
+			++tokenIterator;
+			f << " " << *tokenIterator; // halfmoves
+			++tokenIterator;
+			f << " " << *tokenIterator; // currentMove
+			fen = f.str();
 		}
-		++tokenIterator; // skip fenstring or 'startpos'
+		++tokenIterator; // skip last keyowrd ('startpos' or currentMove)
 	
 		this->comm->engineSetPosition(fen);
 

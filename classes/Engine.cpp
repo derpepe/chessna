@@ -14,11 +14,13 @@ Engine::Engine(Comm *comm)
 
 void Engine::setPosition(std::string position)
 {
+	std::cout << "ENGINE settings position " << position << std::endl;
 	// TODO
 }
 
 void Engine::executeMove(std::string move)
 {
+	std::cout << "ENGINE executeMove " << move << std::endl;
 	// TODO
 }
 
