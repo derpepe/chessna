@@ -74,10 +74,12 @@ void Uci::parse(std::string p_parameters)
 	else if (command.compare("help") == 0)
 	{
 		std::ostringstream help;
-		help << "info string   dodebug  Displays debug output." << std::endl;
+		help << "info string CHESSna help for debugging console" << std::endl;
+		help << "info string" << std::endl;
+		help << "info string  board  Displays debug output." << std::endl;
 		this->sendString(help.str());
 	}
-	else if (command.compare("dodebug") == 0)
+	else if (command.compare("board") == 0)
 	{
 		this->comm->engineDebug();
 	}
