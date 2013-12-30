@@ -2,10 +2,10 @@
 
 Board::Board()
 {
-	this->clear();
+	this->startpos();
 }
 
-void Board::clear()
+void Board::startpos()
 {
 	this->blacks  = 0xffff000000000000;
 	this->whites  = 0x000000000000ffff;
