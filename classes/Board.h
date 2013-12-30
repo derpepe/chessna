@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iterator>
 #include <vector>
-
+#include <algorithm>
 
 class Board
 {
