@@ -19,10 +19,13 @@ void Engine::setPosition(std::string position)
 	// TODO
 }
 
+
 void Engine::executeMove(std::string move)
 {
 	std::cout << "info string [Engine::executeMove] execute move '" << move << "'" << std::endl;
-	// TODO
+	int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+	int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
+	std::cout << "info string [Engine::executeMove] from " << from << " to " << to << std::endl;
 }
 
 void Engine::debug()
