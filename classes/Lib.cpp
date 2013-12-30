@@ -34,5 +34,18 @@ unsigned long long Lib::bitShiftLeft(unsigned long long bitboard, int shift)
 unsigned long long Lib::moveBit(unsigned long long bitboard, int from, int to)
 {
 	unsigned long long bitboard_from = 1ULL << from;
-	return (Lib::bitShiftLeft(bitboard & bitboard_from, (to - from)) | bitboard) & (~bitboard_from);
+	unsigned long long bitboard_to = 1ULL << to;
+	unsigned long long result;
+	if ((bitboard & bitboard_from) == 0)
+	{
+		// moves a 0
+		result = bitboard & (~bitboard_to);
+	}
+	else
+	{
+		// moves a 1
+		int diff = to - from;
+		result = Lib::bitShiftLeft(bitboard & bitboard_from, diff) | bitboard;
+	}
+	return result & (~bitboard_from); // removes bit at 'from'
 }
