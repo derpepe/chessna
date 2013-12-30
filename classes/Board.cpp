@@ -16,6 +16,8 @@ void Board::clear()
 	this->bishops = 0x2400000000000024;
 	this->knights = 0x4200000000000042;
 	this->pawns   = 0x00ff00000000ff00;
+	
+	this->playerToMove = 'w';
 }
 
 void Board::loadFen(std::string fen)
@@ -86,6 +88,6 @@ std::string Board::getDump()
 		emptycount = 0;
 	}
 	result << prefix << std::endl;
-	result << prefix << "FEN: " << fen.str() << std::endl;
+	result << prefix << "FEN: " << fen.str() << " " << this->playerToMove << std::endl;
 	return result.str();
 }

@@ -26,6 +26,8 @@ private:
 	unsigned long long bishops;
 	unsigned long long knights;
 	unsigned long long pawns;
+	
+	char playerToMove;
 };
 
 #endif
