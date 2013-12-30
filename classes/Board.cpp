@@ -30,6 +30,12 @@ void Board::startpos()
 	this->currentMove = 1;
 }
 
+void Board::loadFen(std::string fen)
+{
+	std::vector<std::string> token = Lib::split(fen, ' ');
+	this->loadFen(token[0], token[1][1], token[2], token[3], atol(token[4].c_str()), atol(token[5].c_str()));
+}
+
 void Board::loadFen(std::string figures, char playerToMove, std::string casteling, std::string enPassant,
 	long halfmoves, long currentMove)
 {

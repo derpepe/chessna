@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include "Lib.h"
 
 class Board
 {
@@ -13,7 +14,8 @@ public:
 	Board();
 	void startpos();
 	
-	void Board::loadFen(std::string, char, std::string, std::string, long, long);
+	void loadFen(std::string);
+	void loadFen(std::string, char, std::string, std::string, long, long);
 	std::string getDump();
 	
 private:
