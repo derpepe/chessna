@@ -123,7 +123,7 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	if (incrementCounters)
 	{
 		// update player
-		this->playerToMove = this->playerToMove == 'w' ? 's' : 'w';
+		this->playerToMove = this->playerToMove == 'w' ? 'b' : 'w';
 	
 		// update moves counter
 		this->halfmoves++;
