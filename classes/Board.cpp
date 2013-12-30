@@ -125,9 +125,11 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	// pawn promotion
 	if (move.size() > 4)
 	{
+		char promoteTo = move.c_str()[4];
+		std::cout << "info string [Board::executeMove] Pawn promotion detected. Promoting to '" << promoteTo << "'" << std::endl;
 		unsigned long long to_bb = 1ULL << to;
 		this->pawns = (~to_bb) & this->pawns; // remove from pawns
-		switch (move.c_str()[3])
+		switch (promoteTo)
 		{
 			case 'q':
 				this->queens |= to_bb;
