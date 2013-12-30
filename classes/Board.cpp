@@ -30,6 +30,24 @@ void Board::startpos()
 	this->currentMove = 1;
 }
 
+
+void Board::executeMove(std::string move)
+{
+	int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+	int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
+	std::cout << "info string [Board::executeMove] from " << from << " to " << to << std::endl;
+
+	this->blacks = Lib::moveBit(this->blacks, from, to);
+	this->whites = Lib::moveBit(this->whites, from, to);
+	this->kings = Lib::moveBit(this->kings, from, to);
+	this->queens = Lib::moveBit(this->queens, from, to);
+	this->rooks = Lib::moveBit(this->rooks, from, to);
+	this->bishops = Lib::moveBit(this->bishops, from, to);
+	this->knights = Lib::moveBit(this->knights, from, to);
+	this->pawns = Lib::moveBit(this->pawns, from, to);
+	
+}
+
 void Board::loadFen(std::string fen)
 {
 	std::cout << "info string [Board::loadFen] lazy call: '" << fen << "'" << std::endl;
@@ -62,7 +80,9 @@ std::string Board::getDump()
 	std::ostringstream fen;
 	unsigned long long figures = (this->whites | this->blacks);
 	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
-	if (all == figures)
+	if ((all == figures)
+		&& (figures - this->whites - this->blacks == 0)
+		&& (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0))
 	{
 		result << prefix << "board information is consistent." << std::endl;
 	}

@@ -24,3 +24,15 @@ int Lib::getBitnumFromCoordinates(std::string coordinates)
 	int row = coordinates.c_str()[1] - (int)'1';
 	return (7 - col) + row * 8;
 }
+
+// bitshift left which supports negative values (then does a right bitshift)
+unsigned long long Lib::bitShiftLeft(unsigned long long bitboard, int shift)
+{
+	return shift >= 0 ? bitboard << shift : bitboard >> -shift;
+}
+
+unsigned long long Lib::moveBit(unsigned long long bitboard, int from, int to)
+{
+	unsigned long long bitboard_from = 1ULL << from;
+	return (Lib::bitShiftLeft(bitboard & bitboard_from, (to - from)) | bitboard) & (~bitboard_from);
+}

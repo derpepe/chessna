@@ -18,6 +18,8 @@ public:
 	void loadFen(std::string, char, std::string, std::string, long, long);
 	std::string getDump();
 	
+	void executeMove(std::string move);
+	
 private:
 	unsigned long long blacks;
 	unsigned long long whites;
