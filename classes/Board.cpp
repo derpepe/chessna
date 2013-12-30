@@ -49,48 +49,24 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	this->checkConsistency();
 	
 	// update casteling if rook was moved
-	if ((this->rooks & (1ULL << to)) != 0)
+	if ((to == 0) || (from == 0))
 	{
-		// invalidate casteling
-		switch(from)
-		{
-			case 0:
-				std::cout << "info string [Board::executeMove] White rook h1 moved. Invlaidate casteling." << std::endl;
-				casteling_K = false;
-				break;
-			case 7:
-				std::cout << "info string [Board::executeMove] White rook a1 moved. Invlaidate casteling." << std::endl;
-				casteling_Q = false;
-				break;
-			case 56:
-				std::cout << "info string [Board::executeMove] Black rook h8 moved. Invlaidate casteling." << std::endl;
-				casteling_k = false;
-				break;
-			case 63:
-				std::cout << "info string [Board::executeMove] Black rook a8 moved. Invlaidate casteling." << std::endl;
-				casteling_q = false;
-				break;
-			
-		}
-	}
-	if (to == 0)
-	{
-		std::cout << "info string [Board::executeMove] To field is h1. Invlaidate casteling." << std::endl;
+		std::cout << "info string [Board::executeMove] h1. Invlaidate casteling." << std::endl;
 		casteling_K = false;
 	}
-	else if (to == 7)
+	else if ((to == 7) || (from == 7))
 	{
-		std::cout << "info string [Board::executeMove] To field is a1. Invlaidate casteling." << std::endl;
+		std::cout << "info string [Board::executeMove] a1. Invlaidate casteling." << std::endl;
 		casteling_Q = false;
 	}
-	else if (to == 56)
+	else if ((to == 56) || (from == 56))
 	{
-		std::cout << "info string [Board::executeMove] To field is h8. Invlaidate casteling." << std::endl;
+		std::cout << "info string [Board::executeMove] h8. Invlaidate casteling." << std::endl;
 		casteling_k = false;
 	}
-	else if (to == 63)
+	else if ((to == 63) || (from == 63))
 	{
-		std::cout << "info string [Board::executeMove] To field is a8. Invlaidate casteling." << std::endl;
+		std::cout << "info string [Board::executeMove] a8. Invlaidate casteling." << std::endl;
 		casteling_q = false;
 	}
 	
