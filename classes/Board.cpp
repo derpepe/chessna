@@ -156,10 +156,10 @@ void Board::checkConsistency()
 		&& (figures - this->whites - this->blacks == 0)
 		&& (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0))
 	{
-		std::cout << prefix << "board information is consistent." << std::endl;
+		std::cout << prefix << "[Board::checkConsistency] board information is consistent." << std::endl;
 	}
 	else
 	{
-		std::cout << prefix << "board information is INCONSISTENT." << std::endl;
+		std::cout << prefix << "[Board::checkConsistency] board information is INCONSISTENT." << std::endl;
 	}
 }
