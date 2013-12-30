@@ -79,7 +79,11 @@ std::string Board::getDump()
 	std::string prefix = "info string ";
 	std::ostringstream result;
 	std::ostringstream fen;
+
+	result << prefix << std::endl;
+
 	unsigned long long figures = (this->whites | this->blacks);
+
 	int emptycount = 0;
 	for (int y = 0; y < 8; y++) {
 		result << prefix;
