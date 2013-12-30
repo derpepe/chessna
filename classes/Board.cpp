@@ -35,7 +35,7 @@ void Board::executeMove(std::string move)
 {
 	int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
 	int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
-	std::cout << "info string [Board::executeMove] from " << from << " to " << to << std::endl;
+	std::cout << "info string [Board::executeMove] moves figure from " << from << " to " << to << std::endl;
 
 	this->blacks = Lib::moveBit(this->blacks, from, to);
 	this->whites = Lib::moveBit(this->whites, from, to);
@@ -46,6 +46,7 @@ void Board::executeMove(std::string move)
 	this->knights = Lib::moveBit(this->knights, from, to);
 	this->pawns = Lib::moveBit(this->pawns, from, to);
 	
+	this->checkConsistency();
 }
 
 void Board::loadFen(std::string fen)
@@ -79,18 +80,6 @@ std::string Board::getDump()
 	std::ostringstream result;
 	std::ostringstream fen;
 	unsigned long long figures = (this->whites | this->blacks);
-	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
-	if ((all == figures)
-		&& (figures - this->whites - this->blacks == 0)
-		&& (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0))
-	{
-		result << prefix << "board information is consistent." << std::endl;
-	}
-	else
-	{
-		result << prefix << "board information is INCONSISTENT." << std::endl;
-	}
-	result << prefix << std::endl;
 	int emptycount = 0;
 	for (int y = 0; y < 8; y++) {
 		result << prefix;
@@ -150,5 +139,27 @@ std::string Board::getDump()
 		<< " " << this->halfmoves
 		<< " " << this->currentMove
 		<< std::endl;
+	
+	this->checkConsistency();
+	
 	return result.str();
+}
+
+
+void Board::checkConsistency()
+{
+	std::string prefix = "info string ";
+
+	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
+	unsigned long long figures = (this->whites | this->blacks);
+	if ((all == figures)
+		&& (figures - this->whites - this->blacks == 0)
+		&& (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0))
+	{
+		std::cout << prefix << "board information is consistent." << std::endl;
+	}
+	else
+	{
+		std::cout << prefix << "board information is INCONSISTENT." << std::endl;
+	}
 }
