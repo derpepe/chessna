@@ -31,7 +31,7 @@ void Board::startpos()
 }
 
 
-void Board::executeMove(std::string move)
+void Board::executeMove(std::string move, bool incrementCounters)
 {
 	int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
 	int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
@@ -99,35 +99,38 @@ void Board::executeMove(std::string move)
 				case 1:
 					casteling_K = false;
 					casteling_Q = false;
-					this->executeMove("h1f1");
+					this->executeMove("h1f1", false);
 					break;
 				case 6:
 					casteling_K = false;
 					casteling_Q = false;
-					this->executeMove("a1c1");
+					this->executeMove("a1c1", false);
 					break;
 				case 57:
 					casteling_k = false;
 					casteling_q = false;
-					this->executeMove("h8f8");
+					this->executeMove("h8f8", false);
 					break;
 				case 62:
 					casteling_k = false;
 					casteling_q = false;
-					this->executeMove("a8c8");
+					this->executeMove("a8c8", false);
 					break;
 			}
 		}
 	}
 	
-	// update player
-	this->playerToMove = this->playerToMove == 'w' ? 's' : 'w';
-	
-	// update moves counter
-	this->halfmoves++;
-	if (this->playerToMove == 'w') // increment after move of black
+	if (incrementCounters)
 	{
-		this->currentMove++;
+		// update player
+		this->playerToMove = this->playerToMove == 'w' ? 's' : 'w';
+	
+		// update moves counter
+		this->halfmoves++;
+		if (this->playerToMove == 'w') // increment after move of black
+		{
+			this->currentMove++;
+		}
 	}
 }
 

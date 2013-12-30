@@ -20,7 +20,7 @@ public:
 	
 	void checkConsistency();
 	
-	void executeMove(std::string move);
+	void executeMove(std::string move, bool incrementCounters = true);
 	
 private:
 	unsigned long long blacks;
