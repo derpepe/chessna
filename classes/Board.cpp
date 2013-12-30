@@ -49,7 +49,7 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	this->checkConsistency();
 	
 	// update casteling if rook was moved
-	if ((this->rooks & (1ULL << from)) != 0)
+	if ((this->rooks & (1ULL << to)) != 0)
 	{
 		// invalidate casteling
 		switch(from)
@@ -141,6 +141,7 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	}
 	
 	// TODO: en passant
+	
 	
 	// pawn promotion
 	if (move.size() > 4)
