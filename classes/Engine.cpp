@@ -14,13 +14,14 @@ Engine::Engine(Comm *comm)
 
 void Engine::setPosition(std::string position)
 {
-	std::cout << "ENGINE settings position " << position << std::endl;
+	std::cout << "info string [Engine:setPosition] settings position to '" << position << "'" << std::endl;
+	this->board->loadFen(position);
 	// TODO
 }
 
 void Engine::executeMove(std::string move)
 {
-	std::cout << "ENGINE executeMove " << move << std::endl;
+	std::cout << "info string [Engine::executeMove] execute move '" << move << "'" << std::endl;
 	// TODO
 }
 

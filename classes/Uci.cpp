@@ -76,6 +76,7 @@ void Uci::parse(std::string p_parameters)
 	
 		this->comm->engineSetPosition(fen);
 
+		if (tokenIterator != parameters.end()) ++tokenIterator; // skip 'moves'
 		for ( ; tokenIterator != parameters.end(); ++tokenIterator)
 		{
 			this->comm->engineExecuteMove(*tokenIterator);

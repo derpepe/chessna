@@ -32,6 +32,7 @@ void Board::startpos()
 
 void Board::loadFen(std::string fen)
 {
+	std::cout << "info string [Board::loadFen] lazy call: '" << fen << "'" << std::endl;
 	std::vector<std::string> token = Lib::split(fen, ' ');
 	this->loadFen(token[0], token[1][1], token[2], token[3], atol(token[4].c_str()), atol(token[5].c_str()));
 }
@@ -39,13 +40,12 @@ void Board::loadFen(std::string fen)
 void Board::loadFen(std::string figures, char playerToMove, std::string casteling, std::string enPassant,
 	long halfmoves, long currentMove)
 {
-	std::cout << "Lade FEN-String:" << std::endl;
-	std::cout << "figures: " << figures << std::endl;
-	std::cout << "playerToMove: " << playerToMove << std::endl;
-	std::cout << "casteling: " << casteling << std::endl;
-	std::cout << "enPassant: " << enPassant << std::endl;
-	std::cout << "halfmoves: " << halfmoves << std::endl;
-	std::cout << "currentMove: " << currentMove << std::endl;
+	std::cout << "info string [Board::loadFen] figures: " << figures << std::endl;
+	std::cout << "info string [Board::loadFen] playerToMove: " << playerToMove << std::endl;
+	std::cout << "info string [Board::loadFen] casteling: " << casteling << std::endl;
+	std::cout << "info string [Board::loadFen] enPassant: " << enPassant << std::endl;
+	std::cout << "info string [Board::loadFen] halfmoves: " << halfmoves << std::endl;
+	std::cout << "info string [Board::loadFen] currentMove: " << currentMove << std::endl;
 	// TODO: load figures from parameter string
 	this->playerToMove = playerToMove;
 	// TODO: load casteling from parameter string
