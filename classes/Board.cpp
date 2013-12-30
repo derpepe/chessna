@@ -120,8 +120,34 @@ void Board::executeMove(std::string move, bool incrementCounters)
 		}
 	}
 	
+	// TODO: en passant
+	
+	// pawn promotion
+	if (move.size() > 4)
+	{
+		unsigned long long to_bb = 1ULL << to;
+		this->pawns = (~to_bb) & this->pawns; // remove from pawns
+		switch (move.c_str()[3])
+		{
+			case 'q':
+				this->queens |= to_bb;
+				break;
+			case 'r':
+				this->rooks |= to_bb;
+				break;
+			case 'n':
+				this->knights |= to_bb;
+				break;
+			case 'b':
+				this->bishops |= to_bb;
+				break;
+		}
+	}
+	
 	if (incrementCounters)
 	{
+		// TODO: potential reset of halfmoves-counter
+		
 		// update player
 		this->playerToMove = this->playerToMove == 'w' ? 'b' : 'w';
 	
