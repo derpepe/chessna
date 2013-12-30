@@ -31,8 +31,8 @@ std::string Board::getDump()
 {
 	std::ostringstream result;
 	long long figures = this->whites | this->blacks;
-	for (int x=0; x<=8; x++) {
-		for (int y=0; y<=8; y++) {
+	for (int x = 0; x < 8; x++) {
+		for (int y = 0; y < 8; y++) {
 			std::string f = "?";
 			int bit = y*8 + x;
 			long long position = 1 << bit;
