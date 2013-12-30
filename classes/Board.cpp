@@ -36,6 +36,9 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
 	int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
 	std::cout << "info string [Board::executeMove] moves figure from " << from << " to " << to << std::endl;
+	
+	// check if a figure gets captured (for potential reset of halfmoves-counter)
+	bool figureCaptured = (((1ULL << to) & (this->whites | this->blacks)) != 0);
 
 	this->blacks = Lib::moveBit(this->blacks, from, to);
 	this->whites = Lib::moveBit(this->whites, from, to);
@@ -145,8 +148,6 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	
 	if (incrementCounters)
 	{
-		// TODO: potential reset of halfmoves-counter
-		
 		// update player
 		this->playerToMove = this->playerToMove == 'w' ? 'b' : 'w';
 	
@@ -155,6 +156,15 @@ void Board::executeMove(std::string move, bool incrementCounters)
 		if (this->playerToMove == 'w') // increment after move of black
 		{
 			this->currentMove++;
+		}
+
+		// potential reset of halfmoves-counter
+		if (figureCaptured || (((1ULL << to) & this->pawns) != 0))
+		{
+			// pawn moved or figure captured
+			std::cout << "info string [Board::executeMove] resetting halfmoves, figureCaptured = " << figureCaptured << std::endl;			
+			this->halfmoves = 0;
+			
 		}
 	}
 }
