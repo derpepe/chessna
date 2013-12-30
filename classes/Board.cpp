@@ -47,6 +47,78 @@ void Board::executeMove(std::string move)
 	this->pawns = Lib::moveBit(this->pawns, from, to);
 	
 	this->checkConsistency();
+	
+	// update casteling if rook was moved
+	if ((this->rooks & (1ULL << to)) != 0)
+	{
+		// invalidate casteling
+		switch(from)
+		{
+			case 0:
+				std::cout << "info string [Board::executeMove] White rook h1 moved. Invlaidate casteling." << std::endl;
+				casteling_K = false;
+				break;
+			case 7:
+				std::cout << "info string [Board::executeMove] White rook a1 moved. Invlaidate casteling." << std::endl;
+				casteling_Q = false;
+				break;
+			case 56:
+				std::cout << "info string [Board::executeMove] Black rook h8 moved. Invlaidate casteling." << std::endl;
+				casteling_k = false;
+				break;
+			case 63:
+				std::cout << "info string [Board::executeMove] Black rook a8 moved. Invlaidate casteling." << std::endl;
+				casteling_q = false;
+				break;
+			
+		}
+	}
+	
+	// update casteling if king has moved and also move rook if necessary
+	if ((this->kings & (1ULL << to)) != 0)
+	{
+		// invalidate casteling
+		if ((this->whites & (1ULL << to)) != 0)
+		{
+			std::cout << "info string [Board::executeMove] White king moved. Invlaidate casteling." << std::endl;
+			casteling_K = false;
+			casteling_Q = false;
+		}
+		else
+		{
+			std::cout << "info string [Board::executeMove] Black king moved. Invlaidate casteling." << std::endl;
+			casteling_k = false;
+			casteling_q = false;
+		}
+		
+		if (abs(to - from) > 1) {
+			// casteling just happend, also move rook!
+			std::cout << "info string [Board::executeMove] casteling found. Also moving rook." << std::endl;
+			switch(to)
+			{
+				case 1:
+					casteling_K = false;
+					casteling_Q = false;
+					this->executeMove("h1f1");
+					break;
+				case 6:
+					casteling_K = false;
+					casteling_Q = false;
+					this->executeMove("a1c1");
+					break;
+				case 57:
+					casteling_k = false;
+					casteling_q = false;
+					this->executeMove("h8f8");
+					break;
+				case 62:
+					casteling_k = false;
+					casteling_q = false;
+					this->executeMove("a8c8");
+					break;
+			}
+		}
+	}
 }
 
 void Board::loadFen(std::string fen)
