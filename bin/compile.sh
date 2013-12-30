@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ -Werror -pthread -std=c++11 classes/*.cpp -o bin/chessna
+g++ -Werror -pthread -std=c++11 -s -static classes/*.cpp -o bin/chessna
