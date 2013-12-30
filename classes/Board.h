@@ -33,6 +33,8 @@ private:
 	bool casteling_k;
 	bool casteling_Q;
 	bool casteling_q;
+
+	std::string enPassant;
 };
 
 #endif

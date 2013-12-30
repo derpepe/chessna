@@ -23,6 +23,8 @@ void Board::clear()
 	this->casteling_Q = true;
 	this->casteling_k = true;
 	this->casteling_q = true;
+
+	this->enPassant = "-";
 }
 
 void Board::loadFen(std::string fen)
@@ -102,6 +104,10 @@ std::string Board::getDump()
 	if (this->casteling_q) casteling << 'q';
 	if (casteling.str().length() == 0) casteling << '-';
 
-	result << prefix << "FEN: " << fen.str() << " " << this->playerToMove << " " << casteling.str() << std::endl;
+	result << prefix << "FEN: " << fen.str()
+		<< " " << this->playerToMove
+		<< " " << casteling.str()
+		<< " " << this->enPassant
+		<< std::endl;
 	return result.str();
 }
