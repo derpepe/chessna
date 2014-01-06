@@ -230,7 +230,7 @@ std::string Board::getDump()
 			}
 			else
 			{
-				f = "·";
+				f = "-";
 				emptycount++;
 			}
 			result << f << ' ';
