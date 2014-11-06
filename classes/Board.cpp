@@ -119,8 +119,24 @@ void Board::executeMove(std::string move, bool incrementCounters)
 		}
 	}
 	
-	// TODO: en passant
-	
+	// en passant
+	if (((1ULL << to) & this->pawns) && (abs(to - from) == 16))
+	{
+		// pawn moved 2 fields
+		std::cout << "info string [Board::executeMove] pawn moved 2 fields" << std::endl;
+		int field = -1;
+		if (((1UL << to) & this->whites) != 0)
+		{
+			// white pawn moved
+			field = to - 8;
+		}
+		else
+		{
+			// black pawn moved
+			field = to + 8;
+		}
+		// TODO: Set en passant field to 'field'
+	}
 	
 	// pawn promotion
 	if (move.size() > 4)
