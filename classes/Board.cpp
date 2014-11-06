@@ -202,6 +202,7 @@ void Board::loadFen(std::string figures, char playerToMove, std::string castelin
 	std::cout << "info string [Board::loadFen] halfmoves: " << halfmoves << std::endl;
 	std::cout << "info string [Board::loadFen] currentMove: " << currentMove << std::endl;
 	// TODO: load figures from parameter string
+	this->startpos(); // <-- to be removed
 	this->playerToMove = playerToMove;
 	// TODO: load casteling from parameter string
 	this->enPassant = enPassant;
@@ -245,7 +246,7 @@ std::string Board::getDump()
 			}
 			else
 			{
-				f = "·";
+				f = "-";
 				emptycount++;
 			}
 			result << f << ' ';
