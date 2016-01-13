@@ -334,9 +334,9 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 	
 	// check for occupied target-fields
 	for (int i = 0; i < checkForEmpty.size(); i++) {
-		int to = checkForEmpty[i];
-		if (((this->whites | this->blacks) & (1ULL << to)) > 0) {
-			std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (occupied)" << std::endl;
+		int interim = checkForEmpty[i];
+		if (((this->whites | this->blacks) & (1ULL << interim)) > 0) {
+			std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (" << Lib::getCoordinatesFromBitnum(interim) << " is occupied)" << std::endl;
 			return; // no changes
 		} else {
 			std::cout << "info string [Board::addMoveToList] " << Lib::getCoordinatesFromBitnum(to) << " is free" << std::endl;
@@ -395,8 +395,48 @@ std::vector<std::string> Board::getAllMoves()
 
 	// TODO: casteling moves
 
-	// TODO: moves of the queens
-	//unsigned long long current_queens = this->queens & pieces;
+	// moves of the queens
+	unsigned long long current_queens = this->queens & pieces;
+	std::cout << "info string [Board::getAllMoves] QUEENS ------------------------------" << std::endl;
+	from = __builtin_ffsll(current_queens) - 1;
+	while (current_queens > 0) {
+		from = __builtin_ffsll(current_queens) - 1;
+		std::cout << "info string [Board::getAllMoves] queen at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
+
+		this->addMoveToList(&moves, from, from +  8, {});
+		this->addMoveToList(&moves, from, from + 16, { from + 8 });
+		this->addMoveToList(&moves, from, from + 24, { from + 8, from + 16 });
+		this->addMoveToList(&moves, from, from + 32, { from + 8, from + 16, from + 24 });
+		this->addMoveToList(&moves, from, from + 40, { from + 8, from + 16, from + 24, from + 32 });
+		this->addMoveToList(&moves, from, from + 48, { from + 8, from + 16, from + 24, from + 32, from + 40 });
+		this->addMoveToList(&moves, from, from + 56, { from + 8, from + 16, from + 24, from + 32, from + 40, from + 48 });
+
+		this->addMoveToList(&moves, from, from -  8, {});
+		this->addMoveToList(&moves, from, from - 16, { from - 8 });
+		this->addMoveToList(&moves, from, from - 24, { from - 8, from - 16 });
+		this->addMoveToList(&moves, from, from - 32, { from - 8, from - 16, from - 24 });
+		this->addMoveToList(&moves, from, from - 40, { from - 8, from - 16, from - 24, from - 32 });
+		this->addMoveToList(&moves, from, from - 48, { from - 8, from - 16, from - 24, from - 32, from - 40 });
+		this->addMoveToList(&moves, from, from - 56, { from - 8, from - 16, from - 24, from - 32, from - 40, from - 48 });
+
+		this->addMoveToList(&moves, from, from +  9, {});
+		this->addMoveToList(&moves, from, from + 18, { from + 9 });
+		this->addMoveToList(&moves, from, from + 27, { from + 9, from + 18 });
+		this->addMoveToList(&moves, from, from + 36, { from + 9, from + 18, from + 27 });
+		this->addMoveToList(&moves, from, from + 45, { from + 9, from + 18, from + 27, from + 36 });
+		this->addMoveToList(&moves, from, from + 54, { from + 9, from + 18, from + 27, from + 36, from + 45 });
+		this->addMoveToList(&moves, from, from + 63, { from + 9, from + 18, from + 27, from + 36, from + 45, from + 54 });
+
+		this->addMoveToList(&moves, from, from -  9, {});
+		this->addMoveToList(&moves, from, from - 18, { from - 9 });
+		this->addMoveToList(&moves, from, from - 27, { from - 9, from - 18 });
+		this->addMoveToList(&moves, from, from - 36, { from - 9, from - 18, from - 27 });
+		this->addMoveToList(&moves, from, from - 45, { from - 9, from - 18, from - 27, from - 36 });
+		this->addMoveToList(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
+		this->addMoveToList(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
+
+		current_queens = current_queens & ~(1ULL << from);
+	}
 
 	// TODO: moves of the rooks
 	//unsigned long long current_rooks = this->rooks & pieces;
