@@ -312,11 +312,6 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to) {
 }
 
 
-void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, int maxdist) {
-	this->addMoveToList(moves, from, to, {}, maxdist);
-}
-
-
 void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty)
 {
 	this->addMoveToList(moves, from, to, checkForEmpty, 7);
@@ -388,14 +383,14 @@ std::vector<std::string> Board::getAllMoves()
 	std::cout << "info string [Board::getAllMoves] KING ------------------------------" << std::endl;
 	from = __builtin_ffsll(current_king) - 1;
 	std::cout << "info string [Board::getAllMoves] king at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
-	this->addMoveToList(&moves, from, from + 8, 1);
-	this->addMoveToList(&moves, from, from - 8, 1);
-	this->addMoveToList(&moves, from, from + 1, 1);
-	this->addMoveToList(&moves, from, from - 1, 1);
-	this->addMoveToList(&moves, from, from + 9, 1);
-	this->addMoveToList(&moves, from, from - 9, 1);
-	this->addMoveToList(&moves, from, from + 7, 1);
-	this->addMoveToList(&moves, from, from - 7, 1);
+	this->addMoveToList(&moves, from, from + 8, {}, 1);
+	this->addMoveToList(&moves, from, from - 8, {}, 1);
+	this->addMoveToList(&moves, from, from + 1, {}, 1);
+	this->addMoveToList(&moves, from, from - 1, {}, 1);
+	this->addMoveToList(&moves, from, from + 9, {}, 1);
+	this->addMoveToList(&moves, from, from - 9, {}, 1);
+	this->addMoveToList(&moves, from, from + 7, {}, 1);
+	this->addMoveToList(&moves, from, from - 7, {}, 1);
 	// TODO: check for check and mate
 
 	// TODO: casteling moves
@@ -416,14 +411,14 @@ std::vector<std::string> Board::getAllMoves()
 		from = __builtin_ffsll(current_knights) - 1;
 		std::cout << "info string [Board::getAllMoves] knight at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
 
-		this->addMoveToList(&moves, from, from -  6, 2);
-		this->addMoveToList(&moves, from, from - 10, 2);
-		this->addMoveToList(&moves, from, from - 15, 2);
-		this->addMoveToList(&moves, from, from - 17, 2);
-		this->addMoveToList(&moves, from, from +  6, 2);
-		this->addMoveToList(&moves, from, from + 10, 2);
-		this->addMoveToList(&moves, from, from + 15, 2);
-		this->addMoveToList(&moves, from, from + 17, 2);
+		this->addMoveToList(&moves, from, from -  6, {}, 2);
+		this->addMoveToList(&moves, from, from - 10, {}, 2);
+		this->addMoveToList(&moves, from, from - 15, {}, 2);
+		this->addMoveToList(&moves, from, from - 17, {}, 2);
+		this->addMoveToList(&moves, from, from +  6, {}, 2);
+		this->addMoveToList(&moves, from, from + 10, {}, 2);
+		this->addMoveToList(&moves, from, from + 15, {}, 2);
+		this->addMoveToList(&moves, from, from + 17, {}, 2);
 
 		current_knights = current_knights & ~(1ULL << from);
 	}
