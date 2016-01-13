@@ -390,7 +390,57 @@ std::vector<std::string> Board::getAllMoves()
 	//unsigned long long current_bishops = this->bishops & pieces;
 
 	// TODO: moves of the knights
-	//unsigned long long current_knigts = this->knights & pieces;
+	unsigned long long current_knights = this->knights & pieces;
+	std::cout << "info string [Board::getAllMoves] knights:" << std::endl;
+	while (current_knights > 0) {
+		std::cout << "#" << Lib::getFile(57) << "/" << Lib::getFile(47) << "#";
+		from = __builtin_ffsll(current_knights) - 1;
+		std::cout << "info string [Board::getAllMoves] knight at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
+
+		if ((abs(Lib::getRank(from) - Lib::getRank(from - 6)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 6)) <= 2)) {
+			this->addMoveToList(&moves, from, from - 6);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 6) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from - 10)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 10)) <= 2)) {
+			this->addMoveToList(&moves, from, from - 10);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 10) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from - 15)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 15)) <= 2)) {
+			this->addMoveToList(&moves, from, from - 15);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 15) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from - 17)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 17)) <= 2)) {
+			this->addMoveToList(&moves, from, from - 17);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 17) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from + 6)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 6)) <= 2)) {
+			this->addMoveToList(&moves, from, from + 6);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 6) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from + 10)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 10)) <= 2)) {
+			this->addMoveToList(&moves, from, from + 10);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 10) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from + 15)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 15)) <= 2)) {
+			this->addMoveToList(&moves, from, from + 15);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 15) << " (too far away)" << std::endl;
+		}
+		if ((abs(Lib::getRank(from) - Lib::getRank(from + 17)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 17)) <= 2)) {
+			this->addMoveToList(&moves, from, from + 17);
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 17) << " (too far away)" << std::endl;
+		}
+		// TODO: check for borders
+
+		current_knights = current_knights & ~(1ULL << from);
+	}
 
 	// pawns
 	unsigned long long current_pawns = this->pawns & pieces;

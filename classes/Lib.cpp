@@ -28,14 +28,29 @@ int Lib::getBitnumFromCoordinates(std::string coordinates)
 // converts 15 to 'a2'
 std::string Lib::getCoordinatesFromBitnum(int bitnum)
 {
-	int file = (bitnum % 8);
-	int rank = ((bitnum - file) / 8) + 1;
+	int file = Lib::getFile(bitnum);
+	int rank = Lib::getRank(bitnum);
 
 	std::string result;
 	result += (char) ((int)'h' - file);
 	result += std::to_string(rank);
 	
 	return result;
+}
+
+
+int Lib::getRank(int bitnum)
+{
+	int file = Lib::getFile(bitnum);
+	int rank = ((bitnum - file) / 8) + 1;
+
+	return rank;
+}
+
+
+int Lib::getFile(int bitnum)
+{
+	return (bitnum % 8);
 }
 
 
