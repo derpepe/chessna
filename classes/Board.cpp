@@ -419,6 +419,80 @@ std::vector<std::string> Board::getAllMoves()
 		this->addMoveToList(&moves, from, from - 48, { from - 8, from - 16, from - 24, from - 32, from - 40 });
 		this->addMoveToList(&moves, from, from - 56, { from - 8, from - 16, from - 24, from - 32, from - 40, from - 48 });
 
+		int rank = Lib::getRank(from);
+		if (Lib::getRank(from + 1) == rank) {
+			this->addMoveToList(&moves, from, from + 1, {});
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 1) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 2) == rank) {
+			this->addMoveToList(&moves, from, from + 2, { from + 1 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 2) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 3) == rank) {
+			this->addMoveToList(&moves, from, from + 3, { from + 1, from + 2 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 3) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 4) == rank) {
+			this->addMoveToList(&moves, from, from + 4, { from + 1, from + 2, from + 3 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 4) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 5) == rank) {
+			this->addMoveToList(&moves, from, from + 5, { from + 1, from + 2, from + 3, from + 4 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 5) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 6) == rank) {
+			this->addMoveToList(&moves, from, from + 6, { from + 1, from + 2, from + 3, from + 4, from + 5 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 6) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 7) == rank) {
+			this->addMoveToList(&moves, from, from + 7, { from + 1, from + 2, from + 3, from + 4, from + 5, from + 6 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 7) << " (not same rank)" << std::endl;
+		}
+
+
+		if (Lib::getRank(from - 1) == rank) {
+			this->addMoveToList(&moves, from, from - 1, {});
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 1) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 2) == rank) {
+			this->addMoveToList(&moves, from, from - 2, { from - 1 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 2) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 3) == rank) {
+			this->addMoveToList(&moves, from, from - 3, { from - 1, from - 2 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 3) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 4) == rank) {
+			this->addMoveToList(&moves, from, from - 4, { from - 1, from - 2, from - 3 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 4) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 5) == rank) {
+			this->addMoveToList(&moves, from, from - 5, { from - 1, from - 2, from - 3, from - 4 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 5) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 6) == rank) {
+			this->addMoveToList(&moves, from, from - 6, { from - 1, from - 2, from - 3, from - 4, from - 5 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 6) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 7) == rank) {
+			this->addMoveToList(&moves, from, from - 7, { from - 1, from - 2, from - 3, from - 4, from - 5, from - 6 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 7) << " (not same rank)" << std::endl;
+		}
+
 		this->addMoveToList(&moves, from, from +  9, {});
 		this->addMoveToList(&moves, from, from + 18, { from + 9 });
 		this->addMoveToList(&moves, from, from + 27, { from + 9, from + 18 });
@@ -435,11 +509,126 @@ std::vector<std::string> Board::getAllMoves()
 		this->addMoveToList(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
 		this->addMoveToList(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
 
+		this->addMoveToList(&moves, from, from +  7, {});
+		this->addMoveToList(&moves, from, from + 14, { from + 7 });
+		this->addMoveToList(&moves, from, from + 21, { from + 7, from + 14 });
+		this->addMoveToList(&moves, from, from + 28, { from + 7, from + 14, from + 21 });
+		this->addMoveToList(&moves, from, from + 35, { from + 7, from + 14, from + 21, from + 28 });
+		this->addMoveToList(&moves, from, from + 42, { from + 7, from + 14, from + 21, from + 28, from + 35 });
+		this->addMoveToList(&moves, from, from + 49, { from + 7, from + 14, from + 21, from + 28, from + 35, from + 42 });
+
+		this->addMoveToList(&moves, from, from -  7, {});
+		this->addMoveToList(&moves, from, from - 14, { from - 7 });
+		this->addMoveToList(&moves, from, from - 21, { from - 7, from - 14 });
+		this->addMoveToList(&moves, from, from - 28, { from - 7, from - 14, from - 21 });
+		this->addMoveToList(&moves, from, from - 35, { from - 7, from - 14, from - 21, from - 28 });
+		this->addMoveToList(&moves, from, from - 42, { from - 7, from - 14, from - 21, from - 28, from - 35 });
+		this->addMoveToList(&moves, from, from - 49, { from - 7, from - 14, from - 21, from - 28, from - 35, from - 42 });
+
 		current_queens = current_queens & ~(1ULL << from);
 	}
 
-	// TODO: moves of the rooks
-	//unsigned long long current_rooks = this->rooks & pieces;
+	// moves of the rooks
+	unsigned long long current_rooks = this->rooks & pieces;
+	std::cout << "info string [Board::getAllMoves] ROOKS ------------------------------" << std::endl;
+	from = __builtin_ffsll(current_rooks) - 1;
+	while (current_rooks > 0) {
+		from = __builtin_ffsll(current_rooks) - 1;
+		std::cout << "info string [Board::getAllMoves] rook at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
+
+		this->addMoveToList(&moves, from, from +  8, {});
+		this->addMoveToList(&moves, from, from + 16, { from + 8 });
+		this->addMoveToList(&moves, from, from + 24, { from + 8, from + 16 });
+		this->addMoveToList(&moves, from, from + 32, { from + 8, from + 16, from + 24 });
+		this->addMoveToList(&moves, from, from + 40, { from + 8, from + 16, from + 24, from + 32 });
+		this->addMoveToList(&moves, from, from + 48, { from + 8, from + 16, from + 24, from + 32, from + 40 });
+		this->addMoveToList(&moves, from, from + 56, { from + 8, from + 16, from + 24, from + 32, from + 40, from + 48 });
+
+		this->addMoveToList(&moves, from, from -  8, {});
+		this->addMoveToList(&moves, from, from - 16, { from - 8 });
+		this->addMoveToList(&moves, from, from - 24, { from - 8, from - 16 });
+		this->addMoveToList(&moves, from, from - 32, { from - 8, from - 16, from - 24 });
+		this->addMoveToList(&moves, from, from - 40, { from - 8, from - 16, from - 24, from - 32 });
+		this->addMoveToList(&moves, from, from - 48, { from - 8, from - 16, from - 24, from - 32, from - 40 });
+		this->addMoveToList(&moves, from, from - 56, { from - 8, from - 16, from - 24, from - 32, from - 40, from - 48 });
+
+		int rank = Lib::getRank(from);
+		if (Lib::getRank(from + 1) == rank) {
+			this->addMoveToList(&moves, from, from + 1, {});
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 1) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 2) == rank) {
+			this->addMoveToList(&moves, from, from + 2, { from + 1 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 2) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 3) == rank) {
+			this->addMoveToList(&moves, from, from + 3, { from + 1, from + 2 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 3) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 4) == rank) {
+			this->addMoveToList(&moves, from, from + 4, { from + 1, from + 2, from + 3 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 4) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 5) == rank) {
+			this->addMoveToList(&moves, from, from + 5, { from + 1, from + 2, from + 3, from + 4 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 5) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 6) == rank) {
+			this->addMoveToList(&moves, from, from + 6, { from + 1, from + 2, from + 3, from + 4, from + 5 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 6) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from + 7) == rank) {
+			this->addMoveToList(&moves, from, from + 7, { from + 1, from + 2, from + 3, from + 4, from + 5, from + 6 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from + 7) << " (not same rank)" << std::endl;
+		}
+
+
+		if (Lib::getRank(from - 1) == rank) {
+			this->addMoveToList(&moves, from, from - 1, {});
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 1) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 2) == rank) {
+			this->addMoveToList(&moves, from, from - 2, { from - 1 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 2) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 3) == rank) {
+			this->addMoveToList(&moves, from, from - 3, { from - 1, from - 2 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 3) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 4) == rank) {
+			this->addMoveToList(&moves, from, from - 4, { from - 1, from - 2, from - 3 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 4) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 5) == rank) {
+			this->addMoveToList(&moves, from, from - 5, { from - 1, from - 2, from - 3, from - 4 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 5) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 6) == rank) {
+			this->addMoveToList(&moves, from, from - 6, { from - 1, from - 2, from - 3, from - 4, from - 5 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 6) << " (not same rank)" << std::endl;
+		}
+		if (Lib::getRank(from - 7) == rank) {
+			this->addMoveToList(&moves, from, from - 7, { from - 1, from - 2, from - 3, from - 4, from - 5, from - 6 });
+		} else {
+			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 7) << " (not same rank)" << std::endl;
+		}
+
+		current_rooks = current_rooks & ~(1ULL << from);
+	}
+
 
 	// TODO: moves of the bishops
 	//unsigned long long current_bishops = this->bishops & pieces;
