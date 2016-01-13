@@ -47,9 +47,13 @@ void Engine::go()
 	
 	// TODO: invoke move generator
 	std::vector<std::string> possibleMoves = this->board->getAllMoves();
+	std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
 	
 	// TODO: decide which move is good
-	std::string bestMove = possibleMoves[0];
+    std::random_device seed;
+    std::mt19937 engine(seed());
+    std::uniform_int_distribution<int> choose(0 , possibleMoves.size() - 1);
+    std::string bestMove = possibleMoves[choose(engine)];
 
 	std::ostringstream output;
 	output << "bestmove " << bestMove << std::endl;

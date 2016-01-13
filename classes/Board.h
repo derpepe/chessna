@@ -23,6 +23,8 @@ public:
 	void executeMove(std::string move, bool incrementCounters = true);
 	
 	std::vector<std::string> getAllMoves();
+	void addMoveToList(std::vector<std::string> *moves, int from, int to);
+	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
 		
 private:
 	unsigned long long blacks;

@@ -307,15 +307,165 @@ void Board::checkConsistency()
 	}
 }
 
+void Board::addMoveToList(std::vector<std::string> *moves, int from, int to) {
+	this->addMoveToList(moves, from, to, {});
+}
+
+
+void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty)
+{
+	if ((to > 63) || (to < 0)) {
+		std::cout << "info string [Board::addMoveToList] cannot move to " << to << " (out of board)" << std::endl;
+		return; // no changes
+	}
+	
+	for (int i = 0; i < checkForEmpty.size(); i++) {
+		int to = checkForEmpty[i];
+		if (((this->whites | this->blacks) & (1ULL << to)) > 0) {
+			std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (occupied)" << std::endl;
+			return; // no changes
+		} else {
+			std::cout << "info string [Board::addMoveToList] " << Lib::getCoordinatesFromBitnum(to) << " is free" << std::endl;
+		}
+	}
+	
+	if (this->playerToMove == 'w') {
+		if ((this->whites & (1ULL << to)) > 0) {
+			std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (same-colored piece)" << std::endl;
+			return; // no changes
+		}
+	} else {
+		if ((this->blacks & (1ULL << to)) > 0) {
+			std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (same-colored piece)" << std::endl;
+			return; // no changes
+		}
+	}
+	
+	std::cout << "info string [Board::addMoveToList] can move to " << Lib::getCoordinatesFromBitnum(to) << std::endl;
+	std::cout << "info currmove " << Lib::getCoordinatesFromBitnum(from) << Lib::getCoordinatesFromBitnum(to) << std::endl; // TODO: possibily move to UCI.cpp
+	moves->push_back(Lib::getCoordinatesFromBitnum(from) + Lib::getCoordinatesFromBitnum(to));
+	return;
+}
 
 std::vector<std::string> Board::getAllMoves()
 {
-	std::cout << "info string [Board::getAllMoves] checking possible moves" << std::endl;
-
 	std::vector<std::string> moves;
 
 	// TODO: implement move generator
-	moves.push_back("e2e4");
+	unsigned long long pieces;
+	if (this->playerToMove == 'w') {
+		pieces = this->whites;
+	} else {
+		pieces = this->blacks;
+	}
+	
 
+	int from, to;
+	
+	// TODO: moves of the kings
+	unsigned long long current_king = this->kings & pieces;
+	std::cout << "info string [Board::getAllMoves] king:" << std::endl;
+	from = __builtin_ffsll(current_king) - 1;
+	std::cout << "info string [Board::getAllMoves] king at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
+	this->addMoveToList(&moves, from, from + 8);
+	this->addMoveToList(&moves, from, from - 8);
+	this->addMoveToList(&moves, from, from + 1);
+	this->addMoveToList(&moves, from, from - 1);
+	this->addMoveToList(&moves, from, from + 9);
+	this->addMoveToList(&moves, from, from - 9);
+	this->addMoveToList(&moves, from, from + 7);
+	this->addMoveToList(&moves, from, from - 7);
+	// TODO: check for borders
+	// TODO: check for check and mate
+
+	// TODO: casteling moves
+
+	// TODO: moves of the queens
+	//unsigned long long current_queens = this->queens & pieces;
+
+	// TODO: moves of the rooks
+	//unsigned long long current_rooks = this->rooks & pieces;
+
+	// TODO: moves of the bishops
+	//unsigned long long current_bishops = this->bishops & pieces;
+
+	// TODO: moves of the knights
+	//unsigned long long current_knigts = this->knights & pieces;
+
+	// pawns
+	unsigned long long current_pawns = this->pawns & pieces;
+	std::cout << "info string [Board::getAllMoves] pawns:" << std::endl;
+	while (current_pawns > 0) {
+		from = __builtin_ffsll(current_pawns) - 1;
+		std::cout << "info string [Board::getAllMoves] pawn at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
+		
+		// pawn moves
+		if (this->playerToMove == 'w') {
+			this->addMoveToList(&moves, from, from + 8, {from + 8} );
+			if (from <= Lib::getBitnumFromCoordinates("a2")) {
+				this->addMoveToList(&moves, from, from + 16, {from + 8, from + 16} );
+			}
+		} else {
+			this->addMoveToList(&moves, from, from - 8, {from - 8} );
+			if (from >= Lib::getBitnumFromCoordinates("h7")) {
+				this->addMoveToList(&moves, from, from - 16, {from - 8, from - 16} );
+			}
+		}
+		
+		// pawn beatings
+		if (this->playerToMove == 'w') {
+			// pawn beatings for white
+			to = from + 7;
+			if /* check for borders */(to % 8 != 7) {
+				if ((this->blacks & (1ULL << to)) > 0) {
+					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+					this->addMoveToList(&moves, from, to);
+				} else {
+					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+				}
+			}
+
+			to = from + 9;
+			if /* check for borders */(to % 8 != 7) {
+				if ((this->blacks & (1ULL << to)) > 0) {
+					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+					this->addMoveToList(&moves, from, to);
+				} else {
+					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+				}
+			}
+		} else {
+			// pawn beatings for black
+			to = from - 7;
+			if /* check for borders */(to % 8 != 7) {
+				if ((this->blacks & (1ULL << to)) > 0) {
+					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+					this->addMoveToList(&moves, from, to);
+				} else {
+					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+				}
+			}
+
+			to = from - 9;
+			if /* check for borders */(to % 8 != 7) {
+				if ((this->blacks & (1ULL << to)) > 0) {
+					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+					this->addMoveToList(&moves, from, to);
+				} else {
+					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
+				}
+			}
+		}
+
+		// TODO: pawn promotions
+
+		// TODO: en passant moves
+		
+		current_pawns = current_pawns & ~(1ULL << from);
+	}
+	std::cout << "info string [Board::getAllMoves] pawns done" << std::endl;
+	
+	// TODO: different move lists for "captures, checks and checkmates, [en passant, promotions, castles|]"
+	
 	return moves;
 }
