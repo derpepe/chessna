@@ -493,37 +493,38 @@ std::vector<std::string> Board::getAllMoves()
 			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 7) << " (not same rank)" << std::endl;
 		}
 
-		this->addMoveToList(&moves, from, from +  9, {});
-		this->addMoveToList(&moves, from, from + 18, { from + 9 });
-		this->addMoveToList(&moves, from, from + 27, { from + 9, from + 18 });
-		this->addMoveToList(&moves, from, from + 36, { from + 9, from + 18, from + 27 });
-		this->addMoveToList(&moves, from, from + 45, { from + 9, from + 18, from + 27, from + 36 });
-		this->addMoveToList(&moves, from, from + 54, { from + 9, from + 18, from + 27, from + 36, from + 45 });
-		this->addMoveToList(&moves, from, from + 63, { from + 9, from + 18, from + 27, from + 36, from + 45, from + 54 });
-
-		this->addMoveToList(&moves, from, from -  9, {});
-		this->addMoveToList(&moves, from, from - 18, { from - 9 });
-		this->addMoveToList(&moves, from, from - 27, { from - 9, from - 18 });
-		this->addMoveToList(&moves, from, from - 36, { from - 9, from - 18, from - 27 });
-		this->addMoveToList(&moves, from, from - 45, { from - 9, from - 18, from - 27, from - 36 });
-		this->addMoveToList(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
-		this->addMoveToList(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
-
-		this->addMoveToList(&moves, from, from +  7, {});
-		this->addMoveToList(&moves, from, from + 14, { from + 7 });
-		this->addMoveToList(&moves, from, from + 21, { from + 7, from + 14 });
-		this->addMoveToList(&moves, from, from + 28, { from + 7, from + 14, from + 21 });
-		this->addMoveToList(&moves, from, from + 35, { from + 7, from + 14, from + 21, from + 28 });
-		this->addMoveToList(&moves, from, from + 42, { from + 7, from + 14, from + 21, from + 28, from + 35 });
-		this->addMoveToList(&moves, from, from + 49, { from + 7, from + 14, from + 21, from + 28, from + 35, from + 42 });
-
-		this->addMoveToList(&moves, from, from -  7, {});
-		this->addMoveToList(&moves, from, from - 14, { from - 7 });
-		this->addMoveToList(&moves, from, from - 21, { from - 7, from - 14 });
-		this->addMoveToList(&moves, from, from - 28, { from - 7, from - 14, from - 21 });
-		this->addMoveToList(&moves, from, from - 35, { from - 7, from - 14, from - 21, from - 28 });
-		this->addMoveToList(&moves, from, from - 42, { from - 7, from - 14, from - 21, from - 28, from - 35 });
-		this->addMoveToList(&moves, from, from - 49, { from - 7, from - 14, from - 21, from - 28, from - 35, from - 42 });
+		// TODO: diagonales
+		// this->addMoveToList(&moves, from, from +  9, {});
+		// this->addMoveToList(&moves, from, from + 18, { from + 9 });
+		// this->addMoveToList(&moves, from, from + 27, { from + 9, from + 18 });
+		// this->addMoveToList(&moves, from, from + 36, { from + 9, from + 18, from + 27 });
+		// this->addMoveToList(&moves, from, from + 45, { from + 9, from + 18, from + 27, from + 36 });
+		// this->addMoveToList(&moves, from, from + 54, { from + 9, from + 18, from + 27, from + 36, from + 45 });
+		// this->addMoveToList(&moves, from, from + 63, { from + 9, from + 18, from + 27, from + 36, from + 45, from + 54 });
+    // 
+		// this->addMoveToList(&moves, from, from -  9, {});
+		// this->addMoveToList(&moves, from, from - 18, { from - 9 });
+		// this->addMoveToList(&moves, from, from - 27, { from - 9, from - 18 });
+		// this->addMoveToList(&moves, from, from - 36, { from - 9, from - 18, from - 27 });
+		// this->addMoveToList(&moves, from, from - 45, { from - 9, from - 18, from - 27, from - 36 });
+		// this->addMoveToList(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
+		// this->addMoveToList(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
+    // 
+		// this->addMoveToList(&moves, from, from +  7, {});
+		// this->addMoveToList(&moves, from, from + 14, { from + 7 });
+		// this->addMoveToList(&moves, from, from + 21, { from + 7, from + 14 });
+		// this->addMoveToList(&moves, from, from + 28, { from + 7, from + 14, from + 21 });
+		// this->addMoveToList(&moves, from, from + 35, { from + 7, from + 14, from + 21, from + 28 });
+		// this->addMoveToList(&moves, from, from + 42, { from + 7, from + 14, from + 21, from + 28, from + 35 });
+		// this->addMoveToList(&moves, from, from + 49, { from + 7, from + 14, from + 21, from + 28, from + 35, from + 42 });
+    // 
+		// this->addMoveToList(&moves, from, from -  7, {});
+		// this->addMoveToList(&moves, from, from - 14, { from - 7 });
+		// this->addMoveToList(&moves, from, from - 21, { from - 7, from - 14 });
+		// this->addMoveToList(&moves, from, from - 28, { from - 7, from - 14, from - 21 });
+		// this->addMoveToList(&moves, from, from - 35, { from - 7, from - 14, from - 21, from - 28 });
+		// this->addMoveToList(&moves, from, from - 42, { from - 7, from - 14, from - 21, from - 28, from - 35 });
+		// this->addMoveToList(&moves, from, from - 49, { from - 7, from - 14, from - 21, from - 28, from - 35, from - 42 });
 
 		current_queens = current_queens & ~(1ULL << from);
 	}
