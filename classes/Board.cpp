@@ -318,6 +318,18 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 }
 
 
+void Board::addMoveToListDiag(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty)
+{
+	if ((Lib::getFile(from) == Lib::getFile(to)) && (Lib::getRank(from) == Lib::getRank(to))) {
+		std::cout << "info string [Board::addMoveToListDiag] rank and file pass for diag" << std::endl;
+		this->addMoveToList(moves, from, to, checkForEmpty, 7);
+	} else {
+		std::cout << "info string [Board::addMoveToListDiag] cannot move to " << to << " (rank and file don't pass for diag)" << std::endl;
+		return;
+	}
+}
+
+
 void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist)
 {
 	// check for out of board
@@ -330,6 +342,8 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 	if (!((abs(Lib::getRank(from) - Lib::getRank(to)) <= maxdist) && (abs(Lib::getFile(from) - Lib::getFile(to)) <= maxdist))) {
 		std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (too far away)" << std::endl;
 		return;
+	} else {
+		std::cout << "info string [Board::addMoveToList] distance of rank is " << (abs(Lib::getRank(from) - Lib::getRank(to))) << ", distance of file is " << (abs(Lib::getFile(from) - Lib::getFile(to))) << ", maxdist is " << maxdist << std::endl;
 	}
 	
 	// check for occupied target-fields
@@ -493,38 +507,37 @@ std::vector<std::string> Board::getAllMoves()
 			std::cout << "info string [Board::getAllMoves] cannot move to " << Lib::getCoordinatesFromBitnum(from - 7) << " (not same rank)" << std::endl;
 		}
 
-		// TODO: diagonales
-		// this->addMoveToList(&moves, from, from +  9, {});
-		// this->addMoveToList(&moves, from, from + 18, { from + 9 });
-		// this->addMoveToList(&moves, from, from + 27, { from + 9, from + 18 });
-		// this->addMoveToList(&moves, from, from + 36, { from + 9, from + 18, from + 27 });
-		// this->addMoveToList(&moves, from, from + 45, { from + 9, from + 18, from + 27, from + 36 });
-		// this->addMoveToList(&moves, from, from + 54, { from + 9, from + 18, from + 27, from + 36, from + 45 });
-		// this->addMoveToList(&moves, from, from + 63, { from + 9, from + 18, from + 27, from + 36, from + 45, from + 54 });
-    // 
-		// this->addMoveToList(&moves, from, from -  9, {});
-		// this->addMoveToList(&moves, from, from - 18, { from - 9 });
-		// this->addMoveToList(&moves, from, from - 27, { from - 9, from - 18 });
-		// this->addMoveToList(&moves, from, from - 36, { from - 9, from - 18, from - 27 });
-		// this->addMoveToList(&moves, from, from - 45, { from - 9, from - 18, from - 27, from - 36 });
-		// this->addMoveToList(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
-		// this->addMoveToList(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
-    // 
-		// this->addMoveToList(&moves, from, from +  7, {});
-		// this->addMoveToList(&moves, from, from + 14, { from + 7 });
-		// this->addMoveToList(&moves, from, from + 21, { from + 7, from + 14 });
-		// this->addMoveToList(&moves, from, from + 28, { from + 7, from + 14, from + 21 });
-		// this->addMoveToList(&moves, from, from + 35, { from + 7, from + 14, from + 21, from + 28 });
-		// this->addMoveToList(&moves, from, from + 42, { from + 7, from + 14, from + 21, from + 28, from + 35 });
-		// this->addMoveToList(&moves, from, from + 49, { from + 7, from + 14, from + 21, from + 28, from + 35, from + 42 });
-    // 
-		// this->addMoveToList(&moves, from, from -  7, {});
-		// this->addMoveToList(&moves, from, from - 14, { from - 7 });
-		// this->addMoveToList(&moves, from, from - 21, { from - 7, from - 14 });
-		// this->addMoveToList(&moves, from, from - 28, { from - 7, from - 14, from - 21 });
-		// this->addMoveToList(&moves, from, from - 35, { from - 7, from - 14, from - 21, from - 28 });
-		// this->addMoveToList(&moves, from, from - 42, { from - 7, from - 14, from - 21, from - 28, from - 35 });
-		// this->addMoveToList(&moves, from, from - 49, { from - 7, from - 14, from - 21, from - 28, from - 35, from - 42 });
+		this->addMoveToListDiag(&moves, from, from +  9, {});
+		this->addMoveToListDiag(&moves, from, from + 18, { from + 9 });
+		this->addMoveToListDiag(&moves, from, from + 27, { from + 9, from + 18 });
+		this->addMoveToListDiag(&moves, from, from + 36, { from + 9, from + 18, from + 27 });
+		this->addMoveToListDiag(&moves, from, from + 45, { from + 9, from + 18, from + 27, from + 36 });
+		this->addMoveToListDiag(&moves, from, from + 54, { from + 9, from + 18, from + 27, from + 36, from + 45 });
+		this->addMoveToListDiag(&moves, from, from + 63, { from + 9, from + 18, from + 27, from + 36, from + 45, from + 54 });
+
+		this->addMoveToListDiag(&moves, from, from -  9, {});
+		this->addMoveToListDiag(&moves, from, from - 18, { from - 9 });
+		this->addMoveToListDiag(&moves, from, from - 27, { from - 9, from - 18 });
+		this->addMoveToListDiag(&moves, from, from - 36, { from - 9, from - 18, from - 27 });
+		this->addMoveToListDiag(&moves, from, from - 45, { from - 9, from - 18, from - 27, from - 36 });
+		this->addMoveToListDiag(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
+		this->addMoveToListDiag(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
+
+		this->addMoveToListDiag(&moves, from, from +  7, {});
+		this->addMoveToListDiag(&moves, from, from + 14, { from + 7 });
+		this->addMoveToListDiag(&moves, from, from + 21, { from + 7, from + 14 });
+		this->addMoveToListDiag(&moves, from, from + 28, { from + 7, from + 14, from + 21 });
+		this->addMoveToListDiag(&moves, from, from + 35, { from + 7, from + 14, from + 21, from + 28 });
+		this->addMoveToListDiag(&moves, from, from + 42, { from + 7, from + 14, from + 21, from + 28, from + 35 });
+		this->addMoveToListDiag(&moves, from, from + 49, { from + 7, from + 14, from + 21, from + 28, from + 35, from + 42 });
+
+		this->addMoveToListDiag(&moves, from, from -  7, {});
+		this->addMoveToListDiag(&moves, from, from - 14, { from - 7 });
+		this->addMoveToListDiag(&moves, from, from - 21, { from - 7, from - 14 });
+		this->addMoveToListDiag(&moves, from, from - 28, { from - 7, from - 14, from - 21 });
+		this->addMoveToListDiag(&moves, from, from - 35, { from - 7, from - 14, from - 21, from - 28 });
+		this->addMoveToListDiag(&moves, from, from - 42, { from - 7, from - 14, from - 21, from - 28, from - 35 });
+		this->addMoveToListDiag(&moves, from, from - 49, { from - 7, from - 14, from - 21, from - 28, from - 35, from - 42 });
 
 		current_queens = current_queens & ~(1ULL << from);
 	}
