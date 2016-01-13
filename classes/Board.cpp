@@ -306,3 +306,16 @@ void Board::checkConsistency()
 		std::cout << prefix << "[Board::checkConsistency] board information is INCONSISTENT." << std::endl;
 	}
 }
+
+
+std::vector<std::string> Board::getAllMoves()
+{
+	std::cout << "info string [Board::getAllMoves] checking possible moves" << std::endl;
+
+	std::vector<std::string> moves;
+
+	// TODO: implement move generator
+	moves.push_back("e2e4");
+
+	return moves;
+}

@@ -8,6 +8,7 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
 	this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
 	this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
+	this->comm->registerEngineGoCallback( [this] { this->go(); } );
 	
 	this->board = new Board();
 }
@@ -42,7 +43,16 @@ void Engine::run()
 
 void Engine::go()
 {
+	std::cout << "info string [Engine::go] let's go!" << std::endl;
+	
+	// TODO: invoke move generator
+	std::vector<std::string> possibleMoves = this->board->getAllMoves();
+	
+	// TODO: decide which move is good
+	std::string bestMove = possibleMoves[0];
+
 	std::ostringstream output;
-	output << "bestmove e2e4" << std::endl;
+	output << "bestmove " << bestMove << std::endl;
 	this->comm->uciOutput(output.str()); // TODO
+	// TODO: use UCI sendBestmove()?
 }

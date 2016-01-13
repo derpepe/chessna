@@ -22,6 +22,8 @@ public:
 	
 	void executeMove(std::string move, bool incrementCounters = true);
 	
+	std::vector<std::string> getAllMoves();
+		
 private:
 	unsigned long long blacks;
 	unsigned long long whites;
