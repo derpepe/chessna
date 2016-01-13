@@ -314,11 +314,25 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to) {
 
 void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty)
 {
+	this->addMoveToList(moves, from, to, checkForEmpty, 7);
+}
+
+
+void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist)
+{
+	// check for out of board
 	if ((to > 63) || (to < 0)) {
 		std::cout << "info string [Board::addMoveToList] cannot move to " << to << " (out of board)" << std::endl;
 		return; // no changes
 	}
 	
+	// check for maxdist
+	if (!((abs(Lib::getRank(from) - Lib::getRank(to)) <= maxdist) && (abs(Lib::getFile(from) - Lib::getFile(to)) <= maxdist))) {
+		std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (too far away)" << std::endl;
+		return;
+	}
+	
+	// check for occupied target-fields
 	for (int i = 0; i < checkForEmpty.size(); i++) {
 		int to = checkForEmpty[i];
 		if (((this->whites | this->blacks) & (1ULL << to)) > 0) {
@@ -329,6 +343,7 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 		}
 	}
 	
+	// check for same-colored piece at target field
 	if (this->playerToMove == 'w') {
 		if ((this->whites & (1ULL << to)) > 0) {
 			std::cout << "info string [Board::addMoveToList] cannot move to " << Lib::getCoordinatesFromBitnum(to) << " (same-colored piece)" << std::endl;
@@ -341,6 +356,7 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 		}
 	}
 	
+	// output stats and add move
 	std::cout << "info string [Board::addMoveToList] can move to " << Lib::getCoordinatesFromBitnum(to) << std::endl;
 	std::cout << "info currmove " << Lib::getCoordinatesFromBitnum(from) << Lib::getCoordinatesFromBitnum(to) << std::endl; // TODO: possibily move to UCI.cpp
 	moves->push_back(Lib::getCoordinatesFromBitnum(from) + Lib::getCoordinatesFromBitnum(to));
@@ -364,18 +380,17 @@ std::vector<std::string> Board::getAllMoves()
 	
 	// TODO: moves of the kings
 	unsigned long long current_king = this->kings & pieces;
-	std::cout << "info string [Board::getAllMoves] king:" << std::endl;
+	std::cout << "info string [Board::getAllMoves] KING ------------------------------" << std::endl;
 	from = __builtin_ffsll(current_king) - 1;
 	std::cout << "info string [Board::getAllMoves] king at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
-	this->addMoveToList(&moves, from, from + 8);
-	this->addMoveToList(&moves, from, from - 8);
-	this->addMoveToList(&moves, from, from + 1);
-	this->addMoveToList(&moves, from, from - 1);
-	this->addMoveToList(&moves, from, from + 9);
-	this->addMoveToList(&moves, from, from - 9);
-	this->addMoveToList(&moves, from, from + 7);
-	this->addMoveToList(&moves, from, from - 7);
-	// TODO: check for borders
+	this->addMoveToList(&moves, from, from + 8, {}, 1);
+	this->addMoveToList(&moves, from, from - 8, {}, 1);
+	this->addMoveToList(&moves, from, from + 1, {}, 1);
+	this->addMoveToList(&moves, from, from - 1, {}, 1);
+	this->addMoveToList(&moves, from, from + 9, {}, 1);
+	this->addMoveToList(&moves, from, from - 9, {}, 1);
+	this->addMoveToList(&moves, from, from + 7, {}, 1);
+	this->addMoveToList(&moves, from, from - 7, {}, 1);
 	// TODO: check for check and mate
 
 	// TODO: casteling moves
@@ -391,60 +406,26 @@ std::vector<std::string> Board::getAllMoves()
 
 	// TODO: moves of the knights
 	unsigned long long current_knights = this->knights & pieces;
-	std::cout << "info string [Board::getAllMoves] knights:" << std::endl;
+	std::cout << "info string [Board::getAllMoves] KNIGHTS ------------------------------" << std::endl;
 	while (current_knights > 0) {
-		std::cout << "#" << Lib::getFile(57) << "/" << Lib::getFile(47) << "#";
 		from = __builtin_ffsll(current_knights) - 1;
 		std::cout << "info string [Board::getAllMoves] knight at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
 
-		if ((abs(Lib::getRank(from) - Lib::getRank(from - 6)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 6)) <= 2)) {
-			this->addMoveToList(&moves, from, from - 6);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 6) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from - 10)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 10)) <= 2)) {
-			this->addMoveToList(&moves, from, from - 10);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 10) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from - 15)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 15)) <= 2)) {
-			this->addMoveToList(&moves, from, from - 15);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 15) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from - 17)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from - 17)) <= 2)) {
-			this->addMoveToList(&moves, from, from - 17);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from - 17) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from + 6)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 6)) <= 2)) {
-			this->addMoveToList(&moves, from, from + 6);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 6) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from + 10)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 10)) <= 2)) {
-			this->addMoveToList(&moves, from, from + 10);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 10) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from + 15)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 15)) <= 2)) {
-			this->addMoveToList(&moves, from, from + 15);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 15) << " (too far away)" << std::endl;
-		}
-		if ((abs(Lib::getRank(from) - Lib::getRank(from + 17)) <= 2) && (abs(Lib::getFile(from) - Lib::getFile(from + 17)) <= 2)) {
-			this->addMoveToList(&moves, from, from + 17);
-		} else {
-			std::cout << "info string [Board::getAllMoves] cannot move to " << (from + 17) << " (too far away)" << std::endl;
-		}
-		// TODO: check for borders
+		this->addMoveToList(&moves, from, from - 6, {}, 2);
+		this->addMoveToList(&moves, from, from - 10, {}, 2);
+		this->addMoveToList(&moves, from, from - 15, {}, 2);
+		this->addMoveToList(&moves, from, from - 17, {}, 2);
+		this->addMoveToList(&moves, from, from + 6, {}, 2);
+		this->addMoveToList(&moves, from, from + 10, {}, 2);
+		this->addMoveToList(&moves, from, from + 15, {}, 2);
+		this->addMoveToList(&moves, from, from + 17, {}, 2);
 
 		current_knights = current_knights & ~(1ULL << from);
 	}
 
 	// pawns
 	unsigned long long current_pawns = this->pawns & pieces;
-	std::cout << "info string [Board::getAllMoves] pawns:" << std::endl;
+	std::cout << "info string [Board::getAllMoves] PAWNS ------------------------------" << std::endl;
 	while (current_pawns > 0) {
 		from = __builtin_ffsll(current_pawns) - 1;
 		std::cout << "info string [Board::getAllMoves] pawn at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
@@ -514,6 +495,8 @@ std::vector<std::string> Board::getAllMoves()
 		current_pawns = current_pawns & ~(1ULL << from);
 	}
 	std::cout << "info string [Board::getAllMoves] pawns done" << std::endl;
+	
+	std::cout << "info string [Board::getAllMoves] ------------------------------" << std::endl;
 	
 	// TODO: different move lists for "captures, checks and checkmates, [en passant, promotions, castles|]"
 	
