@@ -17,13 +17,27 @@ std::vector<std::string> Lib::split(const std::string &s, char delim)
     return split(s, delim, elems);
 }
 
-// converts 'e2' to 15
+// converts 'a2' to 15
 int Lib::getBitnumFromCoordinates(std::string coordinates)
 {
 	int col = coordinates.c_str()[0] - (int)'a';
 	int row = coordinates.c_str()[1] - (int)'1';
 	return (7 - col) + row * 8;
 }
+
+// converts 15 to 'a2'
+std::string Lib::getCoordinatesFromBitnum(int bitnum)
+{
+	int file = (bitnum % 8);
+	int rank = ((bitnum - file) / 8) + 1;
+
+	std::string result;
+	result += (char) ((int)'h' - file);
+	result += std::to_string(rank);
+	
+	return result;
+}
+
 
 // bitshift left which supports negative values (then does a right bitshift)
 unsigned long long Lib::bitShiftLeft(unsigned long long bitboard, int shift)
