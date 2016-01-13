@@ -416,11 +416,11 @@ std::vector<std::string> Board::getAllMoves()
 		from = __builtin_ffsll(current_knights) - 1;
 		std::cout << "info string [Board::getAllMoves] knight at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
 
-		this->addMoveToList(&moves, from, from - 6,  2);
+		this->addMoveToList(&moves, from, from -  6, 2);
 		this->addMoveToList(&moves, from, from - 10, 2);
 		this->addMoveToList(&moves, from, from - 15, 2);
 		this->addMoveToList(&moves, from, from - 17, 2);
-		this->addMoveToList(&moves, from, from + 6,  2);
+		this->addMoveToList(&moves, from, from +  6, 2);
 		this->addMoveToList(&moves, from, from + 10, 2);
 		this->addMoveToList(&moves, from, from + 15, 2);
 		this->addMoveToList(&moves, from, from + 17, 2);
