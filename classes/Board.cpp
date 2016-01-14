@@ -201,12 +201,17 @@ void Board::loadFen(std::string figures, char playerToMove, std::string castelin
 	std::cout << "info string [Board::loadFen] enPassant: " << enPassant << std::endl;
 	std::cout << "info string [Board::loadFen] halfmoves: " << halfmoves << std::endl;
 	std::cout << "info string [Board::loadFen] currentMove: " << currentMove << std::endl;
+
 	// TODO: load figures from parameter string
 	this->startpos(); // <-- to be removed
+
 	this->playerToMove = playerToMove;
+
 	// TODO: load casteling from parameter string
+
 	this->enPassant = enPassant;
 	// TODO: verify enPassant variable
+
 	this->halfmoves = halfmoves;
 	this->currentMove = currentMove;
 }
@@ -379,9 +384,10 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 
 std::vector<std::string> Board::getAllMoves()
 {
+	int from, to; // commonly used for all pieces
 	std::vector<std::string> moves;
 
-	// TODO: implement move generator
+	// set pieces to current color
 	unsigned long long pieces;
 	if (this->playerToMove == 'w') {
 		pieces = this->whites;
@@ -390,9 +396,7 @@ std::vector<std::string> Board::getAllMoves()
 	}
 	
 
-	int from, to;
-	
-	// TODO: moves of the kings
+	// king
 	unsigned long long current_king = this->kings & pieces;
 	std::cout << "info string [Board::getAllMoves] KING ------------------------------" << std::endl;
 	from = __builtin_ffsll(current_king) - 1;
@@ -409,7 +413,8 @@ std::vector<std::string> Board::getAllMoves()
 
 	// TODO: casteling moves
 
-	// moves of the queens
+
+	// queens
 	unsigned long long current_queens = this->queens & pieces;
 	std::cout << "info string [Board::getAllMoves] QUEENS ------------------------------" << std::endl;
 	from = __builtin_ffsll(current_queens) - 1;
@@ -541,8 +546,9 @@ std::vector<std::string> Board::getAllMoves()
 
 		current_queens = current_queens & ~(1ULL << from);
 	}
+	
 
-	// moves of the rooks
+	// rooks
 	unsigned long long current_rooks = this->rooks & pieces;
 	std::cout << "info string [Board::getAllMoves] ROOKS ------------------------------" << std::endl;
 	from = __builtin_ffsll(current_rooks) - 1;
@@ -644,10 +650,51 @@ std::vector<std::string> Board::getAllMoves()
 	}
 
 
-	// TODO: moves of the bishops
-	//unsigned long long current_bishops = this->bishops & pieces;
+	// bishops
+	unsigned long long current_bishops = this->bishops & pieces;
+	std::cout << "info string [Board::getAllMoves] BISHOPS ------------------------------" << std::endl;
+	from = __builtin_ffsll(current_bishops) - 1;
+	while (current_bishops > 0) {
+		from = __builtin_ffsll(current_bishops) - 1;
+		std::cout << "info string [Board::getAllMoves] bishop at " << Lib::getCoordinatesFromBitnum(from) << std::endl;
 
-	// TODO: moves of the knights
+		this->addMoveToListDiag(&moves, from, from +  9, {});
+		this->addMoveToListDiag(&moves, from, from + 18, { from + 9 });
+		this->addMoveToListDiag(&moves, from, from + 27, { from + 9, from + 18 });
+		this->addMoveToListDiag(&moves, from, from + 36, { from + 9, from + 18, from + 27 });
+		this->addMoveToListDiag(&moves, from, from + 45, { from + 9, from + 18, from + 27, from + 36 });
+		this->addMoveToListDiag(&moves, from, from + 54, { from + 9, from + 18, from + 27, from + 36, from + 45 });
+		this->addMoveToListDiag(&moves, from, from + 63, { from + 9, from + 18, from + 27, from + 36, from + 45, from + 54 });
+
+		this->addMoveToListDiag(&moves, from, from -  9, {});
+		this->addMoveToListDiag(&moves, from, from - 18, { from - 9 });
+		this->addMoveToListDiag(&moves, from, from - 27, { from - 9, from - 18 });
+		this->addMoveToListDiag(&moves, from, from - 36, { from - 9, from - 18, from - 27 });
+		this->addMoveToListDiag(&moves, from, from - 45, { from - 9, from - 18, from - 27, from - 36 });
+		this->addMoveToListDiag(&moves, from, from - 54, { from - 9, from - 18, from - 27, from - 36, from - 45 });
+		this->addMoveToListDiag(&moves, from, from - 63, { from - 9, from - 18, from - 27, from - 36, from - 45, from - 54 });
+
+		this->addMoveToListDiag(&moves, from, from +  7, {});
+		this->addMoveToListDiag(&moves, from, from + 14, { from + 7 });
+		this->addMoveToListDiag(&moves, from, from + 21, { from + 7, from + 14 });
+		this->addMoveToListDiag(&moves, from, from + 28, { from + 7, from + 14, from + 21 });
+		this->addMoveToListDiag(&moves, from, from + 35, { from + 7, from + 14, from + 21, from + 28 });
+		this->addMoveToListDiag(&moves, from, from + 42, { from + 7, from + 14, from + 21, from + 28, from + 35 });
+		this->addMoveToListDiag(&moves, from, from + 49, { from + 7, from + 14, from + 21, from + 28, from + 35, from + 42 });
+
+		this->addMoveToListDiag(&moves, from, from -  7, {});
+		this->addMoveToListDiag(&moves, from, from - 14, { from - 7 });
+		this->addMoveToListDiag(&moves, from, from - 21, { from - 7, from - 14 });
+		this->addMoveToListDiag(&moves, from, from - 28, { from - 7, from - 14, from - 21 });
+		this->addMoveToListDiag(&moves, from, from - 35, { from - 7, from - 14, from - 21, from - 28 });
+		this->addMoveToListDiag(&moves, from, from - 42, { from - 7, from - 14, from - 21, from - 28, from - 35 });
+		this->addMoveToListDiag(&moves, from, from - 49, { from - 7, from - 14, from - 21, from - 28, from - 35, from - 42 });
+
+		current_bishops = current_bishops & ~(1ULL << from);
+	}
+
+
+	// knights
 	unsigned long long current_knights = this->knights & pieces;
 	std::cout << "info string [Board::getAllMoves] KNIGHTS ------------------------------" << std::endl;
 	while (current_knights > 0) {
@@ -665,6 +712,7 @@ std::vector<std::string> Board::getAllMoves()
 
 		current_knights = current_knights & ~(1ULL << from);
 	}
+	
 
 	// pawns
 	unsigned long long current_pawns = this->pawns & pieces;
@@ -737,11 +785,12 @@ std::vector<std::string> Board::getAllMoves()
 		
 		current_pawns = current_pawns & ~(1ULL << from);
 	}
-	std::cout << "info string [Board::getAllMoves] pawns done" << std::endl;
 	
-	std::cout << "info string [Board::getAllMoves] ------------------------------" << std::endl;
+	
 	
 	// TODO: different move lists for "captures, checks and checkmates, [en passant, promotions, castles|]"
+
+	std::cout << "info string [Board::getAllMoves] ------------------------------" << std::endl;
 	
 	return moves;
 }
