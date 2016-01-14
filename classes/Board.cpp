@@ -325,13 +325,13 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 
 void Board::addMoveToListDiag(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty)
 {
-	if ((Lib::getFile(from) == Lib::getFile(to)) && (Lib::getRank(from) == Lib::getRank(to))) {
-		std::cout << "info string [Board::addMoveToListDiag] rank and file pass for diag" << std::endl;
-		this->addMoveToList(moves, from, to, checkForEmpty, 7);
-	} else {
-		std::cout << "info string [Board::addMoveToListDiag] cannot move to " << to << " (rank and file don't pass for diag)" << std::endl;
+	if ((Lib::getFile(from) - Lib::getFile(to)) != (Lib::getRank(from) - Lib::getRank(to))) {
+		std::cout << "info string [Board::addMoveToListDiag] cannot move to " << to << " (don't pass for diag)" << std::endl;
 		return;
 	}
+
+	std::cout << "info string [Board::addMoveToListDiag] rank and file pass for diag" << std::endl;
+	this->addMoveToList(moves, from, to, checkForEmpty, 7);
 }
 
 
