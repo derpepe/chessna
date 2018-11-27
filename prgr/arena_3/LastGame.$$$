@@ -1,0 +1,22 @@
+[LastMove "7"]
+[Event "Computer Schach Partie"]
+[Site "music-mac"]
+[Date "2016.01.14"]
+[Round "?"]
+[White "Chessna"]
+[Black "Chessna"]
+[Result "*"]
+[BlackElo "2000"]
+[ECO "C00"]
+[Opening "Französische Verteidigung"]
+[Time "17:21:50"]
+[Variation "2.d4"]
+[WhiteElo "2000"]
+[TimeControl "300"]
+[Termination "unterminated"]
+[PlyCount "7"]
+[WhiteType "program"]
+[BlackType "program"]
+
+1. e4 e6 2. d4 f5 3. Ba6 Nxa6 4. Nf3 *
+
