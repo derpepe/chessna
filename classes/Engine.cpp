@@ -8,7 +8,6 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
 	this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
 	this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
-	this->comm->registerEngineGoCallback( [this] { this->go(); } );
 	this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
 	
 	this->board = new Board();
@@ -30,8 +29,10 @@ void Engine::executeMove(std::string move)
 
 void Engine::debug()
 {
-	std::string boardDump = this->board->getDump();
-	this->comm->uciOutput(boardDump);
+	bool attacked = this->board->isSquareAttacked(20, 'b');
+	std::ostringstream output;
+	output << "info string e3 is attacked by black: " << (attacked ? "true" : "false") << std::endl;
+	this->comm->uciOutput(output.str());
 }
 
 void Engine::run()

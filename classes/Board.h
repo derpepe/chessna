@@ -31,6 +31,8 @@ public:
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
 
 	unsigned long long perft(int);
+
+	bool isSquareAttacked(int square, char byPlayer);
 			
 private:
 	unsigned long long blacks;

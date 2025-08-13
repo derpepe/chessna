@@ -1,4 +1,4 @@
-//#define DEBUG
+#define DEBUG
 
 #include "Board.h"
 
@@ -64,6 +64,20 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	// check if a figure gets captured (for potential reset of halfmoves-counter)
 	bool figureCaptured = (((1ULL << to) & (this->whites | this->blacks)) != 0);
 
+	if (figureCaptured) {
+		unsigned long long capture_mask = ~(1ULL << to);
+		this->rooks &= capture_mask;
+		this->knights &= capture_mask;
+		this->bishops &= capture_mask;
+		this->queens &= capture_mask;
+		this->pawns &= capture_mask;
+		if (this->playerToMove == 'w') {
+			this->blacks &= capture_mask;
+		} else {
+			this->whites &= capture_mask;
+		}
+	}
+
 	this->blacks = Lib::moveBit(this->blacks, from, to);
 	this->whites = Lib::moveBit(this->whites, from, to);
 	this->kings = Lib::moveBit(this->kings, from, to);
@@ -126,32 +140,28 @@ void Board::executeMove(std::string move, bool incrementCounters)
 			casteling_q = false;
 		}
 		
-		if (abs(to - from) > 1) {
+		if (abs(to - from) > 1) { // king moved more than 1 square -> casteling
 			// casteling just happend, also move rook!
 #ifdef DEBUG
 			std::cout << "info string [Board::executeMove] casteling found. Also moving rook." << std::endl;
 #endif
 			switch(to)
 			{
-				case 1:
-					casteling_K = false;
-					casteling_Q = false;
-					this->executeMove("h1f1", false);
+				case 2: // white, queenside
+					this->rooks = Lib::moveBit(this->rooks, 0, 3);
+					this->whites = Lib::moveBit(this->whites, 0, 3);
 					break;
-				case 6:
-					casteling_K = false;
-					casteling_Q = false;
-					this->executeMove("a1c1", false);
+				case 6: // white, kingside
+					this->rooks = Lib::moveBit(this->rooks, 7, 5);
+					this->whites = Lib::moveBit(this->whites, 7, 5);
 					break;
-				case 57:
-					casteling_k = false;
-					casteling_q = false;
-					this->executeMove("h8f8", false);
+				case 58: // black, queenside
+					this->rooks = Lib::moveBit(this->rooks, 56, 59);
+					this->blacks = Lib::moveBit(this->blacks, 56, 59);
 					break;
-				case 62:
-					casteling_k = false;
-					casteling_q = false;
-					this->executeMove("a8c8", false);
+				case 62: // black, kingside
+					this->rooks = Lib::moveBit(this->rooks, 63, 61);
+					this->blacks = Lib::moveBit(this->blacks, 63, 61);
 					break;
 			}
 		}
@@ -501,7 +511,29 @@ std::vector<std::string> Board::getAllMoves()
 	this->addMoveToList(&moves, from, from - 7, {}, 1);
 	// TODO: check for check (illegal moves)
 
-	// TODO: casteling moves
+	// casteling moves
+	if (this->playerToMove == 'w')
+	{
+		if (this->casteling_K) // kingside
+		{
+			this->addMoveToList(&moves, from, from + 2, {from + 1, from + 2});
+		}
+		if (this->casteling_Q) // queenside
+		{
+			this->addMoveToList(&moves, from, from - 2, {from - 1, from - 2, from - 3});
+		}
+	}
+	else // black
+	{
+		if (this->casteling_k) // kingside
+		{
+			this->addMoveToList(&moves, from, from + 2, {from + 1, from + 2});
+		}
+		if (this->casteling_q) // queenside
+		{
+			this->addMoveToList(&moves, from, from - 2, {from - 1, from - 2, from - 3});
+		}
+	}
 
 
 	// queens
@@ -1028,6 +1060,77 @@ std::vector<std::string> Board::getAllMoves()
 	return moves;
 }
 
+bool Board::isSquareAttacked(int square, char byPlayer)
+{
+#ifdef DEBUG
+	std::cout << "info string [Board::isSquareAttacked] checking square " << Lib::getCoordinatesFromBitnum(square) << " for attack by " << byPlayer << std::endl;
+#endif
+	// Note: This function does not consider whose turn it is.
+	// It checks if a square is attacked by a player.
+
+	unsigned long long occupied = this->whites | this->blacks;
+	unsigned long long attackers;
+
+	if (byPlayer == 'w') {
+		attackers = this->whites;
+	} else {
+		attackers = this->blacks;
+	}
+
+	// attacked by pawns
+	if (byPlayer == 'w') {
+		if (Lib::getFile(square) > 0 && (this->pawns & this->whites & (1ULL << (square - 9)))) return true;
+		if (Lib::getFile(square) < 7 && (this->pawns & this->whites & (1ULL << (square - 7)))) return true;
+	} else { // 'b'
+		if (Lib::getFile(square) > 0 && (this->pawns & this->blacks & (1ULL << (square + 7)))) return true;
+		if (Lib::getFile(square) < 7 && (this->pawns & this->blacks & (1ULL << (square + 9)))) return true;
+	}
+
+	// attacked by knights
+	if (this->knights & attackers) {
+		if ((1ULL << (square -  6)) & this->knights & attackers) return true;
+		if ((1ULL << (square - 10)) & this->knights & attackers) return true;
+		if ((1ULL << (square - 15)) & this->knights & attackers) return true;
+		if ((1ULL << (square - 17)) & this->knights & attackers) return true;
+		if ((1ULL << (square +  6)) & this->knights & attackers) return true;
+		if ((1ULL << (square + 10)) & this->knights & attackers) return true;
+		if ((1ULL << (square + 15)) & this->knights & attackers) return true;
+		if ((1ULL << (square + 17)) & this->knights & attackers) return true;
+	}
+
+	// attacked by king
+	if (this->kings & attackers) {
+		if ((1ULL << (square - 1)) & this->kings & attackers) return true;
+		if ((1ULL << (square + 1)) & this->kings & attackers) return true;
+		if ((1ULL << (square - 8)) & this->kings & attackers) return true;
+		if ((1ULL << (square + 8)) & this->kings & attackers) return true;
+		if ((1ULL << (square - 7)) & this->kings & attackers) return true;
+		if ((1ULL << (square + 7)) & this->kings & attackers) return true;
+		if ((1ULL << (square - 9)) & this->kings & attackers) return true;
+		if ((1ULL << (square + 9)) & this->kings & attackers) return true;
+	}
+
+	// attacked by sliding pieces (rooks, bishops, queens)
+	unsigned long long rooks_and_queens = (this->rooks | this->queens) & attackers;
+	unsigned long long bishops_and_queens = (this->bishops | this->queens) & attackers;
+
+	if (rooks_and_queens) {
+		for (int i = square + 8; i < 64; i += 8) { if ((1ULL << i) & rooks_and_queens) return true; if ((1ULL << i) & occupied) break; }
+		for (int i = square - 8; i >= 0; i -= 8) { if ((1ULL << i) & rooks_and_queens) return true; if ((1ULL << i) & occupied) break; }
+		for (int i = square + 1; (i % 8) != 0; i++) { if ((1ULL << i) & rooks_and_queens) return true; if ((1ULL << i) & occupied) break; }
+		for (int i = square - 1; (i % 8) != 7 && i>=0; i--) { if ((1ULL << i) & rooks_and_queens) return true; if ((1ULL << i) & occupied) break; }
+	}
+
+	if (bishops_and_queens) {
+		for (int i = square + 9; i < 64 && (i % 8) > ( (i-9)%8 ); i += 9) { if ((1ULL << i) & bishops_and_queens) return true; if ((1ULL << i) & occupied) break; }
+		for (int i = square - 9; i >= 0 && (i % 8) < ( (i+9)%8 ); i -= 9) { if ((1ULL << i) & bishops_and_queens) return true; if ((1ULL << i) & occupied) break; }
+		for (int i = square + 7; i < 64 && (i % 8) < ( (i-7)%8 ); i += 7) { if ((1ULL << i) & bishops_and_queens) return true; if ((1ULL << i) & occupied) break; }
+		for (int i = square - 7; i >= 0 && (i % 8) > ( (i+7)%8 ); i -= 7) { if ((1ULL << i) & bishops_and_queens) return true; if ((1ULL << i) & occupied) break; }
+	}
+
+	return false;
+}
+
 unsigned long long Board::perft(int depth)
 {
 	if (depth == 0)
@@ -1041,6 +1144,8 @@ unsigned long long Board::perft(int depth)
 	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
 	{
 		Board nextBoard(*this);
+		nextBoard.executeMove(*it);
+
 		nextBoard.executeMove(*it);
 		nodes += nextBoard.perft(depth - 1);
 	}
