@@ -16,3 +16,6 @@ void Comm::engineExecuteMove(std::string move) { this->engineExecuteMoveCallback
 
 void Comm::registerEngineDebugCallback(std::function<void()> engineDebugCallback) { this->engineDebugCallback = engineDebugCallback; }
 void Comm::engineDebug() { this->engineDebugCallback(); }
+
+void Comm::registerEnginePerftCallback(std::function<void(int)> enginePerftCallback) { this->enginePerftCallback = enginePerftCallback; }
+void Comm::enginePerft(int depth) { this->enginePerftCallback(depth); }

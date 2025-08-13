@@ -101,6 +101,11 @@ void Uci::parse(std::string p_parameters)
 	{
 		this->comm->engineDebug();
 	}
+	else if (command.compare("perft") == 0)
+	{
+		int depth = std::stoi(parameters[1]);
+		this->comm->enginePerft(depth);
+	}
 	else
 	{
 		// ignore unknown command

@@ -7,6 +7,26 @@ Board::Board()
 	this->startpos();
 }
 
+Board::Board(const Board& other)
+{
+	this->blacks = other.blacks;
+	this->whites = other.whites;
+	this->kings = other.kings;
+	this->queens = other.queens;
+	this->rooks = other.rooks;
+	this->bishops = other.bishops;
+	this->knights = other.knights;
+	this->pawns = other.pawns;
+	this->playerToMove = other.playerToMove;
+	this->casteling_K = other.casteling_K;
+	this->casteling_k = other.casteling_k;
+	this->casteling_Q = other.casteling_Q;
+	this->casteling_q = other.casteling_q;
+	this->enPassant = other.enPassant;
+	this->halfmoves = other.halfmoves;
+	this->currentMove = other.currentMove;
+}
+
 void Board::startpos()
 {
 	this->blacks  = 0xffff000000000000;
@@ -334,7 +354,7 @@ void Board::checkConsistency()
 		&& (figures - this->whites - this->blacks == 0)
 		&& (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0))
 	{
-		std::cout << prefix << "[Board::checkConsistency] board information is consistent." << std::endl;
+		// std::cout << prefix << "[Board::checkConsistency] board information is consistent." << std::endl;
 	}
 	else
 	{
@@ -1006,4 +1026,24 @@ std::vector<std::string> Board::getAllMoves()
 #endif
 		
 	return moves;
+}
+
+unsigned long long Board::perft(int depth)
+{
+	if (depth == 0)
+	{
+		return 1;
+	}
+
+	std::vector<std::string> moves = this->getAllMoves();
+	unsigned long long nodes = 0;
+
+	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
+	{
+		Board nextBoard(*this);
+		nextBoard.executeMove(*it);
+		nodes += nextBoard.perft(depth - 1);
+	}
+
+	return nodes;
 }

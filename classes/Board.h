@@ -12,6 +12,7 @@ class Board
 {
 public:
 	Board();
+	Board(const Board&);
 	void startpos();
 	
 	void loadFen(std::string);
@@ -28,6 +29,8 @@ public:
 	void addMoveToListDiag(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist);
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
+
+	unsigned long long perft(int);
 			
 private:
 	unsigned long long blacks;

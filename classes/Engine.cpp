@@ -9,6 +9,7 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
 	this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
 	this->comm->registerEngineGoCallback( [this] { this->go(); } );
+	this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
 	
 	this->board = new Board();
 }
@@ -59,4 +60,13 @@ void Engine::go()
 	output << "bestmove " << bestMove << std::endl;
 	this->comm->uciOutput(output.str()); // TODO
 	// TODO: use UCI sendBestmove()?
+}
+
+void Engine::perft(int depth)
+{
+	std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
+	unsigned long long nodes = this->board->perft(depth);
+	std::ostringstream output;
+	output << "info string nodes " << nodes << std::endl;
+	this->comm->uciOutput(output.str());
 }

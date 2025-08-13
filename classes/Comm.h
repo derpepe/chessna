@@ -19,6 +19,8 @@ public:
 	void engineExecuteMove(std::string);
 	void registerEngineDebugCallback(std::function<void()>);
 	void engineDebug();
+	void registerEnginePerftCallback(std::function<void(int)>);
+	void enginePerft(int);
 	
 private:
 	std::function<void(std::string)> uciOutputCallback;
@@ -27,5 +29,6 @@ private:
 	std::function<void(std::string)> engineSetPositionCallback;
 	std::function<void(std::string)> engineExecuteMoveCallback;
 	std::function<void()> engineDebugCallback;
+	std::function<void(int)> enginePerftCallback;
 };
 #endif

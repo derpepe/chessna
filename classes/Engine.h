@@ -18,6 +18,7 @@ public:
 	void setPosition(std::string);
 	void executeMove(std::string);
 	void debug();
+	void perft(int);
 	
 private:
 	Board *board;
