@@ -27,6 +27,7 @@ public:
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
 	void addMoveToListDiag(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist);
+	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
 			
 private:
 	unsigned long long blacks;

@@ -155,7 +155,9 @@ void Board::executeMove(std::string move, bool incrementCounters)
 			// black pawn moved
 			field = to + 8;
 		}
-		// TODO: Set en passant field to 'field'
+		this->enPassant = Lib::getCoordinatesFromBitnum(field);
+	} else {
+		this->enPassant = "-";
 	}
 	
 	// pawn promotion
@@ -367,6 +369,20 @@ void Board::addMoveToListDiag(std::vector<std::string> *moves, int from, int to,
 }
 
 
+void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion)
+{
+	for (std::vector<int>::size_type i = 0; i < checkForEmpty.size(); i++) {
+		int interim = checkForEmpty[i];
+		if (((this->whites | this->blacks) & (1ULL << interim)) > 0) {
+			return; // Path is blocked
+		}
+	}
+
+	for (char const& p : promotion) {
+		moves->push_back(Lib::getCoordinatesFromBitnum(from) + Lib::getCoordinatesFromBitnum(to) + p);
+	}
+}
+
 void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist)
 {
 	// check for out of board
@@ -391,7 +407,7 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 #endif
 		
 	// check for occupied target-fields
-	for (int i = 0; i < checkForEmpty.size(); i++) {
+	for (std::vector<int>::size_type i = 0; i < checkForEmpty.size(); i++) {
 		int interim = checkForEmpty[i];
 		if (((this->whites | this->blacks) & (1ULL << interim)) > 0) {
 #ifdef DEBUG
@@ -881,13 +897,17 @@ std::vector<std::string> Board::getAllMoves()
 				
 		// pawn moves
 		if (this->playerToMove == 'w') {
-			this->addMoveToList(&moves, from, from + 8, {from + 8} );
-			if (from <= Lib::getBitnumFromCoordinates("a2")) {
+			if (Lib::getRank(from) != 7) {
+				this->addMoveToList(&moves, from, from + 8, {from + 8} );
+			}
+			if (Lib::getRank(from) == 2) {
 				this->addMoveToList(&moves, from, from + 16, {from + 8, from + 16} );
 			}
 		} else {
-			this->addMoveToList(&moves, from, from - 8, {from - 8} );
-			if (from >= Lib::getBitnumFromCoordinates("h7")) {
+			if (Lib::getRank(from) != 2) {
+				this->addMoveToList(&moves, from, from - 8, {from - 8} );
+			}
+			if (Lib::getRank(from) == 7) {
 				this->addMoveToList(&moves, from, from - 16, {from - 8, from - 16} );
 			}
 		}
@@ -896,70 +916,85 @@ std::vector<std::string> Board::getAllMoves()
 		if (this->playerToMove == 'w') {
 			// pawn beatings for white
 			to = from + 7;
-			if /* check for borders */(to % 8 != 7) {
+			if (Lib::getFile(from) != 0) { // check for border
 				if ((this->blacks & (1ULL << to)) > 0) {
-#ifdef DEBUG
-					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-#endif
-					this->addMoveToList(&moves, from, to);
+					if (Lib::getRank(to) == 8) {
+						this->addMoveToList(&moves, from, to, {}, "qnrb");
+					} else {
+						this->addMoveToList(&moves, from, to);
+					}
 				}
-#ifdef DEBUG
-				else {
-					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-				}
-#endif
 			}
 
 			to = from + 9;
-			if /* check for borders */(to % 8 != 7) {
+			if (Lib::getFile(from) != 7) { // check for border
 				if ((this->blacks & (1ULL << to)) > 0) {
-#ifdef DEBUG
-					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-#endif
-					this->addMoveToList(&moves, from, to);
+					if (Lib::getRank(to) == 8) {
+						this->addMoveToList(&moves, from, to, {}, "qnrb");
+					} else {
+						this->addMoveToList(&moves, from, to);
+					}
 				}
-#ifdef DEBUG
-				else {
-					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-				}
-#endif
 			}
 		} else {
 			// pawn beatings for black
 			to = from - 7;
-			if /* check for borders */(to % 8 != 7) {
-				if ((this->blacks & (1ULL << to)) > 0) {
-#ifdef DEBUG
-					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-#endif
-					this->addMoveToList(&moves, from, to);
+			if (Lib::getFile(from) != 7) { // check for border
+				if ((this->whites & (1ULL << to)) > 0) {
+					if (Lib::getRank(to) == 1) {
+						this->addMoveToList(&moves, from, to, {}, "qnrb");
+					} else {
+						this->addMoveToList(&moves, from, to);
+					}
 				}
-#ifdef DEBUG
-				else {
-					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-				}
-#endif
 			}
 
 			to = from - 9;
-			if /* check for borders */(to % 8 != 7) {
-				if ((this->blacks & (1ULL << to)) > 0) {
-#ifdef DEBUG
-					std::cout << "info string [Board::getAllMoves] piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-#endif
-					this->addMoveToList(&moves, from, to);
+			if (Lib::getFile(from) != 0) { // check for border
+				if ((this->whites & (1ULL << to)) > 0) {
+					if (Lib::getRank(to) == 1) {
+						this->addMoveToList(&moves, from, to, {}, "qnrb");
+					} else {
+						this->addMoveToList(&moves, from, to);
+					}
 				}
-#ifdef DEBUG
-				else {
-					std::cout << "info string [Board::getAllMoves] no piece at " << Lib::getCoordinatesFromBitnum(to) << " can be beaten" << std::endl;
-				}
-#endif
 			}
 		}
 
-		// TODO: pawn promotions
+		// pawn promotions
+		if (this->playerToMove == 'w') {
+			if (Lib::getRank(from) == 7) {
+				this->addMoveToList(&moves, from, from + 8, {from + 8}, "qnrb");
+			}
+		} else {
+			if (Lib::getRank(from) == 2) {
+				this->addMoveToList(&moves, from, from - 8, {from - 8}, "qnrb");
+			}
+		}
 
-		// TODO: en passant beatings
+		// en passant beatings
+		if (this->enPassant != "-") {
+			int ep_square = Lib::getBitnumFromCoordinates(this->enPassant);
+			if (this->playerToMove == 'w') {
+				if (Lib::getRank(from) == 5) {
+					if (ep_square == from + 7 && Lib::getFile(from) != 0) {
+						this->addMoveToList(&moves, from, from + 7);
+					}
+					if (ep_square == from + 9 && Lib::getFile(from) != 7) {
+						this->addMoveToList(&moves, from, from + 9);
+					}
+				}
+			} else { // black to move
+				if (Lib::getRank(from) == 4) {
+					if (ep_square == from - 7 && Lib::getFile(from) != 7) {
+						this->addMoveToList(&moves, from, from - 7);
+					}
+					if (ep_square == from - 9 && Lib::getFile(from) != 0) {
+						this->addMoveToList(&moves, from, from - 9);
+					}
+				}
+			}
+		}
 		
 		current_pawns = current_pawns & ~(1ULL << from);
 	}
