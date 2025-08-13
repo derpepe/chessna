@@ -1,4 +1,4 @@
-#define DEBUG
+// #define DEBUG
 
 #include "Board.h"
 
@@ -482,6 +482,7 @@ std::vector<std::string> Board::getAllMoves()
 {
 	int from, to; // commonly used for all pieces
 	std::vector<std::string> moves;
+	std::vector<std::string> legalMoves;
 
 	// set pieces to current color
 	unsigned long long pieces;
@@ -1057,7 +1058,27 @@ std::vector<std::string> Board::getAllMoves()
 	std::cout << "info string [Board::getAllMoves] ------------------------------" << std::endl;
 #endif
 		
-	return moves;
+	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
+	{
+		Board nextBoard(*this);
+		nextBoard.executeMove(*it, false);
+
+		unsigned long long king_bb;
+		if (this->playerToMove == 'w') {
+			king_bb = nextBoard.kings & nextBoard.whites;
+		} else {
+			king_bb = nextBoard.kings & nextBoard.blacks;
+		}
+		int king_sq = __builtin_ffsll(king_bb) - 1;
+
+		char opponent = this->playerToMove == 'w' ? 'b' : 'w';
+		if (!nextBoard.isSquareAttacked(king_sq, opponent))
+		{
+			legalMoves.push_back(*it);
+		}
+	}
+
+	return legalMoves;
 }
 
 bool Board::isSquareAttacked(int square, char byPlayer)
@@ -1144,8 +1165,6 @@ unsigned long long Board::perft(int depth)
 	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
 	{
 		Board nextBoard(*this);
-		nextBoard.executeMove(*it);
-
 		nextBoard.executeMove(*it);
 		nodes += nextBoard.perft(depth - 1);
 	}
