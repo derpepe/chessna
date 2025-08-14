@@ -15,8 +15,8 @@ public:
 	Board(const Board&);
 	void startpos();
 	
-	void loadFen(std::string);
-	void loadFen(std::string, char, std::string, std::string, long, long);
+	void loadFen(const std::string&);
+	void loadFen(const std::string&, char, const std::string&, const std::string&, long, long);
 	std::string getDump();
 	
 	void checkConsistency();
@@ -29,6 +29,7 @@ public:
 	void addMoveToListDiag(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist);
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
+	void addSlidingMoves(std::vector<std::string> *moves, int from, const std::vector<int>& directions);
 
 	unsigned long long perft(int);
 
