@@ -20,37 +20,30 @@ std::vector<std::string> Lib::split(const std::string &s, char delim)
 // converts 'a2' to 15
 int Lib::getBitnumFromCoordinates(std::string coordinates)
 {
-	int col = coordinates.c_str()[0] - (int)'a';
-	int row = coordinates.c_str()[1] - (int)'1';
-	return (7 - col) + row * 8;
+	int col = coordinates.c_str()[0] - 'a';
+	int row = coordinates.c_str()[1] - '1';
+	return row * 8 + col;
 }
 
 // converts 15 to 'a2'
 std::string Lib::getCoordinatesFromBitnum(int bitnum)
 {
-	int file = Lib::getFile(bitnum);
-	int rank = Lib::getRank(bitnum);
-
-	std::string result;
-	result += (char) ((int)'h' - file);
-	result += std::to_string(rank);
-	
+	int rank = bitnum / 8;
+	int file = bitnum % 8;
+	std::string result = "";
+	result += (char)('a' + file);
+	result += (char)('1' + rank);
 	return result;
 }
 
-
 int Lib::getRank(int bitnum)
 {
-	int file = Lib::getFile(bitnum);
-	int rank = ((bitnum - file) / 8) + 1;
-
-	return rank;
+	return bitnum / 8;
 }
-
 
 int Lib::getFile(int bitnum)
 {
-	return (bitnum % 8);
+	return bitnum % 8;
 }
 
 
