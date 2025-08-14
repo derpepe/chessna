@@ -343,6 +343,27 @@ void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std
 	}
 }
 
+void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty)
+{
+	if ((to > 63) || (to < 0)) {
+		return;
+	}
+
+	for (std::vector<int>::size_type i = 0; i < checkForEmpty.size(); i++) {
+		int interim = checkForEmpty[i];
+		if (((this->whites | this->blacks) & (1ULL << interim)) > 0) {
+			return; // Path is blocked
+		}
+	}
+
+	unsigned long long friendly_pieces = (this->playerToMove == 'w') ? this->whites : this->blacks;
+	if ((friendly_pieces & (1ULL << to)) > 0) {
+		return; // Cannot capture friendly piece
+	}
+
+	moves->push_back(Lib::getCoordinatesFromBitnum(from) + Lib::getCoordinatesFromBitnum(to));
+}
+
 void Board::addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist)
 {
 	if ((to > 63) || (to < 0)) {

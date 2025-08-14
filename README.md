@@ -1,54 +1,74 @@
 # CHESSna 2
 
-CHESSna 2 is a simple chess engine written in C++. It uses the Universal Chess Interface (UCI) protocol for communication.
+CHESSna 2 ist eine einfache Schach-Engine, die in C++ geschrieben ist und das Universal Chess Interface (UCI) Protokoll zur Kommunikation verwendet.
 
-## Specialties
+Dieses Dokument beschreibt, wie die Engine kompiliert und verwendet wird, und geht auf ihre Besonderheiten ein.
 
-This version of CHESSna 2 includes a custom `perft` command for testing the move generation.
+## Bedienung
 
-## Building
+### Kompilieren
 
-To build the engine, you need a C++ compiler that supports C++11. Then, simply run `make`:
+Um die Engine zu kompilieren, wird ein C++-Compiler benötigt, der C++11 unterstützt (z. B. g++). Führen Sie dann einfach den folgenden Befehl im Hauptverzeichnis aus:
 
-```
+```sh
 make
 ```
 
-This will create the `chessna` executable in the `bin` directory.
+Dadurch wird die ausführbare Datei `chessna` im Verzeichnis `bin` erstellt.
 
-## Running
+### Ausführen
 
-You can run the engine from the command line:
+Es gibt mehrere Möglichkeiten, die CHESSna-Engine auszuführen:
 
+#### Mit einer UCI-GUI (Empfohlen)
+
+CHESSna ist eine UCI-Engine und sollte daher mit jeder UCI-kompatiblen grafischen Benutzeroberfläche (GUI) funktionieren. Das Repository enthält die bekannte Arena-GUI (im Verzeichnis `prgr/arena_3`), die unter Windows lauffähig ist.
+
+Für Linux- oder macOS-Benutzer gibt es ein Skript, um Arena mit Wine zu starten:
+
+```sh
+./bin/arena.command
 ```
+
+In der GUI können Sie dann die `chessna.exe` (oder die kompilierte `chessna` auf Linux/macOS) als neue UCI-Engine hinzufügen.
+
+#### Direkt auf der Kommandozeile
+
+Für Entwicklungs- oder Testzwecke kann die Engine direkt von der Kommandozeile aus gestartet werden:
+
+```sh
 ./bin/chessna
 ```
 
-The engine will then wait for UCI commands.
+Die Engine wartet dann auf UCI-Befehle von der Standardeingabe.
 
-## Commands
+#### Test-Modus
 
-### Standard UCI Commands
+Ein spezieller Testmodus führt eine Reihe von internen `perft`-Tests durch, um die Korrektheit der Zuggenerierung zu überprüfen. Dieser Modus kann wie folgt gestartet werden:
 
-The engine supports the following standard UCI commands:
-
-- `uci`: Print engine information.
-- `isready`: Check if the engine is ready.
-- `position [fen <fenstring> | startpos] moves <move1> ... <moveN>`: Set the board position.
-- `go`: Start calculating the best move.
-- `stop`: Stop calculating.
-- `quit`: Quit the engine.
-
-### Custom Commands
-
-#### `perft <depth>`
-
-This command performs a performance test of the move generator. It counts the number of legal moves from the current position to a given depth.
-
-Example:
-
-```
-perft 5
+```sh
+./bin/chessna --test
 ```
 
-This will calculate the number of legal moves up to a depth of 5 and print the result.
+## Besonderheiten
+
+### Benutzerdefinierte Befehle
+
+Zusätzlich zu den Standard-UCI-Befehlen unterstützt CHESSna einige benutzerdefinierte Befehle, wenn sie manuell über die Kommandozeile eingegeben werden:
+
+-   `perft <Tiefe>`
+    Führt einen Performance-Test der Zuggenerierung für die aktuelle Stellung bis zur angegebenen Tiefe (`<Tiefe>`) durch und gibt die Anzahl der Knoten aus.
+
+-   `board`
+    Gibt eine einfache Textdarstellung des aktuellen Bretts auf der Konsole aus. Nützlich für Debugging-Zwecke.
+
+-   `help`
+    Zeigt eine kurze Hilfe-Nachricht für die benutzerdefinierten Befehle an.
+
+### Bekannte Probleme
+
+-   **`stop`-Befehl**: Der `stop`-Befehl beendet zwar die Berechnung, gibt aber derzeit nicht den besten gefundenen Zug zurück, sondern einen fest kodierten Wert (`e2e4`).
+
+### Netzwerk-Spiel (für fortgeschrittene Benutzer)
+
+Die Skripte `bin/listen.sh` und `bin/engine.sh` verwenden `socat`, um die Engine-Kommunikation über ein TCP-Netzwerk zu leiten. Dies ermöglicht es, die GUI auf einem Computer und die CHESSna-Engine auf einem anderen laufen zu lassen. Diese Skripte sind für fortgeschrittene Anwendungsfälle gedacht und erfordern `socat`.
