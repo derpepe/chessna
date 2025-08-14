@@ -448,7 +448,7 @@ std::vector<std::string> Board::getAllMoves()
 			}
 			if (this->casteling_Q && !isSquareAttacked(from, 'b') && !isSquareAttacked(from - 1, 'b') && !isSquareAttacked(from - 2, 'b'))
 			{
-				this->addMoveToList(&moves, from, from - 2, {from - 1, from - 3});
+				this->addMoveToList(&moves, from, from - 2, {from - 1, from - 2, from - 3});
 			}
 		} else {
 			if (this->casteling_k && !isSquareAttacked(from, 'w') && !isSquareAttacked(from + 1, 'w') && !isSquareAttacked(from + 2, 'w'))
@@ -457,7 +457,7 @@ std::vector<std::string> Board::getAllMoves()
 			}
 			if (this->casteling_q && !isSquareAttacked(from, 'w') && !isSquareAttacked(from - 1, 'w') && !isSquareAttacked(from - 2, 'w'))
 			{
-				this->addMoveToList(&moves, from, from - 2, {from - 1, from - 3});
+				this->addMoveToList(&moves, from, from - 2, {from - 1, from - 2, from - 3});
 			}
 		}
 	}
@@ -643,8 +643,15 @@ bool Board::isSquareAttacked(int square, char byPlayer)
 	if (kings & attackers & king_attacks) return true;
 
 	unsigned long long rooks_and_queens = (rooks | queens) & attackers;
-	for (int i = square + 1; Lib::getFile(i) > Lib::getFile(square) && Lib::getFile(i) != 0 ; i++) { if ((rooks_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
-	for (int i = square - 1; Lib::getFile(i) < Lib::getFile(square) && Lib::getFile(i) != 7; i--) { if ((rooks_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
+	int current_rank = Lib::getRank(square);
+	for (int i = square + 1; i < 64 && Lib::getRank(i) == current_rank; i++) { // Right
+		if ((rooks_and_queens & (1ULL << i)) != 0) return true;
+		if ((occupied & (1ULL << i)) != 0) break;
+	}
+	for (int i = square - 1; i >= 0 && Lib::getRank(i) == current_rank; i--) { // Left
+		if ((rooks_and_queens & (1ULL << i)) != 0) return true;
+		if ((occupied & (1ULL << i)) != 0) break;
+	}
 	for (int i = square + 8; i < 64; i += 8) { if ((rooks_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
 	for (int i = square - 8; i >= 0; i -= 8) { if ((rooks_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
 
