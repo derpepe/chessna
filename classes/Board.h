@@ -8,6 +8,28 @@
 #include <iostream>
 #include "Lib.h"
 
+struct PerftResult {
+	unsigned long long nodes = 0;
+	unsigned long long captures = 0;
+	unsigned long long en_passant = 0;
+	unsigned long long castles = 0;
+	unsigned long long promotions = 0;
+	unsigned long long checks = 0;
+	unsigned long long checkmates = 0;
+
+	PerftResult& operator+=(const PerftResult& rhs)
+	{
+		this->nodes += rhs.nodes;
+		this->captures += rhs.captures;
+		this->en_passant += rhs.en_passant;
+		this->castles += rhs.castles;
+		this->promotions += rhs.promotions;
+		this->checks += rhs.checks;
+		this->checkmates += rhs.checkmates;
+		return *this;
+	}
+};
+
 class Board
 {
 public:
@@ -31,7 +53,7 @@ public:
 	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
 	void addSlidingMoves(std::vector<std::string> *moves, int from, const std::vector<int>& directions);
 
-	unsigned long long perft(int);
+	PerftResult perft(int);
 	void perftDivide(int);
 
 	bool isSquareAttacked(int square, char byPlayer);
