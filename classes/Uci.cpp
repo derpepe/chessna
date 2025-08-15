@@ -92,12 +92,12 @@ void Uci::parse(std::string p_parameters)
         else if (command.compare("help") == 0)
         {
                 std::ostringstream help;
-                help << "info string CHESSna help for debugging console" << std::endl;
-                help << "info string" << std::endl;
-                help << "info string  help                 Show this help text." << std::endl;
-                help << "info string  board                Displays debug output." << std::endl;
-                help << "info string  perft <depth>        Performance test of the move generation." << std::endl;
-                help << "info string  perfdiv <depth>      Performance test of the move generation with debug output." << std::endl;
+                const std::string prefix = "info string [Uci::parse]";
+                help << prefix << " CHESSna help for debugging console" << std::endl;
+                help << prefix << std::endl;
+                help << prefix << "  board  Displays debug output." << std::endl;
+                help << prefix << "  perft <depth>  Performance test of the move generation." << std::endl;
+                help << prefix << "  perfdiv <depth>  Performance test of the move generation with debug output." << std::endl;
                 this->sendString(help.str());
         }
 	else if (command.compare("board") == 0)

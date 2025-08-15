@@ -258,7 +258,7 @@ void Board::loadFen(const std::string& figures, char playerToMove, const std::st
 
 std::string Board::getDump()
 {
-	std::string prefix = "info string ";
+        std::string prefix = "info string [Board::getDump] ";
 	std::ostringstream result;
 	std::ostringstream fen;
 
