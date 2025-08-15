@@ -29,10 +29,7 @@ void Engine::executeMove(std::string move)
 
 void Engine::debug()
 {
-	bool attacked = this->board->isSquareAttacked(20, 'b');
-	std::ostringstream output;
-	output << "info string e3 is attacked by black: " << (attacked ? "true" : "false") << std::endl;
-	this->comm->uciOutput(output.str());
+	this->comm->uciOutput(this->board->getDump());
 }
 
 void Engine::run()
