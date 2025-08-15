@@ -42,9 +42,15 @@ Für Entwicklungs- oder Testzwecke kann die Engine direkt von der Kommandozeile 
 
 Die Engine wartet dann auf UCI-Befehle von der Standardeingabe.
 
-#### Test-Modus
+#### Kommandozeilen-Parameter
 
-Ein spezieller Testmodus führt eine Reihe von internen `perft`-Tests durch, um die Korrektheit der Zuggenerierung zu überprüfen. Dieser Modus kann wie folgt gestartet werden:
+Die ausführbare Datei akzeptiert folgende optionale Parameter:
+
+- `--test` führt eine Reihe interner `perft`-Tests durch und beendet die Engine danach.
+
+Ohne Parameter startet die Engine im normalen UCI-Modus und wartet auf Befehle von der Standardeingabe.
+
+Beispiel:
 
 ```sh
 ./bin/chessna --test
@@ -100,8 +106,11 @@ Zusätzlich zu den Standard-UCI-Befehlen unterstützt CHESSna einige benutzerdef
 -   `board`
     Gibt eine einfache Textdarstellung des aktuellen Bretts auf der Konsole aus. Nützlich für Debugging-Zwecke.
 
+-   `perfdiv <Tiefe>`
+    Führt einen `perft`-Test mit zusätzlicher Aufschlüsselung nach einzelnen Zügen durch.
+
 -   `help`
-    Zeigt eine kurze Hilfe-Nachricht für die benutzerdefinierten Befehle an.
+    Zeigt eine Übersicht aller benutzerdefinierten Befehle an.
 
 ### Bekannte Probleme
 
