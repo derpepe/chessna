@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "MoveGenerator.h"
 #include "Evaluator.h"
+#include "Lib.h"
 #include <iostream>
 
 
@@ -141,14 +142,14 @@ void Engine::perft(int depth)
 {
 	std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
 	PerftResult result = this->perft_runner->perft(*this->board, depth);
-	std::ostringstream output;
-	output << "info string [Engine::perft] nodes " << result.nodes << std::endl
-		<< "info string [Engine::perft] captures " << result.captures << std::endl
-		<< "info string [Engine::perft] ep " << result.en_passant << std::endl
-		<< "info string [Engine::perft] castles " << result.castles << std::endl
-		<< "info string [Engine::perft] promotions " << result.promotions << std::endl
-		<< "info string [Engine::perft] checks " << result.checks << std::endl
-		<< "info string [Engine::perft] checkmates " << result.checkmates << std::endl;
+        std::ostringstream output;
+        output << "info string [Engine::perft] nodes " << Lib::formatThousands(result.nodes) << std::endl
+                << "info string [Engine::perft] captures " << Lib::formatThousands(result.captures) << std::endl
+                << "info string [Engine::perft] ep " << Lib::formatThousands(result.en_passant) << std::endl
+                << "info string [Engine::perft] castles " << Lib::formatThousands(result.castles) << std::endl
+                << "info string [Engine::perft] promotions " << Lib::formatThousands(result.promotions) << std::endl
+                << "info string [Engine::perft] checks " << Lib::formatThousands(result.checks) << std::endl
+                << "info string [Engine::perft] checkmates " << Lib::formatThousands(result.checkmates) << std::endl;
 	this->comm->uciOutput(output.str());
 }
 
