@@ -7,6 +7,7 @@
 #include <chrono>
 #include <limits>
 #include <thread>
+#include <vector>
 
 
 Engine::Engine(Comm *comm)
@@ -85,6 +86,7 @@ void Engine::go(int movetime)
 
         std::string bestMove = possibleMoves[0];
         int bestScore = std::numeric_limits<int>::min();
+        std::vector<std::string> bestMoves;
 
         for (const auto& move : possibleMoves)
         {
@@ -95,6 +97,12 @@ void Engine::go(int movetime)
                 {
                         bestScore = score;
                         bestMove = move;
+                        bestMoves.clear();
+                        bestMoves.push_back(move);
+                }
+                else if (score == bestScore)
+                {
+                        bestMoves.push_back(move);
                 }
 
                 auto now = steady_clock::now();
@@ -141,6 +149,12 @@ void Engine::go(int movetime)
 
         std::ostringstream output;
         output << "info score cp " << bestScore << std::endl;
+        output << "info string [Engine::go] equal";
+        for (const auto& move : bestMoves)
+        {
+                output << ' ' << move;
+        }
+        output << std::endl;
         output << "bestmove " << bestMove << std::endl;
         this->comm->uciOutput(output.str());
 }
