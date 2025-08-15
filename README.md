@@ -69,7 +69,9 @@ Das Projekt enthält ein Python-Skript, um die CHESSna-Engine als Bot auf [Liche
 
 Installieren Sie die benötigte Python-Bibliothek mit dem folgenden Befehl:
 ```sh
-pip install -r requirements.txt
+cd lichess-bot/
+source ./bin/activate
+python3 -m pip install -r requirements.txt
 ```
 
 **2. Konfiguration:**
