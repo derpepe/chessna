@@ -59,7 +59,7 @@ void Engine::go()
 		return;
 	}
 
-        std::string bestMove = "";
+        std::vector<std::string> bestMoves;
         int bestScore = -100000;
 
         for (const auto& move : possibleMoves)
@@ -70,18 +70,28 @@ void Engine::go()
                 if (score > bestScore)
                 {
                         bestScore = score;
-                        bestMove = move;
+                        bestMoves.clear();
+                        bestMoves.push_back(move);
+                }
+                else if (score == bestScore)
+                {
+                        bestMoves.push_back(move);
                 }
         }
 
-        if (bestMove == "")
+        // Output all moves sharing the best score
+        std::cout << "info string [Engine::go] best moves:";
+        for (const auto& move : bestMoves)
         {
-                // If all moves have the same score, pick a random one
-                std::random_device seed;
-                std::mt19937 engine(seed());
-                std::uniform_int_distribution<int> choose(0 , possibleMoves.size() - 1);
-                bestMove = possibleMoves[choose(engine)];
+                std::cout << ' ' << move;
         }
+        std::cout << std::endl;
+
+        // Choose one of the best moves at random
+        std::random_device seed;
+        std::mt19937 engine(seed());
+        std::uniform_int_distribution<size_t> choose(0, bestMoves.size() - 1);
+        std::string bestMove = bestMoves[choose(engine)];
 
         std::ostringstream output;
         output << "bestmove " << bestMove << std::endl;
