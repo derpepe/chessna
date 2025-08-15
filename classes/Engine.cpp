@@ -10,10 +10,11 @@ Engine::Engine(Comm *comm)
 	this->comm = comm;
 	this->comm->registerEngineGoCallback( [this] { this->go(); } );
 	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
-	this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
-	this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
-	this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
-	this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
+        this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
+        this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
+        this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
+        this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
+        this->comm->registerEnginePerftNodesCallback( [this](int depth) { return this->perftNodes(depth); } );
 	
 	this->board = new Board();
 	this->perft_runner = new Perft();
@@ -155,6 +156,16 @@ void Engine::perft(int depth)
 
 void Engine::perftDivide(int depth)
 {
-	std::cout << "info string [Engine::perftDivide] starting perftDivide(" << depth << ")" << std::endl;
-	this->perft_runner->perftDivide(*this->board, depth);
+        std::cout << "info string [Engine::perftDivide] starting perftDivide(" << depth << ")" << std::endl;
+        this->perft_runner->perftDivide(*this->board, depth);
+}
+
+unsigned long long Engine::perftNodes(int depth)
+{
+        PerftResult result = this->perft_runner->perft(*this->board, depth);
+        std::ostringstream output;
+        output << "info string [Engine::perftNodes] perft(" << depth
+               << ") nodes " << Lib::formatThousands(result.nodes) << std::endl;
+        this->comm->uciOutput(output.str());
+        return result.nodes;
 }
