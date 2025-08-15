@@ -19,6 +19,7 @@ public:
 	void executeMove(std::string);
 	void debug();
 	void perft(int);
+	void perftDivide(int);
 	
 private:
 	Board *board;

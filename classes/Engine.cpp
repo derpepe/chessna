@@ -9,6 +9,7 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
 	this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
 	this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
+	this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
 	
 	this->board = new Board();
 }
@@ -67,4 +68,10 @@ void Engine::perft(int depth)
 	std::ostringstream output;
 	output << "info string nodes " << nodes << std::endl;
 	this->comm->uciOutput(output.str());
+}
+
+void Engine::perftDivide(int depth)
+{
+	std::cout << "info string [Engine::perftDivide] starting perftDivide(" << depth << ")" << std::endl;
+	this->board->perftDivide(depth);
 }

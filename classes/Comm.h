@@ -21,6 +21,8 @@ public:
 	void engineDebug();
 	void registerEnginePerftCallback(std::function<void(int)>);
 	void enginePerft(int);
+	void registerEnginePerftDivideCallback(std::function<void(int)>);
+	void enginePerftDivide(int);
 	
 private:
 	std::function<void(std::string)> uciOutputCallback;
@@ -30,5 +32,6 @@ private:
 	std::function<void(std::string)> engineExecuteMoveCallback;
 	std::function<void()> engineDebugCallback;
 	std::function<void(int)> enginePerftCallback;
+	std::function<void(int)> enginePerftDivideCallback;
 };
 #endif
