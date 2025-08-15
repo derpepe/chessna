@@ -47,17 +47,32 @@ void runTests() {
     int test_index = 0;
     for (const auto& test : tests) {
         ++test_index;
+        std::cout << "Running test " << test_index << ": " << test.fen << std::endl;
+
         Board board;
         board.loadFen(test.fen);
+
+        bool test_passed = true;
         for (std::size_t i = 0; i < test.nodes.size(); ++i) {
             int depth = static_cast<int>(i + 1);
             PerftResult result = perft.perft(board, depth);
-            if (result.nodes != test.nodes[i]) {
-                std::cout << "Test FAILED: Line " << test_index << " Depth: " << depth
-                          << " Expected: " << test.nodes[i] << " Got: " << result.nodes << std::endl;
+            bool depth_passed = (result.nodes == test.nodes[i]);
+
+            std::cout << "  Depth " << depth << ": expected " << test.nodes[i]
+                      << ", got " << result.nodes
+                      << (depth_passed ? " [OK]" : " [FAIL]") << std::endl;
+
+            if (!depth_passed) {
                 all_tests_passed = false;
+                test_passed = false;
                 break;
             }
+        }
+
+        if (test_passed) {
+            std::cout << "Test " << test_index << " passed." << std::endl;
+        } else {
+            std::cout << "Test " << test_index << " failed." << std::endl;
         }
     }
 
