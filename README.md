@@ -106,7 +106,7 @@ Zusätzlich zu den Standard-UCI-Befehlen unterstützt CHESSna einige benutzerdef
 -   `board`
     Gibt eine einfache Textdarstellung des aktuellen Bretts auf der Konsole aus. Nützlich für Debugging-Zwecke.
 
--   `perfdiv <Tiefe>`
+-   `perftdiv <Tiefe>`
     Führt einen `perft`-Test mit zusätzlicher Aufschlüsselung nach einzelnen Zügen durch.
 
 -   `help`
