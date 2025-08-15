@@ -6,7 +6,10 @@ std::vector<std::string> &Lib::split(const std::string &s, char delim, std::vect
     std::string item;
     while(std::getline(ss, item, delim))
     {
-        elems.push_back(item);
+        if (!item.empty())
+        {
+            elems.push_back(item);
+        }
     }
     return elems;
 }
