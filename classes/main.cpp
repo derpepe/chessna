@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Comm.h"
 #include "Board.h"
+#include "Perft.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -24,10 +25,11 @@ void runTests() {
     };
 
     bool all_tests_passed = true;
+    Perft perft;
     for (const auto& test : tests) {
         Board board;
         board.loadFen(test.fen);
-        PerftResult result = board.perft(test.depth);
+        PerftResult result = perft.perft(board, test.depth);
         if (result.nodes == test.expected_nodes) {
             std::cout << "Test passed: FEN: " << test.fen << " Depth: " << test.depth << " Result: " << result.nodes << std::endl;
         } else {
