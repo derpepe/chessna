@@ -656,10 +656,38 @@ bool Board::isSquareAttacked(int square, char byPlayer)
 	for (int i = square - 8; i >= 0; i -= 8) { if ((rooks_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
 
 	unsigned long long bishops_and_queens = (bishops | queens) & attackers;
-	for (int i = square + 9; i < 64 && Lib::getFile(i) > Lib::getFile(square); i += 9) { if ((bishops_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
-	for (int i = square - 9; i >= 0 && Lib::getFile(i) < Lib::getFile(square); i -= 9) { if ((bishops_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
-	for (int i = square + 7; i < 64 && Lib::getFile(i) < Lib::getFile(square); i += 7) { if ((bishops_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
-	for (int i = square - 7; i >= 0 && Lib::getFile(i) > Lib::getFile(square); i -= 7) { if ((bishops_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
+    int current_pos = square;
+    while (true) {
+        int next_pos = current_pos + 9;
+        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) < Lib::getFile(current_pos)) break;
+        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
+        if ((occupied & (1ULL << next_pos)) != 0) break;
+        current_pos = next_pos;
+    }
+    current_pos = square;
+    while (true) {
+        int next_pos = current_pos - 9;
+        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) > Lib::getFile(current_pos)) break;
+        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
+        if ((occupied & (1ULL << next_pos)) != 0) break;
+        current_pos = next_pos;
+    }
+    current_pos = square;
+    while (true) {
+        int next_pos = current_pos + 7;
+        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) > Lib::getFile(current_pos)) break;
+        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
+        if ((occupied & (1ULL << next_pos)) != 0) break;
+        current_pos = next_pos;
+    }
+    current_pos = square;
+    while (true) {
+        int next_pos = current_pos - 7;
+        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) < Lib::getFile(current_pos)) break;
+        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
+        if ((occupied & (1ULL << next_pos)) != 0) break;
+        current_pos = next_pos;
+    }
 
 	return false;
 }
