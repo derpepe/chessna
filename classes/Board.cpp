@@ -85,23 +85,24 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	
 	this->checkConsistency();
 	
-	// update casteling if rook was moved
-	if ((to == 0) || (from == 0))
-	{
-		casteling_Q = false;
-	}
-	else if ((to == 7) || (from == 7))
-	{
-		casteling_K = false;
-	}
-	else if ((to == 56) || (from == 56))
-	{
-		casteling_q = false;
-	}
-	else if ((to == 63) || (from == 63))
-	{
-		casteling_k = false;
-	}
+        // update castling rights if a rook moved or was captured
+        // use separate checks for each corner to avoid missing cases
+        if ((to == 0) || (from == 0))
+        {
+                casteling_Q = false;
+        }
+        if ((to == 7) || (from == 7))
+        {
+                casteling_K = false;
+        }
+        if ((to == 56) || (from == 56))
+        {
+                casteling_q = false;
+        }
+        if ((to == 63) || (from == 63))
+        {
+                casteling_k = false;
+        }
 	
 	// update casteling if king has moved and also move rook if necessary
 	if ((this->kings & (1ULL << to)) != 0)
