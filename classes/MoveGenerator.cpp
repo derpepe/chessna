@@ -251,25 +251,21 @@ std::vector<std::string> MoveGenerator::getAllMoves(Board& board)
 		current_pawns &= ~(1ULL << from);
 	}
 
-	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
-	{
-		Board nextBoard(board);
-		nextBoard.executeMove(*it, false);
+        for (const std::string& move : moves)
+        {
+                Board nextBoard(board);
+                nextBoard.executeMove(move);
 
-		unsigned long long king_bb;
-		if (board.playerToMove == 'w') {
-			king_bb = nextBoard.kings & nextBoard.whites;
-		} else {
-			king_bb = nextBoard.kings & nextBoard.blacks;
-		}
-		int king_sq = __builtin_ffsll(king_bb) - 1;
+                char opponent = nextBoard.getPlayerToMove();
+                unsigned long long king_bb = (opponent == 'w') ? (nextBoard.kings & nextBoard.blacks)
+                                                               : (nextBoard.kings & nextBoard.whites);
+                int king_sq = __builtin_ffsll(king_bb) - 1;
 
-		char opponent = board.playerToMove == 'w' ? 'b' : 'w';
-		if (!this->isSquareAttacked(nextBoard, king_sq, opponent))
-		{
-			legalMoves.push_back(*it);
-		}
-	}
+                if (!this->isSquareAttacked(nextBoard, king_sq, opponent))
+                {
+                        legalMoves.push_back(move);
+                }
+        }
 
 	return legalMoves;
 }
