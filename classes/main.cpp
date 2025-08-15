@@ -1,4 +1,6 @@
 #include <thread>
+#include <mutex>
+#include <atomic>
 #include "Uci.h"
 #include "Engine.h"
 #include "Comm.h"
@@ -47,18 +49,14 @@ void runTests(bool deepTest, int singleTest = 0) {
         return;
     }
 
-    bool all_tests_passed = true;
-    Perft perft;
-    int test_index = 0;
-    for (const auto& test : tests) {
-        ++test_index;
-        if (singleTest > 0 && test_index != singleTest) {
-            continue;
-        }
-        std::cout << "Running test " << test_index << ": " << test.fen << std::endl;
+    // Run only the requested test if a specific number is provided
+    if (singleTest > 0) {
+        const auto& test = tests[singleTest - 1];
+        std::cout << "Running test " << singleTest << ": " << test.fen << std::endl;
 
         Board board;
         board.loadFen(test.fen);
+        Perft perft;
 
         bool test_passed = true;
         std::size_t max_depth = deepTest ? test.nodes.size() : std::min<std::size_t>(4, test.nodes.size());
@@ -72,25 +70,80 @@ void runTests(bool deepTest, int singleTest = 0) {
                       << (depth_passed ? " [OK]" : " [FAIL]") << std::endl;
 
             if (!depth_passed) {
-                all_tests_passed = false;
                 test_passed = false;
                 break;
             }
         }
 
-        if (test_passed) {
-            std::cout << "Test " << test_index << " passed." << std::endl;
-        } else {
-            std::cout << "Test " << test_index << " failed." << std::endl;
-        }
+        std::cout << "Test " << singleTest << (test_passed ? " passed." : " failed.") << std::endl;
+        return;
     }
 
-    if (singleTest == 0) {
-        if (all_tests_passed) {
-            std::cout << "All perft tests passed!" << std::endl;
-        } else {
-            std::cout << "Some perft tests failed." << std::endl;
+    std::atomic<bool> all_tests_passed{true};
+    std::atomic<std::size_t> next_index{0};
+    std::mutex cout_mutex;
+
+    unsigned int thread_count = std::thread::hardware_concurrency();
+    if (thread_count == 0) {
+        thread_count = 2;
+    }
+
+    auto worker = [&]() {
+        Perft perft;
+        std::ostringstream out;
+        while (true) {
+            std::size_t idx = next_index++;
+            if (idx >= tests.size()) {
+                break;
+            }
+
+            const auto& test = tests[idx];
+            Board board;
+            board.loadFen(test.fen);
+
+            bool test_passed = true;
+            out.str("");
+            out.clear();
+            out << "Running test " << idx + 1 << ": " << test.fen << std::endl;
+
+            std::size_t max_depth = deepTest ? test.nodes.size() : std::min<std::size_t>(4, test.nodes.size());
+            for (std::size_t i = 0; i < max_depth; ++i) {
+                int depth = static_cast<int>(i + 1);
+                PerftResult result = perft.perft(board, depth);
+                bool depth_passed = (result.nodes == test.nodes[i]);
+
+                out << "  Depth " << depth << ": expected " << test.nodes[i]
+                    << ", got " << result.nodes
+                    << (depth_passed ? " [OK]" : " [FAIL]") << std::endl;
+
+                if (!depth_passed) {
+                    all_tests_passed = false;
+                    test_passed = false;
+                    break;
+                }
+            }
+
+            out << "Test " << idx + 1 << (test_passed ? " passed." : " failed.") << std::endl;
+
+            {
+                std::lock_guard<std::mutex> lock(cout_mutex);
+                std::cout << out.str();
+            }
         }
+    };
+
+    std::vector<std::thread> threads;
+    for (unsigned int i = 0; i < thread_count; ++i) {
+        threads.emplace_back(worker);
+    }
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    if (all_tests_passed) {
+        std::cout << "All perft tests passed!" << std::endl;
+    } else {
+        std::cout << "Some perft tests failed." << std::endl;
     }
 }
 
