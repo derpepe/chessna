@@ -656,38 +656,27 @@ bool Board::isSquareAttacked(int square, char byPlayer)
 	for (int i = square - 8; i >= 0; i -= 8) { if ((rooks_and_queens & (1ULL << i)) != 0) return true; if ((occupied & (1ULL << i)) != 0) break; }
 
 	unsigned long long bishops_and_queens = (bishops | queens) & attackers;
-    int current_pos = square;
-    while (true) {
-        int next_pos = current_pos + 9;
-        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) < Lib::getFile(current_pos)) break;
-        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
-        if ((occupied & (1ULL << next_pos)) != 0) break;
-        current_pos = next_pos;
-    }
-    current_pos = square;
-    while (true) {
-        int next_pos = current_pos - 9;
-        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) > Lib::getFile(current_pos)) break;
-        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
-        if ((occupied & (1ULL << next_pos)) != 0) break;
-        current_pos = next_pos;
-    }
-    current_pos = square;
-    while (true) {
-        int next_pos = current_pos + 7;
-        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) > Lib::getFile(current_pos)) break;
-        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
-        if ((occupied & (1ULL << next_pos)) != 0) break;
-        current_pos = next_pos;
-    }
-    current_pos = square;
-    while (true) {
-        int next_pos = current_pos - 7;
-        if (next_pos < 0 || next_pos > 63 || Lib::getFile(next_pos) < Lib::getFile(current_pos)) break;
-        if ((bishops_and_queens & (1ULL << next_pos)) != 0) return true;
-        if ((occupied & (1ULL << next_pos)) != 0) break;
-        current_pos = next_pos;
-    }
+	const std::vector<int> directions = {7, -7, 9, -9};
+	for (int direction : directions)
+	{
+		int current_pos = square;
+		while (true)
+		{
+			int next_pos = current_pos + direction;
+			if (next_pos < 0 || next_pos > 63) break;
+			if (abs(Lib::getFile(next_pos) - Lib::getFile(current_pos)) > 1) break;
+
+			if ((bishops_and_queens & (1ULL << next_pos)) != 0)
+			{
+				return true;
+			}
+			if ((occupied & (1ULL << next_pos)) != 0)
+			{
+				break;
+			}
+			current_pos = next_pos;
+		}
+	}
 
 	return false;
 }
@@ -726,10 +715,6 @@ PerftResult Board::perft(int depth)
 					// EP is a capture, but it's not on an occupied square, so we need to increment captures here too.
 					// However, my previous check for captures only checks for opponent pieces on the 'to' square.
 					// Let's assume the 'is_capture' logic will be handled correctly.
-					// An EP capture is still a capture.
-					// The move generation logic should handle this. Let's see...
-					// The target square is empty, so the `to_bb & opponent_pieces` will be false.
-					// So we must increment captures for EP here.
 					result.captures++;
 				}
 			}
@@ -745,16 +730,17 @@ PerftResult Board::perft(int depth)
 			// Check and Checkmate check
 			Board nextBoard(*this);
 			nextBoard.executeMove(move);
-			char mover_color = this->playerToMove;
-			unsigned long long opponent_king_bb;
-			if (nextBoard.playerToMove == 'w') {
-				opponent_king_bb = nextBoard.kings & nextBoard.whites;
-			} else {
-				opponent_king_bb = nextBoard.kings & nextBoard.blacks;
-			}
-			int opponent_king_sq = __builtin_ffsll(opponent_king_bb) - 1;
 
-			if (opponent_king_sq >= 0 && nextBoard.isSquareAttacked(opponent_king_sq, mover_color)) {
+			char opponent_color = nextBoard.playerToMove;
+			unsigned long long king_bb;
+			if (opponent_color == 'w') {
+				king_bb = nextBoard.kings & nextBoard.whites;
+			} else {
+				king_bb = nextBoard.kings & nextBoard.blacks;
+			}
+			int king_sq = __builtin_ffsll(king_bb) - 1;
+
+			if (king_sq >= 0 && nextBoard.isSquareAttacked(king_sq, this->playerToMove)) {
 				result.checks++;
 				if (nextBoard.getAllMoves().empty()) {
 					result.checkmates++;
