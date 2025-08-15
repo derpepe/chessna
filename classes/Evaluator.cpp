@@ -6,6 +6,28 @@
 int Evaluator::evaluate(Board& board, const std::string& move)
 {
         int score = 0;
+
+        // 0. Evaluate material on the board
+        int whiteMaterial =
+                100   * __builtin_popcountll(board.pawns   & board.whites) +
+                320   * __builtin_popcountll(board.knights & board.whites) +
+                330   * __builtin_popcountll(board.bishops & board.whites) +
+                500   * __builtin_popcountll(board.rooks   & board.whites) +
+                900   * __builtin_popcountll(board.queens  & board.whites) +
+                20000 * __builtin_popcountll(board.kings   & board.whites);
+
+        int blackMaterial =
+                100   * __builtin_popcountll(board.pawns   & board.blacks) +
+                320   * __builtin_popcountll(board.knights & board.blacks) +
+                330   * __builtin_popcountll(board.bishops & board.blacks) +
+                500   * __builtin_popcountll(board.rooks   & board.blacks) +
+                900   * __builtin_popcountll(board.queens  & board.blacks) +
+                20000 * __builtin_popcountll(board.kings   & board.blacks);
+
+        score += (board.getPlayerToMove() == 'w') ?
+                (whiteMaterial - blackMaterial) :
+                (blackMaterial - whiteMaterial);
+
         int from = Lib::getBitnumFromCoordinates(move.substr(0, 2));
         int to = Lib::getBitnumFromCoordinates(move.substr(2, 4));
 
