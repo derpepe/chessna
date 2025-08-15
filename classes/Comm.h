@@ -19,19 +19,22 @@ public:
 	void engineExecuteMove(std::string);
 	void registerEngineDebugCallback(std::function<void()>);
 	void engineDebug();
-	void registerEnginePerftCallback(std::function<void(int)>);
-	void enginePerft(int);
-	void registerEnginePerftDivideCallback(std::function<void(int)>);
-	void enginePerftDivide(int);
+        void registerEnginePerftCallback(std::function<void(int)>);
+        void enginePerft(int);
+        void registerEnginePerftDivideCallback(std::function<void(int)>);
+        void enginePerftDivide(int);
+        void registerEnginePerftNodesCallback(std::function<unsigned long long(int)>);
+        unsigned long long enginePerftNodes(int);
 	
 private:
 	std::function<void(std::string)> uciOutputCallback;
 
 	std::function<void()> engineGoCallback;
 	std::function<void(std::string)> engineSetPositionCallback;
-	std::function<void(std::string)> engineExecuteMoveCallback;
-	std::function<void()> engineDebugCallback;
-	std::function<void(int)> enginePerftCallback;
-	std::function<void(int)> enginePerftDivideCallback;
+        std::function<void(std::string)> engineExecuteMoveCallback;
+        std::function<void()> engineDebugCallback;
+        std::function<void(int)> enginePerftCallback;
+        std::function<void(int)> enginePerftDivideCallback;
+        std::function<unsigned long long(int)> enginePerftNodesCallback;
 };
 #endif

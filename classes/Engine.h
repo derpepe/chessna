@@ -17,10 +17,11 @@ public:
 	// commands sent via UCI
 	void go();
 	void setPosition(std::string);
-	void executeMove(std::string);
-	void debug();
-	void perft(int);
+        void executeMove(std::string);
+        void debug();
+        void perft(int);
         void perftDivide(int);
+        unsigned long long perftNodes(int);
 
 private:
         Board *board;

@@ -120,27 +120,30 @@ void Uci::parse(std::string p_parameters)
 	{
 		this->comm->engineDebug();
 	}
-	else if (command.compare("perft") == 0)
-	{
-	        if (parameters.size() < 2 || parameters[1].empty())
-	        {
-                        this->sendString(prefix + " Error: perft requires depth parameter\n");
-	                return;
-	        }
-	        try
-	        {
-	                int depth = std::stoi(parameters[1]);
-	                if (depth < 0)
-	                {
+        else if (command.compare("perft") == 0)
+        {
+                if (parameters.size() < 2 || parameters[1].empty())
+                {
+                        for (int d = 1; d <= 5; ++d)
+                        {
+                                this->comm->enginePerftNodes(d);
+                        }
+                        return;
+                }
+                try
+                {
+                        int depth = std::stoi(parameters[1]);
+                        if (depth < 0)
+                        {
                                 this->sendString(prefix + " Error: perft depth must be non-negative\n");
-	                        return;
-	                }
-	                this->comm->enginePerft(depth);
-	        }
-	        catch(const std::exception &)
-	        {
+                                return;
+                        }
+                        this->comm->enginePerft(depth);
+                }
+                catch(const std::exception &)
+                {
                         this->sendString(prefix + " Error: perft requires numeric depth\n");
-	        }
+                }
 	}
         else if (command.compare("perftdiv") == 0)
         {
