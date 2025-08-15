@@ -46,7 +46,7 @@ Die Engine wartet dann auf UCI-Befehle von der Standardeingabe.
 
 Die ausführbare Datei akzeptiert folgende optionale Parameter:
 
-- `--test` führt eine Reihe interner `perft`-Tests bis zur Tiefe 5 durch und beendet die Engine danach.
+- `--test [Nr]` führt eine Reihe interner `perft`-Tests bis zur Tiefe 5 durch und beendet die Engine danach. Wird optional eine Testnummer `Nr` angegeben, so wird nur der entsprechende Test ausgeführt.
 - `--deep-test` führt sämtliche eingebauten `perft`-Tests in voller Tiefe aus.
 
 Ohne Parameter startet die Engine im normalen UCI-Modus und wartet auf Befehle von der Standardeingabe.
@@ -55,6 +55,7 @@ Beispiel:
 
 ```sh
 ./bin/chessna --test
+./bin/chessna --test 3
 ```
 
 ### Als Lichess-Bot
