@@ -27,8 +27,9 @@ void Uci::parse(std::string p_parameters)
 	        return;
 	}
 	
-	// parse command
-	std::string command = parameters[0];
+        // parse command
+        std::string command = parameters[0];
+        const std::string prefix = "info string [Uci::parse]";
 	
 	if (command.compare("uci") == 0)
 	{
@@ -57,7 +58,7 @@ void Uci::parse(std::string p_parameters)
 	{
 	        if (parameters.size() < 2)
 	        {
-	                this->sendString("info string Error: position requires arguments\n");
+                        this->sendString(prefix + " Error: position requires arguments\n");
 	                return;
 	        }
 
@@ -74,7 +75,7 @@ void Uci::parse(std::string p_parameters)
 	        {
 	                if (parameters.size() < 8)
 	                {
-	                        this->sendString("info string Error: position fen requires 6 fields\n");
+                                this->sendString(prefix + " Error: position fen requires 6 fields\n");
 	                        return;
 	                }
 	                ++tokenIterator; // skip 'fen'
@@ -88,7 +89,7 @@ void Uci::parse(std::string p_parameters)
 	        }
 	        else
 	        {
-	                this->sendString("info string Error: position requires 'startpos' or 'fen'\n");
+                        this->sendString(prefix + " Error: position requires 'startpos' or 'fen'\n");
 	                return;
 	        }
 
@@ -108,7 +109,6 @@ void Uci::parse(std::string p_parameters)
         else if (command.compare("help") == 0)
         {
                 std::ostringstream help;
-                const std::string prefix = "info string [Uci::parse]";
                 help << prefix << " CHESSna help for debugging console" << std::endl;
                 help << prefix << std::endl;
                 help << prefix << "  board  Displays debug output." << std::endl;
@@ -124,7 +124,7 @@ void Uci::parse(std::string p_parameters)
 	{
 	        if (parameters.size() < 2 || parameters[1].empty())
 	        {
-	                this->sendString("info string Error: perft requires depth parameter\n");
+                        this->sendString(prefix + " Error: perft requires depth parameter\n");
 	                return;
 	        }
 	        try
@@ -132,21 +132,21 @@ void Uci::parse(std::string p_parameters)
 	                int depth = std::stoi(parameters[1]);
 	                if (depth < 0)
 	                {
-	                        this->sendString("info string Error: perft depth must be non-negative\n");
+                                this->sendString(prefix + " Error: perft depth must be non-negative\n");
 	                        return;
 	                }
 	                this->comm->enginePerft(depth);
 	        }
 	        catch(const std::exception &)
 	        {
-	                this->sendString("info string Error: perft requires numeric depth\n");
+                        this->sendString(prefix + " Error: perft requires numeric depth\n");
 	        }
 	}
         else if (command.compare("perftdiv") == 0)
         {
                 if (parameters.size() < 2 || parameters[1].empty())
                 {
-                        this->sendString("info string Error: perftdiv requires depth parameter\n");
+                        this->sendString(prefix + " Error: perftdiv requires depth parameter\n");
                         return;
                 }
                 try
@@ -154,14 +154,14 @@ void Uci::parse(std::string p_parameters)
                         int depth = std::stoi(parameters[1]);
                         if (depth < 0)
                         {
-                                this->sendString("info string Error: perftdiv depth must be non-negative\n");
+                                this->sendString(prefix + " Error: perftdiv depth must be non-negative\n");
                                 return;
                         }
                         this->comm->enginePerftDivide(depth);
                 }
                 catch(const std::exception &)
                 {
-                        this->sendString("info string Error: perftdiv requires numeric depth\n");
+                        this->sendString(prefix + " Error: perftdiv requires numeric depth\n");
                 }
         }
 	else

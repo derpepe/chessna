@@ -39,7 +39,7 @@ while True:
     elif command == "go":
         move_count = len(board.move_stack)
         if move_count == 3 and not delay_performed:
-            send_command("info string delaying move")
+            send_command("info string [buggy_engine.go] delaying move")
             delay_performed = True
             time.sleep(11)
         move = scholars_mate[move_count]
