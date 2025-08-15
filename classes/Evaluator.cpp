@@ -5,6 +5,21 @@
 
 int Evaluator::evaluate(Board& board, const std::string& move)
 {
+        if (board.getPlayerToMove() == 'w')
+        {
+                return evaluateColorless(board, move);
+        }
+
+        Board flipped(board);
+        unsigned long long temp = flipped.whites;
+        flipped.whites = flipped.blacks;
+        flipped.blacks = temp;
+
+        return evaluateColorless(flipped, move);
+}
+
+int Evaluator::evaluateColorless(Board& board, const std::string& move)
+{
         int score = 0;
 
         // 0. Evaluate material on the board
@@ -24,42 +39,42 @@ int Evaluator::evaluate(Board& board, const std::string& move)
                 900   * __builtin_popcountll(board.queens  & board.blacks) +
                 20000 * __builtin_popcountll(board.kings   & board.blacks);
 
-        score += (board.getPlayerToMove() == 'w') ?
-                (whiteMaterial - blackMaterial) :
-                (blackMaterial - whiteMaterial);
+        score += whiteMaterial - blackMaterial;
 
         int from = Lib::getBitnumFromCoordinates(move.substr(0, 2));
         int to = Lib::getBitnumFromCoordinates(move.substr(2, 4));
 
         // 1. Prefer captures weighted by piece value
         unsigned long long to_bb = 1ULL << to;
-        unsigned long long opponent_pieces = (board.getPlayerToMove() == 'w') ? board.blacks : board.whites;
-        if ((opponent_pieces & to_bb) != 0)
+        if ((board.blacks & to_bb) != 0)
         {
+                int value = 0;
                 if ((board.pawns & to_bb) != 0)
                 {
-                        score += 100;
+                        value = 100;
                 }
                 else if ((board.knights & to_bb) != 0)
                 {
-                        score += 320;
+                        value = 320;
                 }
                 else if ((board.bishops & to_bb) != 0)
                 {
-                        score += 330;
+                        value = 330;
                 }
                 else if ((board.rooks & to_bb) != 0)
                 {
-                        score += 500;
+                        value = 500;
                 }
                 else if ((board.queens & to_bb) != 0)
                 {
-                        score += 900;
+                        value = 900;
                 }
                 else if ((board.kings & to_bb) != 0)
                 {
-                        score += 20000;
+                        value = 20000;
                 }
+
+                score += value;
         }
 
         // 2. Prefer moves to the center for pawns only
@@ -71,6 +86,6 @@ int Evaluator::evaluate(Board& board, const std::string& move)
                 }
         }
 
-//        std::cout << "info string [Evaluator::evaluate] " << move << ": " << score << std::endl;
+//        std::cout << "info string [Evaluator::evaluateColorless] " << move << ": " << score << std::endl;
         return score;
 }

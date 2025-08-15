@@ -7,7 +7,10 @@
 class Evaluator
 {
 public:
-	static int evaluate(Board&, const std::string&);
+        static int evaluate(Board&, const std::string&);
+
+private:
+        static int evaluateColorless(Board&, const std::string&);
 };
 
 #endif
