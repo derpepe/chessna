@@ -61,7 +61,7 @@ void runTests(bool deepTest, int singleTest = 0) {
         board.loadFen(test.fen);
 
         bool test_passed = true;
-        std::size_t max_depth = deepTest ? test.nodes.size() : std::min<std::size_t>(3, test.nodes.size());
+        std::size_t max_depth = deepTest ? test.nodes.size() : std::min<std::size_t>(4, test.nodes.size());
         for (std::size_t i = 0; i < max_depth; ++i) {
             int depth = static_cast<int>(i + 1);
             PerftResult result = perft.perft(board, depth);
