@@ -1,10 +1,10 @@
-#ifndef EVALUATOR_H
-#define EVALUATOR_H
+#ifndef EVALUATION_H
+#define EVALUATION_H
 
 #include "Board.h"
 #include <string>
 
-class Evaluator
+class Evaluation
 {
 public:
         static int evaluate(Board&, const std::string&);

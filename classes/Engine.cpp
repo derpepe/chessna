@@ -1,6 +1,6 @@
 #include "Engine.h"
 #include "MoveGenerator.h"
-#include "Evaluator.h"
+#include "Evaluation.h"
 #include "Lib.h"
 #include <iostream>
 #include <sstream>
@@ -127,7 +127,7 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
                 int bestScore = maximizingPlayer ? -100000 : 100000;
                 for (const auto& move : moves)
                 {
-                        int score = Evaluator::evaluate(board, move);
+                        int score = Evaluation::evaluate(board, move);
                         if (maximizingPlayer)
                         {
                                 if (score > bestScore) bestScore = score;

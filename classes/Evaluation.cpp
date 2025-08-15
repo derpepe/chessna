@@ -1,9 +1,9 @@
-#include "Evaluator.h"
+#include "Evaluation.h"
 #include "Board.h"
 #include "Lib.h"
 #include <iostream>
 
-int Evaluator::evaluate(Board& board, const std::string& move)
+int Evaluation::evaluate(Board& board, const std::string& move)
 {
         if (board.getPlayerToMove() == 'w')
         {
@@ -18,7 +18,7 @@ int Evaluator::evaluate(Board& board, const std::string& move)
         return evaluateColorless(flipped, move);
 }
 
-int Evaluator::evaluateColorless(Board& board, const std::string& move)
+int Evaluation::evaluateColorless(Board& board, const std::string& move)
 {
         int score = 0;
 
@@ -86,6 +86,6 @@ int Evaluator::evaluateColorless(Board& board, const std::string& move)
                 }
         }
 
-//        std::cout << "info string [Evaluator::evaluateColorless] " << move << ": " << score << std::endl;
+//        std::cout << "info string [Evaluation::evaluateColorless] " << move << ": " << score << std::endl;
         return score;
 }
