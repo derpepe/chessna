@@ -3,6 +3,7 @@
 #include "Evaluator.h"
 #include "Lib.h"
 #include <iostream>
+#include <sstream>
 
 
 Engine::Engine(Comm *comm)
@@ -12,6 +13,7 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
         this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
         this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
+        this->comm->registerEngineListMovesCallback( [this] { this->listMoves(); } );
         this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
         this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
         this->comm->registerEnginePerftNodesCallback( [this](int depth) { return this->perftNodes(depth); } );
@@ -35,7 +37,21 @@ void Engine::executeMove(std::string move)
 
 void Engine::debug()
 {
-	this->comm->uciOutput(this->board->getDump());
+        this->comm->uciOutput(this->board->getDump());
+}
+
+void Engine::listMoves()
+{
+        MoveGenerator moveGenerator;
+        std::vector<std::string> moves = moveGenerator.getAllMoves(*this->board);
+        std::ostringstream output;
+        output << "info string [Engine::listMoves]";
+        for (const auto& move : moves)
+        {
+                output << ' ' << move;
+        }
+        output << std::endl;
+        this->comm->uciOutput(output.str());
 }
 
 void Engine::run()

@@ -112,14 +112,19 @@ void Uci::parse(std::string p_parameters)
                 help << prefix << " CHESSna help for debugging console" << std::endl;
                 help << prefix << std::endl;
                 help << prefix << "  board  Displays debug output." << std::endl;
+                help << prefix << "  moves  Lists all legal moves for the current position." << std::endl;
                 help << prefix << "  perft <depth>  Performance test of the move generation." << std::endl;
                 help << prefix << "  perftdiv <depth>  Performance test of the move generation with debug output." << std::endl;
                 this->sendString(help.str());
         }
-	else if (command.compare("board") == 0)
-	{
-		this->comm->engineDebug();
-	}
+        else if (command.compare("board") == 0)
+        {
+                this->comm->engineDebug();
+        }
+        else if (command.compare("moves") == 0)
+        {
+                this->comm->engineListMoves();
+        }
         else if (command.compare("perft") == 0)
         {
                 if (parameters.size() < 2 || parameters[1].empty())
