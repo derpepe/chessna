@@ -7,37 +7,57 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 void runTests() {
     struct PerftTest {
         std::string fen;
-        int depth;
-        unsigned long long expected_nodes;
+        std::vector<unsigned long long> nodes;
     };
 
-    std::vector<PerftTest> tests = {
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 1, 20},
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 2, 400},
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3, 8902},
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 4, 197281},
-        {"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 1, 48},
-        {"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 2, 2039},
-        {"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 4, 4085603},
-        {"8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 1, 14},
-        {"8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 2, 191},
-    };
+    std::vector<PerftTest> tests;
+    std::ifstream file("doc/perft.txt");
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty()) {
+            continue;
+        }
+        std::size_t pos = line.find(" -,");
+        if (pos == std::string::npos) {
+            continue;
+        }
+        PerftTest test;
+        test.fen = line.substr(0, pos + 2) + " 0 1";
+        std::string numbers = line.substr(pos + 3);
+        std::stringstream ss(numbers);
+        std::string num;
+        while (std::getline(ss, num, ',')) {
+            if (!num.empty()) {
+                test.nodes.push_back(std::stoull(num));
+            }
+        }
+        if (!test.nodes.empty()) {
+            tests.push_back(test);
+        }
+    }
 
     bool all_tests_passed = true;
     Perft perft;
+    int test_index = 0;
     for (const auto& test : tests) {
+        ++test_index;
         Board board;
         board.loadFen(test.fen);
-        PerftResult result = perft.perft(board, test.depth);
-        if (result.nodes == test.expected_nodes) {
-            std::cout << "Test passed: FEN: " << test.fen << " Depth: " << test.depth << " Result: " << result.nodes << std::endl;
-        } else {
-            std::cout << "Test FAILED: FEN: " << test.fen << " Depth: " << test.depth << " Expected: " << test.expected_nodes << " Got: " << result.nodes << std::endl;
-            all_tests_passed = false;
+        for (std::size_t i = 0; i < test.nodes.size(); ++i) {
+            int depth = static_cast<int>(i + 1);
+            PerftResult result = perft.perft(board, depth);
+            if (result.nodes != test.nodes[i]) {
+                std::cout << "Test FAILED: Line " << test_index << " Depth: " << depth
+                          << " Expected: " << test.nodes[i] << " Got: " << result.nodes << std::endl;
+                all_tests_passed = false;
+                break;
+            }
         }
     }
 
