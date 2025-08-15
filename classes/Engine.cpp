@@ -85,7 +85,7 @@ void Engine::go()
         {
                 std::cout << ' ' << move;
         }
-        std::cout << std::endl;
+        std::cout << " score " << bestScore << std::endl;
 
         // Choose one of the best moves at random
         std::random_device seed;
@@ -94,6 +94,7 @@ void Engine::go()
         std::string bestMove = bestMoves[choose(engine)];
 
         std::ostringstream output;
+        output << "info score cp " << bestScore << std::endl;
         output << "bestmove " << bestMove << std::endl;
         this->comm->uciOutput(output.str());
 }
