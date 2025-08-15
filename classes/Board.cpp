@@ -683,3 +683,21 @@ unsigned long long Board::perft(int depth)
 
 	return nodes;
 }
+
+void Board::perftDivide(int depth)
+{
+	std::vector<std::string> moves = this->getAllMoves();
+	unsigned long long nodes = 0;
+	unsigned long long child_nodes;
+
+	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
+	{
+		Board nextBoard(*this);
+		nextBoard.executeMove(*it);
+		child_nodes = nextBoard.perft(depth - 1);
+		nodes += child_nodes;
+		std::cout << *it << ": " << child_nodes << std::endl;
+	}
+
+	std::cout << std::endl << "Total: " << nodes << std::endl;
+}

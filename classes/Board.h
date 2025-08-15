@@ -32,6 +32,7 @@ public:
 	void addSlidingMoves(std::vector<std::string> *moves, int from, const std::vector<int>& directions);
 
 	unsigned long long perft(int);
+	void perftDivide(int);
 
 	bool isSquareAttacked(int square, char byPlayer);
 			

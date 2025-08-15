@@ -19,3 +19,6 @@ void Comm::engineDebug() { this->engineDebugCallback(); }
 
 void Comm::registerEnginePerftCallback(std::function<void(int)> enginePerftCallback) { this->enginePerftCallback = enginePerftCallback; }
 void Comm::enginePerft(int depth) { this->enginePerftCallback(depth); }
+
+void Comm::registerEnginePerftDivideCallback(std::function<void(int)> enginePerftDivideCallback) { this->enginePerftDivideCallback = enginePerftDivideCallback; }
+void Comm::enginePerftDivide(int depth) { this->enginePerftDivideCallback(depth); }

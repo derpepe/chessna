@@ -107,6 +107,11 @@ void Uci::parse(std::string p_parameters)
 		int depth = std::stoi(parameters[1]);
 		this->comm->enginePerft(depth);
 	}
+	else if (command.compare("perfdiv") == 0)
+	{
+		int depth = std::stoi(parameters[1]);
+		this->comm->enginePerftDivide(depth);
+	}
 	else
 	{
 		// ignore unknown command
