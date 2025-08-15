@@ -43,22 +43,36 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	// std::cout << "info string [Board::executeMove] moves figure from " << from << " to " << to << std::endl;
 #endif
 	
-	// check if a figure gets captured (for potential reset of halfmoves-counter)
-	bool figureCaptured = (((1ULL << to) & (this->whites | this->blacks)) != 0);
+        // check if a figure gets captured (for potential reset of halfmoves-counter)
+        bool isPawn = (this->pawns & (1ULL << from)) != 0;
+        bool enPassantCapture = false;
+        int captureSquare = to;
 
-	if (figureCaptured) {
-		unsigned long long capture_mask = ~(1ULL << to);
-		this->rooks &= capture_mask;
-		this->knights &= capture_mask;
-		this->bishops &= capture_mask;
-		this->queens &= capture_mask;
-		this->pawns &= capture_mask;
-		if (this->playerToMove == 'w') {
-			this->blacks &= capture_mask;
-		} else {
-			this->whites &= capture_mask;
-		}
-	}
+        if (isPawn && this->enPassant != "-")
+        {
+                int ep_square = Lib::getBitnumFromCoordinates(this->enPassant);
+                if (to == ep_square && (abs(to - from) == 7 || abs(to - from) == 9))
+                {
+                        enPassantCapture = true;
+                        captureSquare = (this->playerToMove == 'w') ? to - 8 : to + 8;
+                }
+        }
+
+        bool figureCaptured = enPassantCapture || (((1ULL << to) & (this->whites | this->blacks)) != 0);
+
+        if (figureCaptured) {
+                unsigned long long capture_mask = ~(1ULL << captureSquare);
+                this->rooks &= capture_mask;
+                this->knights &= capture_mask;
+                this->bishops &= capture_mask;
+                this->queens &= capture_mask;
+                this->pawns &= capture_mask;
+                if (this->playerToMove == 'w') {
+                        this->blacks &= capture_mask;
+                } else {
+                        this->whites &= capture_mask;
+                }
+        }
 
 	this->blacks = Lib::moveBit(this->blacks, from, to);
 	this->whites = Lib::moveBit(this->whites, from, to);
