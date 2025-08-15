@@ -100,10 +100,14 @@ std::vector<std::string> MoveGenerator::getAllMoves(Board& board)
 	std::vector<std::string> moves;
 	std::vector<std::string> legalMoves;
 
-	unsigned long long pieces = (board.playerToMove == 'w') ? board.whites : board.blacks;
+       unsigned long long pieces = (board.playerToMove == 'w') ? board.whites : board.blacks;
 
-	unsigned long long current_king = board.kings & pieces;
-	if (current_king > 0) {
+       unsigned long long current_king = board.kings & pieces;
+       if (current_king == 0) {
+               return legalMoves; // no king -> no legal moves
+       }
+
+       if (current_king > 0) {
 		from = __builtin_ffsll(current_king) - 1;
 		this->addMoveToList(board, &moves, from, from + 8, {}, 1);
 		this->addMoveToList(board, &moves, from, from - 8, {}, 1);
@@ -256,16 +260,24 @@ std::vector<std::string> MoveGenerator::getAllMoves(Board& board)
                 Board nextBoard(board);
                 nextBoard.executeMove(move);
 
-                char opponent = nextBoard.getPlayerToMove();
-                unsigned long long king_bb = (opponent == 'w') ? (nextBoard.kings & nextBoard.blacks)
-                                                               : (nextBoard.kings & nextBoard.whites);
-                int king_sq = __builtin_ffsll(king_bb) - 1;
+               char opponent = nextBoard.getPlayerToMove();
+               unsigned long long ownKing_bb = (opponent == 'w') ? (nextBoard.kings & nextBoard.blacks)
+                                                                 : (nextBoard.kings & nextBoard.whites);
+               unsigned long long oppKing_bb = (opponent == 'w') ? (nextBoard.kings & nextBoard.whites)
+                                                                 : (nextBoard.kings & nextBoard.blacks);
 
-                if (!this->isSquareAttacked(nextBoard, king_sq, opponent))
-                {
-                        legalMoves.push_back(move);
-                }
-        }
+               if (oppKing_bb == 0 || ownKing_bb == 0)
+               {
+                       continue; // invalid position (king captured)
+               }
+
+               int king_sq = __builtin_ffsll(ownKing_bb) - 1;
+
+               if (!this->isSquareAttacked(nextBoard, king_sq, opponent))
+               {
+                       legalMoves.push_back(move);
+               }
+       }
 
 	return legalMoves;
 }
@@ -281,19 +293,19 @@ bool MoveGenerator::isSquareAttacked(Board& board, int square, char byPlayer)
 		attackers = board.blacks;
 	}
 
-	if (byPlayer == 'w') {
-		if (Lib::getFile(square) > 0 && (board.pawns & board.whites & (1ULL << (square - 9)))) return true;
-		if (Lib::getFile(square) < 7 && (board.pawns & board.whites & (1ULL << (square - 7)))) return true;
-	} else {
-		if (Lib::getFile(square) > 0 && (board.pawns & board.blacks & (1ULL << (square + 7)))) return true;
-		if (Lib::getFile(square) < 7 && (board.pawns & board.blacks & (1ULL << (square + 9)))) return true;
-	}
+        if (byPlayer == 'w') {
+                if (square >= 9 && Lib::getFile(square) > 0 && (board.pawns & board.whites & (1ULL << (square - 9)))) return true;
+                if (square >= 7 && Lib::getFile(square) < 7 && (board.pawns & board.whites & (1ULL << (square - 7)))) return true;
+        } else {
+                if (square < 57 && Lib::getFile(square) > 0 && (board.pawns & board.blacks & (1ULL << (square + 7)))) return true;
+                if (square < 55 && Lib::getFile(square) < 7 && (board.pawns & board.blacks & (1ULL << (square + 9)))) return true;
+        }
 
 	unsigned long long knight_attacks = 0;
-	if (square > 17 && Lib::getFile(square) > 0) knight_attacks |= (1ULL << (square - 17));
-	if (square > 15 && Lib::getFile(square) < 7) knight_attacks |= (1ULL << (square - 15));
-	if (square > 10 && Lib::getFile(square) > 1) knight_attacks |= (1ULL << (square - 10));
-	if (square > 6 && Lib::getFile(square) < 6) knight_attacks |= (1ULL << (square - 6));
+        if (square >= 17 && Lib::getFile(square) > 0) knight_attacks |= (1ULL << (square - 17));
+        if (square >= 15 && Lib::getFile(square) < 7) knight_attacks |= (1ULL << (square - 15));
+        if (square >= 10 && Lib::getFile(square) > 1) knight_attacks |= (1ULL << (square - 10));
+        if (square >= 6 && Lib::getFile(square) < 6) knight_attacks |= (1ULL << (square - 6));
         // prevent undefined behaviour when shifting beyond 64 bits
         // squares with index >=49 would overflow when adding 15
         if (square < 49 && Lib::getFile(square) > 0) knight_attacks |= (1ULL << (square + 15));
