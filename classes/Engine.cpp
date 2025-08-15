@@ -1,4 +1,7 @@
 #include "Engine.h"
+#include "MoveGenerator.h"
+#include "Evaluator.h"
+#include <iostream>
 
 
 Engine::Engine(Comm *comm)
@@ -12,6 +15,7 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
 	
 	this->board = new Board();
+	this->perft_runner = new Perft();
 }
 
 void Engine::setPosition(std::string position)
@@ -45,26 +49,47 @@ void Engine::go()
 {
 	std::cout << "info string [Engine::go] let's go!" << std::endl;
 	
-	// TODO: invoke move generator
-	std::vector<std::string> possibleMoves = this->board->getAllMoves();
+	MoveGenerator moveGenerator;
+	std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
 	std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
 	
-	// TODO: decide which move is good
-    std::random_device seed;
-    std::mt19937 engine(seed());
-    std::uniform_int_distribution<int> choose(0 , possibleMoves.size() - 1);
-    std::string bestMove = possibleMoves[choose(engine)];
+	if (possibleMoves.empty())
+	{
+		std::cout << "info string [Engine::go] no moves found" << std::endl;
+		return;
+	}
+
+	std::string bestMove = "";
+	int bestScore = -1;
+
+	for (const auto& move : possibleMoves)
+	{
+		int score = Evaluator::evaluate(*this->board, move);
+		if (score > bestScore)
+		{
+			bestScore = score;
+			bestMove = move;
+		}
+	}
+
+	if (bestMove == "")
+	{
+		// If no move has a score > 0, pick a random one
+		std::random_device seed;
+		std::mt19937 engine(seed());
+		std::uniform_int_distribution<int> choose(0 , possibleMoves.size() - 1);
+		bestMove = possibleMoves[choose(engine)];
+	}
 
 	std::ostringstream output;
 	output << "bestmove " << bestMove << std::endl;
-	this->comm->uciOutput(output.str()); // TODO
-	// TODO: use UCI sendBestmove()?
+	this->comm->uciOutput(output.str());
 }
 
 void Engine::perft(int depth)
 {
 	std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
-	PerftResult result = this->board->perft(depth);
+	PerftResult result = this->perft_runner->perft(*this->board, depth);
 	std::ostringstream output;
 	output << "info string" << std::endl
 		<< " nodes " << result.nodes << std::endl
@@ -80,5 +105,5 @@ void Engine::perft(int depth)
 void Engine::perftDivide(int depth)
 {
 	std::cout << "info string [Engine::perftDivide] starting perftDivide(" << depth << ")" << std::endl;
-	this->board->perftDivide(depth);
+	this->perft_runner->perftDivide(*this->board, depth);
 }

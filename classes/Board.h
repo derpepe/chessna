@@ -5,38 +5,19 @@
 #include <iterator>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 #include "Lib.h"
+#include <vector>
+#include <string>
 
-struct PerftResult {
-	unsigned long long nodes = 0;
-	unsigned long long captures = 0;
-	unsigned long long en_passant = 0;
-	unsigned long long castles = 0;
-	unsigned long long promotions = 0;
-	unsigned long long checks = 0;
-	unsigned long long checkmates = 0;
-
-	PerftResult& operator+=(const PerftResult& rhs)
-	{
-		this->nodes += rhs.nodes;
-		this->captures += rhs.captures;
-		this->en_passant += rhs.en_passant;
-		this->castles += rhs.castles;
-		this->promotions += rhs.promotions;
-		this->checks += rhs.checks;
-		this->checkmates += rhs.checkmates;
-		return *this;
-	}
-};
+class MoveGenerator;
 
 class Board
 {
 public:
 	Board();
-	Board(const Board&);
+	Board(const Board& other);
 	void startpos();
-	
+
 	void loadFen(const std::string&);
 	void loadFen(const std::string&, char, const std::string&, const std::string&, long, long);
 	std::string getDump();
@@ -46,19 +27,10 @@ public:
 	void executeMove(std::string move, bool incrementCounters = true);
 	
 	std::vector<std::string> getAllMoves();
-	void addMoveToList(std::vector<std::string> *moves, int from, int to);
-	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
-	void addMoveToListDiag(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
-	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist);
-	void addMoveToList(std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
-	void addSlidingMoves(std::vector<std::string> *moves, int from, const std::vector<int>& directions);
 
-	PerftResult perft(int);
-	void perftDivide(int);
-
-	bool isSquareAttacked(int square, char byPlayer);
+	char getPlayerToMove() const { return playerToMove; }
 			
-private:
+// private: //
 	unsigned long long blacks;
 	unsigned long long whites;
 	

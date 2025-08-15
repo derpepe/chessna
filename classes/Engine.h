@@ -3,6 +3,7 @@
 
 #include "Board.h"
 #include "Comm.h"
+#include "Perft.h"
 #include <vector>
 #include <string>
 #include <random>
@@ -24,6 +25,7 @@ public:
 private:
 	Board *board;
 	Comm *comm;
+	Perft *perft_runner;
 };
 
 #endif
