@@ -49,6 +49,6 @@ int Evaluator::evaluate(Board& board, const std::string& move)
                 }
         }
 
-        std::cout << "info string [Evaluator::evaluate] " << move << ": " << score << std::endl;
+//        std::cout << "info string [Evaluator::evaluate] " << move << ": " << score << std::endl;
         return score;
 }
