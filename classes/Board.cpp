@@ -38,7 +38,7 @@ void Board::executeMove(std::string move, bool incrementCounters)
 	int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
 	int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
 #ifdef DEBUG
-	std::cout << "info string [Board::executeMove] moves figure from " << from << " to " << to << std::endl;
+	// std::cout << "info string [Board::executeMove] moves figure from " << from << " to " << to << std::endl;
 #endif
 	
 	// check if a figure gets captured (for potential reset of halfmoves-counter)
