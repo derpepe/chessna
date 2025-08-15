@@ -5,8 +5,8 @@ void Comm::registerUciOutputCallback(std::function<void(std::string)> uciOutputC
 void Comm::uciOutput(std::string message) { this->uciOutputCallback(message); }
 
 
-void Comm::registerEngineGoCallback(std::function<void()> engineGoCallback) { this->engineGoCallback = engineGoCallback; }
-void Comm::engineGo() { this->engineGoCallback(); }
+void Comm::registerEngineGoCallback(std::function<void(int)> engineGoCallback) { this->engineGoCallback = engineGoCallback; }
+void Comm::engineGo(int movetime) { this->engineGoCallback(movetime); }
 
 void Comm::registerEngineSetPositionCallback(std::function<void(std::string)> engineSetPositionCallback) { this->engineSetPositionCallback = engineSetPositionCallback; }
 void Comm::engineSetPosition(std::string fen) { this->engineSetPositionCallback(fen); }

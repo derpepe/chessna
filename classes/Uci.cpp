@@ -41,10 +41,25 @@ void Uci::parse(std::string p_parameters)
 	{
 		this->sendReadyok();
 	}
-	else if (command.compare("go") == 0)
-	{
-		this->comm->engineGo();
-	}
+        else if (command.compare("go") == 0)
+        {
+                int movetime = 1000;
+                for (size_t i = 1; i + 1 < parameters.size(); ++i)
+                {
+                        if (parameters[i] == "movetime")
+                        {
+                                try
+                                {
+                                        movetime = std::stoi(parameters[i + 1]);
+                                }
+                                catch(const std::exception &)
+                                {
+                                        // ignore invalid value, keep default
+                                }
+                        }
+                }
+                this->comm->engineGo(movetime);
+        }
         else if (command.compare("quit") == 0 || command.compare("exit") == 0)
         {
                 //this->comm->engineStop();
