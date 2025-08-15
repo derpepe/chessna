@@ -161,23 +161,23 @@ void Perft::perftDivide(Board& board, int depth)
 
                 total_result += child_result;
                 std::cout << prefix << " " << move << ": "
-                        << "nodes " << child_result.nodes << " "
-                        << "captures " << child_result.captures << " "
-                        << "ep " << child_result.en_passant << " "
-                        << "castles " << child_result.castles << " "
-                        << "promotions " << child_result.promotions << " "
-                        << "checks " << child_result.checks << " "
-                        << "checkmates " << child_result.checkmates
+                        << "nodes " << Lib::formatThousands(child_result.nodes) << " "
+                        << "captures " << Lib::formatThousands(child_result.captures) << " "
+                        << "ep " << Lib::formatThousands(child_result.en_passant) << " "
+                        << "castles " << Lib::formatThousands(child_result.castles) << " "
+                        << "promotions " << Lib::formatThousands(child_result.promotions) << " "
+                        << "checks " << Lib::formatThousands(child_result.checks) << " "
+                        << "checkmates " << Lib::formatThousands(child_result.checkmates)
                         << std::endl;
         }
 
         std::cout << prefix << std::endl
                 << prefix << " Total:" << std::endl
-                << prefix << " nodes " << total_result.nodes << std::endl
-                << prefix << " captures " << total_result.captures << std::endl
-                << prefix << " ep " << total_result.en_passant << std::endl
-                << prefix << " castles " << total_result.castles << std::endl
-                << prefix << " promotions " << total_result.promotions << std::endl
-                << prefix << " checks " << total_result.checks << std::endl
-                << prefix << " checkmates " << total_result.checkmates << std::endl;
+                << prefix << " nodes " << Lib::formatThousands(total_result.nodes) << std::endl
+                << prefix << " captures " << Lib::formatThousands(total_result.captures) << std::endl
+                << prefix << " ep " << Lib::formatThousands(total_result.en_passant) << std::endl
+                << prefix << " castles " << Lib::formatThousands(total_result.castles) << std::endl
+                << prefix << " promotions " << Lib::formatThousands(total_result.promotions) << std::endl
+                << prefix << " checks " << Lib::formatThousands(total_result.checks) << std::endl
+                << prefix << " checkmates " << Lib::formatThousands(total_result.checkmates) << std::endl;
 }

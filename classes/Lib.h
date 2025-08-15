@@ -13,9 +13,10 @@ public:
 	static int getBitnumFromCoordinates(std::string coordinates);
 	static std::string getCoordinatesFromBitnum(int bitnum);
 	static unsigned long long bitShiftLeft(unsigned long long bitboard, int shift);
-	static unsigned long long moveBit(unsigned long long bitboard, int from, int to);
-	static int getFile(int bitnum);
-	static int getRank(int bitnum);
+        static unsigned long long moveBit(unsigned long long bitboard, int from, int to);
+        static int getFile(int bitnum);
+        static int getRank(int bitnum);
+        static std::string formatThousands(unsigned long long value);
 };
 
 #endif

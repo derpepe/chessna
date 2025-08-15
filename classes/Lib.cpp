@@ -58,11 +58,23 @@ unsigned long long Lib::bitShiftLeft(unsigned long long bitboard, int shift)
 
 unsigned long long Lib::moveBit(unsigned long long bitboard, int from, int to)
 {
-	int delta = to - from;
-	unsigned long long bitboard_from = 1ULL << from;
-	unsigned long long bitboard_to = 1ULL << to;
+        int delta = to - from;
+        unsigned long long bitboard_from = 1ULL << from;
+        unsigned long long bitboard_to = 1ULL << to;
 	
 	unsigned long long clearedToField = bitboard & (~bitboard_to); // removes bit at 'to'
-	unsigned long long movedBit = Lib::bitShiftLeft(clearedToField & bitboard_from, delta) | clearedToField;  // moves bit from 'from' to 'to'
-	return movedBit & (~bitboard_from); // removes bit at 'from'
+        unsigned long long movedBit = Lib::bitShiftLeft(clearedToField & bitboard_from, delta) | clearedToField;  // moves bit from 'from' to 'to'
+        return movedBit & (~bitboard_from); // removes bit at 'from'
+}
+
+std::string Lib::formatThousands(unsigned long long value)
+{
+        std::string s = std::to_string(value);
+        int insertPosition = s.length() - 3;
+        while (insertPosition > 0)
+        {
+                s.insert(insertPosition, ".");
+                insertPosition -= 3;
+        }
+        return s;
 }
