@@ -303,8 +303,10 @@ bool MoveGenerator::isSquareAttacked(Board& board, int square, char byPlayer)
         if (square < 49 && Lib::getFile(square) > 0) knight_attacks |= (1ULL << (square + 15));
         // squares with index >=47 would overflow when adding 17
         if (square < 47 && Lib::getFile(square) < 7) knight_attacks |= (1ULL << (square + 17));
-	if (square < 54 && Lib::getFile(square) > 1) knight_attacks |= (1ULL << (square + 6));
-	if (square < 48 && Lib::getFile(square) < 6) knight_attacks |= (1ULL << (square + 10));
+        // squares with index >=58 would overflow when adding 6
+        if (square < 58 && Lib::getFile(square) > 1) knight_attacks |= (1ULL << (square + 6));
+        // squares with index >=54 would overflow when adding 10
+        if (square < 54 && Lib::getFile(square) < 6) knight_attacks |= (1ULL << (square + 10));
 	if (board.knights & attackers & knight_attacks) return true;
 
 	unsigned long long king_attacks = 0;
