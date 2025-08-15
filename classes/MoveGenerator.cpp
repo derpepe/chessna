@@ -116,18 +116,18 @@ std::vector<std::string> MoveGenerator::getAllMoves(Board& board)
 
 		if (board.playerToMove == 'w') {
 			if (board.casteling_K && !isSquareAttacked(board, from, 'b') && !isSquareAttacked(board, from + 1, 'b') && !isSquareAttacked(board, from + 2, 'b'))
-			{
-				this->addMoveToList(board, &moves, from, from + 2, {from + 1});
-			}
+                        {
+                                this->addMoveToList(board, &moves, from, from + 2, {from + 1, from + 2});
+                        }
 			if (board.casteling_Q && !isSquareAttacked(board, from, 'b') && !isSquareAttacked(board, from - 1, 'b') && !isSquareAttacked(board, from - 2, 'b'))
 			{
 				this->addMoveToList(board, &moves, from, from - 2, {from - 1, from - 2, from - 3});
 			}
 		} else {
 			if (board.casteling_k && !isSquareAttacked(board, from, 'w') && !isSquareAttacked(board, from + 1, 'w') && !isSquareAttacked(board, from + 2, 'w'))
-			{
-				this->addMoveToList(board, &moves, from, from + 2, {from + 1});
-			}
+                        {
+                                this->addMoveToList(board, &moves, from, from + 2, {from + 1, from + 2});
+                        }
 			if (board.casteling_q && !isSquareAttacked(board, from, 'w') && !isSquareAttacked(board, from - 1, 'w') && !isSquareAttacked(board, from - 2, 'w'))
 			{
 				this->addMoveToList(board, &moves, from, from - 2, {from - 1, from - 2, from - 3});
