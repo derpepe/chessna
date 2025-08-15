@@ -7,19 +7,19 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <fstream>
+#include <algorithm>
 #include <sstream>
+#include "perft_data.h"
 
-void runTests() {
+void runTests(bool deepTest) {
     struct PerftTest {
         std::string fen;
         std::vector<unsigned long long> nodes;
     };
 
     std::vector<PerftTest> tests;
-    std::ifstream file("doc/perft.txt");
-    std::string line;
-    while (std::getline(file, line)) {
+    for (size_t i = 0; i < PERFT_DATA_COUNT; ++i) {
+        std::string line(PERFT_DATA[i]);
         if (line.empty()) {
             continue;
         }
@@ -53,7 +53,8 @@ void runTests() {
         board.loadFen(test.fen);
 
         bool test_passed = true;
-        for (std::size_t i = 0; i < test.nodes.size(); ++i) {
+        std::size_t max_depth = deepTest ? test.nodes.size() : std::min<std::size_t>(5, test.nodes.size());
+        for (std::size_t i = 0; i < max_depth; ++i) {
             int depth = static_cast<int>(i + 1);
             PerftResult result = perft.perft(board, depth);
             bool depth_passed = (result.nodes == test.nodes[i]);
@@ -85,8 +86,19 @@ void runTests() {
 
 int main(int argc, char** argv)
 {
-    if (argc > 1 && std::string(argv[1]) == "--test") {
-        runTests();
+    bool run_tests = false;
+    bool deep_test = false;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--test") {
+            run_tests = true;
+        } else if (arg == "--deep-test") {
+            run_tests = true;
+            deep_test = true;
+        }
+    }
+    if (run_tests) {
+        runTests(deep_test);
         return 0;
     }
 
