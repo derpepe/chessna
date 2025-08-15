@@ -44,11 +44,11 @@ void Uci::parse(std::string p_parameters)
 	{
 		this->comm->engineGo();
 	}
-	else if (command.compare("quit") == 0)
-	{
-		//this->comm->engineStop();
-		std::exit(0);
-	}
+        else if (command.compare("quit") == 0 || command.compare("exit") == 0)
+        {
+                //this->comm->engineStop();
+                std::exit(0);
+        }
 	else if (command.compare("stop") == 0)
 	{
 		this->sendBestmove("e2e4", ""); // TODO: get best move from engine
