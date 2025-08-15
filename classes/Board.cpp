@@ -76,13 +76,19 @@ void Board::executeMove(std::string move, bool incrementCounters)
                 }
         }
 
-	this->blacks = Lib::moveBit(this->blacks, from, to);
-	this->whites = Lib::moveBit(this->whites, from, to);
-	this->kings = Lib::moveBit(this->kings, from, to);
-	this->queens = Lib::moveBit(this->queens, from, to);
-	this->rooks = Lib::moveBit(this->rooks, from, to);
-	this->bishops = Lib::moveBit(this->bishops, from, to);
-	this->knights = Lib::moveBit(this->knights, from, to);
+        if (this->playerToMove == 'w')
+        {
+                this->whites = Lib::moveBit(this->whites, from, to);
+        }
+        else
+        {
+                this->blacks = Lib::moveBit(this->blacks, from, to);
+        }
+        this->kings = Lib::moveBit(this->kings, from, to);
+        this->queens = Lib::moveBit(this->queens, from, to);
+        this->rooks = Lib::moveBit(this->rooks, from, to);
+        this->bishops = Lib::moveBit(this->bishops, from, to);
+        this->knights = Lib::moveBit(this->knights, from, to);
 	this->pawns = Lib::moveBit(this->pawns, from, to);
 	
 	this->checkConsistency();
@@ -121,29 +127,21 @@ void Board::executeMove(std::string move, bool incrementCounters)
 			casteling_q = false;
 		}
 		
-		if (abs(to - from) > 1) { // king moved more than 1 square -> casteling
-			// casteling just happend, also move rook!
-			switch(to)
-			{
-				case 2: // white, queenside
-					this->rooks = Lib::moveBit(this->rooks, 0, 3);
-					this->whites = Lib::moveBit(this->whites, 0, 3);
-					break;
-				case 6: // white, kingside
-					this->rooks = Lib::moveBit(this->rooks, 7, 5);
-					this->whites = Lib::moveBit(this->whites, 7, 5);
-					break;
-				case 58: // black, queenside
-					this->rooks = Lib::moveBit(this->rooks, 56, 59);
-					this->blacks = Lib::moveBit(this->blacks, 56, 59);
-					break;
-				case 62: // black, kingside
-					this->rooks = Lib::moveBit(this->rooks, 63, 61);
-					this->blacks = Lib::moveBit(this->blacks, 63, 61);
-					break;
-			}
-		}
-	}
+                // handle castling rook movement explicitly
+                if (from == 4 && to == 2) { // white, queenside
+                        this->rooks = Lib::moveBit(this->rooks, 0, 3);
+                        this->whites = Lib::moveBit(this->whites, 0, 3);
+                } else if (from == 4 && to == 6) { // white, kingside
+                        this->rooks = Lib::moveBit(this->rooks, 7, 5);
+                        this->whites = Lib::moveBit(this->whites, 7, 5);
+                } else if (from == 60 && to == 58) { // black, queenside
+                        this->rooks = Lib::moveBit(this->rooks, 56, 59);
+                        this->blacks = Lib::moveBit(this->blacks, 56, 59);
+                } else if (from == 60 && to == 62) { // black, kingside
+                        this->rooks = Lib::moveBit(this->rooks, 63, 61);
+                        this->blacks = Lib::moveBit(this->blacks, 63, 61);
+                }
+        }
 	
 	// en passant
 	if (((1ULL << to) & this->pawns) && (abs(to - from) == 16))
@@ -338,11 +336,17 @@ std::string Board::getDump()
 
 void Board::checkConsistency()
 {
-	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
-	unsigned long long figures = (this->whites | this->blacks);
-        if (!((all == figures)
-                && (figures - this->whites - this->blacks == 0)
-                && (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0)))
+        unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
+        unsigned long long figures = this->whites | this->blacks;
+
+        bool colorsDisjoint = (this->whites & this->blacks) == 0;
+        int pieceCount =
+                __builtin_popcountll(this->rooks) + __builtin_popcountll(this->knights) +
+                __builtin_popcountll(this->bishops) + __builtin_popcountll(this->queens) +
+                __builtin_popcountll(this->kings) + __builtin_popcountll(this->pawns);
+        bool piecesDisjoint = (__builtin_popcountll(all) == pieceCount);
+
+        if (!((all == figures) && colorsDisjoint && piecesDisjoint))
         {
                 std::cout << "info string [Board::checkConsistency] board information is INCONSISTENT." << std::endl;
                 std::cout << std::hex
