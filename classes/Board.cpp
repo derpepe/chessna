@@ -664,40 +664,118 @@ bool Board::isSquareAttacked(int square, char byPlayer)
 	return false;
 }
 
-unsigned long long Board::perft(int depth)
+PerftResult Board::perft(int depth)
 {
+	PerftResult result;
 	if (depth == 0)
 	{
-		return 1;
+		result.nodes = 1;
+		return result;
 	}
 
 	std::vector<std::string> moves = this->getAllMoves();
-	unsigned long long nodes = 0;
 
-	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
+	if (depth == 1)
 	{
-		Board nextBoard(*this);
-		nextBoard.executeMove(*it);
-		nodes += nextBoard.perft(depth - 1);
+		result.nodes = moves.size();
+		for (const auto& move : moves)
+		{
+			int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+			int to = Lib::getBitnumFromCoordinates(move.substr(2,2));
+			unsigned long long from_bb = 1ULL << from;
+			unsigned long long to_bb = 1ULL << to;
+
+			// Capture check
+			unsigned long long opponent_pieces = (this->playerToMove == 'w') ? this->blacks : this->whites;
+			if ((to_bb & opponent_pieces) != 0) {
+				result.captures++;
+			}
+			// En Passant check
+			if (((from_bb & this->pawns) != 0) && (this->enPassant != "-")) {
+				int ep_square = Lib::getBitnumFromCoordinates(this->enPassant);
+				if (to == ep_square) {
+					result.en_passant++;
+					// EP is a capture, but it's not on an occupied square, so we need to increment captures here too.
+					// However, my previous check for captures only checks for opponent pieces on the 'to' square.
+					// Let's assume the 'is_capture' logic will be handled correctly.
+					// An EP capture is still a capture.
+					// The move generation logic should handle this. Let's see...
+					// The target square is empty, so the `to_bb & opponent_pieces` will be false.
+					// So we must increment captures for EP here.
+					result.captures++;
+				}
+			}
+			// Castle check
+			if (((from_bb & this->kings) != 0) && abs(to - from) == 2) {
+				result.castles++;
+			}
+			// Promotion check
+			if (move.length() > 4) {
+				result.promotions++;
+			}
+
+			// Check and Checkmate check
+			Board nextBoard(*this);
+			nextBoard.executeMove(move);
+			char mover_color = this->playerToMove;
+			unsigned long long opponent_king_bb;
+			if (nextBoard.playerToMove == 'w') {
+				opponent_king_bb = nextBoard.kings & nextBoard.whites;
+			} else {
+				opponent_king_bb = nextBoard.kings & nextBoard.blacks;
+			}
+			int opponent_king_sq = __builtin_ffsll(opponent_king_bb) - 1;
+
+			if (opponent_king_sq >= 0 && nextBoard.isSquareAttacked(opponent_king_sq, mover_color)) {
+				result.checks++;
+				if (nextBoard.getAllMoves().empty()) {
+					result.checkmates++;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (const auto& move : moves)
+		{
+			Board nextBoard(*this);
+			nextBoard.executeMove(move);
+			result += nextBoard.perft(depth - 1);
+		}
 	}
 
-	return nodes;
+	return result;
 }
 
 void Board::perftDivide(int depth)
 {
 	std::vector<std::string> moves = this->getAllMoves();
-	unsigned long long nodes = 0;
-	unsigned long long child_nodes;
+	PerftResult total_result;
 
-	for (std::vector<std::string>::iterator it = moves.begin(); it != moves.end(); ++it)
+	for (const auto& move : moves)
 	{
 		Board nextBoard(*this);
-		nextBoard.executeMove(*it);
-		child_nodes = nextBoard.perft(depth - 1);
-		nodes += child_nodes;
-		std::cout << *it << ": " << child_nodes << std::endl;
+		nextBoard.executeMove(move);
+		PerftResult child_result = nextBoard.perft(depth - 1);
+		total_result += child_result;
+		std::cout << move << ": "
+			<< "nodes " << child_result.nodes << " "
+			<< "captures " << child_result.captures << " "
+			<< "ep " << child_result.en_passant << " "
+			<< "castles " << child_result.castles << " "
+			<< "promotions " << child_result.promotions << " "
+			<< "checks " << child_result.checks << " "
+			<< "checkmates " << child_result.checkmates
+			<< std::endl;
 	}
 
-	std::cout << std::endl << "Total: " << nodes << std::endl;
+	std::cout << std::endl
+		<< "Total:" << std::endl
+		<< " nodes " << total_result.nodes << std::endl
+		<< " captures " << total_result.captures << std::endl
+		<< " ep " << total_result.en_passant << std::endl
+		<< " castles " << total_result.castles << std::endl
+		<< " promotions " << total_result.promotions << std::endl
+		<< " checks " << total_result.checks << std::endl
+		<< " checkmates " << total_result.checkmates << std::endl;
 }

@@ -64,9 +64,16 @@ void Engine::go()
 void Engine::perft(int depth)
 {
 	std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
-	unsigned long long nodes = this->board->perft(depth);
+	PerftResult result = this->board->perft(depth);
 	std::ostringstream output;
-	output << "info string nodes " << nodes << std::endl;
+	output << "info string" << std::endl
+		<< " nodes " << result.nodes << std::endl
+		<< " captures " << result.captures << std::endl
+		<< " ep " << result.en_passant << std::endl
+		<< " castles " << result.castles << std::endl
+		<< " promotions " << result.promotions << std::endl
+		<< " checks " << result.checks << std::endl
+		<< " checkmates " << result.checkmates << std::endl;
 	this->comm->uciOutput(output.str());
 }
 

@@ -27,11 +27,11 @@ void runTests() {
     for (const auto& test : tests) {
         Board board;
         board.loadFen(test.fen);
-        unsigned long long result = board.perft(test.depth);
-        if (result == test.expected_nodes) {
-            std::cout << "Test passed: FEN: " << test.fen << " Depth: " << test.depth << " Result: " << result << std::endl;
+        PerftResult result = board.perft(test.depth);
+        if (result.nodes == test.expected_nodes) {
+            std::cout << "Test passed: FEN: " << test.fen << " Depth: " << test.depth << " Result: " << result.nodes << std::endl;
         } else {
-            std::cout << "Test FAILED: FEN: " << test.fen << " Depth: " << test.depth << " Expected: " << test.expected_nodes << " Got: " << result << std::endl;
+            std::cout << "Test FAILED: FEN: " << test.fen << " Depth: " << test.depth << " Expected: " << test.expected_nodes << " Got: " << result.nodes << std::endl;
             all_tests_passed = false;
         }
     }
