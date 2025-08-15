@@ -3,6 +3,8 @@
 #include "Board.h"
 #include "MoveGenerator.h"
 #include <iostream>
+#include <iomanip>
+#include <cstdlib>
 
 Board::Board()
 {
@@ -338,12 +340,27 @@ void Board::checkConsistency()
 {
 	unsigned long long all = this->rooks | this->knights | this->bishops | this->queens | this->kings | this->pawns;
 	unsigned long long figures = (this->whites | this->blacks);
-	if (!((all == figures)
-		&& (figures - this->whites - this->blacks == 0)
-		&& (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0)))
-	{
-		std::cout << "info string [Board::checkConsistency] board information is INCONSISTENT." << std::endl;
-	}
+        if (!((all == figures)
+                && (figures - this->whites - this->blacks == 0)
+                && (figures - this->rooks - this->knights - this->bishops - this->queens - this->kings - this->pawns == 0)))
+        {
+                std::cout << "info string [Board::checkConsistency] board information is INCONSISTENT." << std::endl;
+                std::cout << std::hex
+                          << "whites: " << this->whites << " blacks: " << this->blacks << '\n'
+                          << "kings: " << this->kings << " queens: " << this->queens << '\n'
+                          << "rooks: " << this->rooks << " bishops: " << this->bishops << '\n'
+                          << "knights: " << this->knights << " pawns: " << this->pawns << '\n'
+                          << std::dec
+                          << "playerToMove: " << this->playerToMove << '\n'
+                          << "casteling_K: " << this->casteling_K
+                          << " casteling_Q: " << this->casteling_Q
+                          << " casteling_k: " << this->casteling_k
+                          << " casteling_q: " << this->casteling_q << '\n'
+                          << "enPassant: " << this->enPassant << '\n'
+                          << "halfmoves: " << this->halfmoves
+                          << " currentMove: " << this->currentMove << std::endl;
+                std::exit(EXIT_FAILURE);
+        }
 }
 
 std::vector<std::string> Board::getAllMoves()
