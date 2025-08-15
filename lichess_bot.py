@@ -1,4 +1,3 @@
-#!/opt/homebrew/bin/python3
 import subprocess
 import threading
 import queue
@@ -8,12 +7,12 @@ import berserk
 # --- Configuration ---
 # TODO: The user should replace this with their own Lichess API token.
 # You can create a token at: https://lichess.org/account/oauth/token/create
-LICHESS_API_TOKEN = "YOUR_LICHESS_API_TOKEN"
+LICHESS_API_TOKEN = "lip_mXKdH4gpeg6X4fzjxCE3"
 
 # Path to the chess engine executable.
 # On Windows, this is likely 'bin/chessna.exe'.
 # On Linux/macOS, you might need to compile it first (`make`) and use 'bin/chessna'.
-ENGINE_PATH = "bin/chessna.exe"
+ENGINE_PATH = "./bin/chessna"
 
 # Time to think per move, in milliseconds.
 # The `stop` command is buggy, so we use a fixed time.
