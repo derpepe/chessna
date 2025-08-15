@@ -50,6 +50,44 @@ Ein spezieller Testmodus führt eine Reihe von internen `perft`-Tests durch, um 
 ./bin/chessna --test
 ```
 
+### Als Lichess-Bot
+
+Das Projekt enthält ein Python-Skript, um die CHESSna-Engine als Bot auf [Lichess.org](https://lichess.org) zu betreiben.
+
+**Voraussetzungen:**
+- Python 3
+- Ein Lichess-Account mit einem API-Token
+
+**1. Installation der Abhängigkeiten:**
+
+Installieren Sie die benötigte Python-Bibliothek mit dem folgenden Befehl:
+```sh
+pip install -r requirements.txt
+```
+
+**2. Konfiguration:**
+
+Öffnen Sie die Datei `lichess_bot.py` und tragen Sie Ihren Lichess API-Token in die Variable `LICHESS_API_TOKEN` ein. Sie können einen Token unter [lichess.org/account/oauth/token/create](https://lichess.org/account/oauth/token/create) erstellen. Stellen Sie sicher, dass der Token die Berechtigung "Spiele als Bot spielen" (`bot:play`) hat.
+
+```python
+# lichess_bot.py
+
+# ...
+LICHESS_API_TOKEN = "DEIN_API_TOKEN_HIER_EINFÜGEN"
+# ...
+```
+
+Passen Sie bei Bedarf auch den Pfad zur Engine-Executable in der Variable `ENGINE_PATH` an.
+
+**3. Bot starten:**
+
+Führen Sie das Skript aus, um den Bot zu starten:
+```sh
+python lichess_bot.py
+```
+
+Der Bot verbindet sich dann mit Lichess, wartet auf Herausforderungen und spielt automatisch Partien.
+
 ## Besonderheiten
 
 ### Benutzerdefinierte Befehle
