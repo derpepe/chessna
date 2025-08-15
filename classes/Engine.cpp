@@ -47,11 +47,11 @@ void Engine::run()
 
 void Engine::go()
 {
-	std::cout << "info string [Engine::go] let's go!" << std::endl;
-	
-	MoveGenerator moveGenerator;
-	std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
-	std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
+        std::cout << "info string [Engine::go] let's go!" << std::endl;
+
+        MoveGenerator moveGenerator;
+        std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
+        std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
 	
 	if (possibleMoves.empty())
 	{
@@ -59,31 +59,83 @@ void Engine::go()
 		return;
 	}
 
-	std::string bestMove = "";
-	int bestScore = -1;
+        std::string bestMove = "";
+        int bestScore = -100000;
 
-	for (const auto& move : possibleMoves)
-	{
-		int score = Evaluator::evaluate(*this->board, move);
-		if (score > bestScore)
-		{
-			bestScore = score;
-			bestMove = move;
-		}
-	}
+        for (const auto& move : possibleMoves)
+        {
+                Board nextBoard(*this->board);
+                nextBoard.executeMove(move);
+                int score = this->minimax(nextBoard, 3, false);
+                if (score > bestScore)
+                {
+                        bestScore = score;
+                        bestMove = move;
+                }
+        }
 
-	if (bestMove == "")
-	{
-		// If no move has a score > 0, pick a random one
-		std::random_device seed;
-		std::mt19937 engine(seed());
-		std::uniform_int_distribution<int> choose(0 , possibleMoves.size() - 1);
-		bestMove = possibleMoves[choose(engine)];
-	}
+        if (bestMove == "")
+        {
+                // If all moves have the same score, pick a random one
+                std::random_device seed;
+                std::mt19937 engine(seed());
+                std::uniform_int_distribution<int> choose(0 , possibleMoves.size() - 1);
+                bestMove = possibleMoves[choose(engine)];
+        }
 
-	std::ostringstream output;
-	output << "bestmove " << bestMove << std::endl;
-	this->comm->uciOutput(output.str());
+        std::ostringstream output;
+        output << "bestmove " << bestMove << std::endl;
+        this->comm->uciOutput(output.str());
+}
+
+int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
+{
+        MoveGenerator moveGenerator;
+        std::vector<std::string> moves = moveGenerator.getAllMoves(board);
+
+        if (depth == 0 || moves.empty())
+        {
+                if (moves.empty()) return 0;
+                int bestScore = maximizingPlayer ? -100000 : 100000;
+                for (const auto& move : moves)
+                {
+                        int score = Evaluator::evaluate(board, move);
+                        if (maximizingPlayer)
+                        {
+                                if (score > bestScore) bestScore = score;
+                        }
+                        else
+                        {
+                                if (score < bestScore) bestScore = score;
+                        }
+                }
+                return bestScore;
+        }
+
+        if (maximizingPlayer)
+        {
+                int maxEval = -100000;
+                for (const auto& move : moves)
+                {
+                        Board nextBoard(board);
+                        nextBoard.executeMove(move);
+                        int eval = minimax(nextBoard, depth - 1, false);
+                        if (eval > maxEval) maxEval = eval;
+                }
+                return maxEval;
+        }
+        else
+        {
+                int minEval = 100000;
+                for (const auto& move : moves)
+                {
+                        Board nextBoard(board);
+                        nextBoard.executeMove(move);
+                        int eval = minimax(nextBoard, depth - 1, true);
+                        if (eval < minEval) minEval = eval;
+                }
+                return minEval;
+        }
 }
 
 void Engine::perft(int depth)

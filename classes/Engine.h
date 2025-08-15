@@ -20,12 +20,14 @@ public:
 	void executeMove(std::string);
 	void debug();
 	void perft(int);
-	void perftDivide(int);
-	
+        void perftDivide(int);
+
 private:
-	Board *board;
-	Comm *comm;
-	Perft *perft_runner;
+        Board *board;
+        Comm *comm;
+        Perft *perft_runner;
+
+        int minimax(Board& board, int depth, bool maximizingPlayer);
 };
 
 #endif
