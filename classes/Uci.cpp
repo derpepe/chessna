@@ -24,7 +24,7 @@ void Uci::parse(std::string p_parameters)
 	std::vector<std::string> parameters = Lib::split(p_parameters, ' ');
 	if (parameters.size() == 0)
 	{
-		return;
+	        return;
 	}
 	
 	// parse command
@@ -55,37 +55,53 @@ void Uci::parse(std::string p_parameters)
 	}
 	else if (command.compare("position") == 0)
 	{
-		std::vector<std::string>::iterator tokenIterator = parameters.begin();
-		++tokenIterator; // skip command
-		std::string position = *tokenIterator; // get second word (startpos | fen)
-		
-		std::string fen = Fen::startPos;
-		if (position.compare("fen") == 0)
-		{
-			++tokenIterator; // skip 'fen'
-			std::ostringstream f;
-			f << *tokenIterator; // position
-			++tokenIterator;
-			f << " " << *tokenIterator; // player to move
-			++tokenIterator;
-			f << " " << *tokenIterator; // casteling
-			++tokenIterator;
-			f << " " << *tokenIterator; // en passant
-			++tokenIterator;
-			f << " " << *tokenIterator; // halfmoves
-			++tokenIterator;
-			f << " " << *tokenIterator; // currentMove
-			fen = f.str();
-		}
-		++tokenIterator; // skip last keyowrd ('startpos' or currentMove)
-	
-		this->comm->engineSetPosition(fen);
+	        if (parameters.size() < 2)
+	        {
+	                this->sendString("info string Error: position requires arguments\n");
+	                return;
+	        }
 
-		if (tokenIterator != parameters.end()) ++tokenIterator; // skip 'moves'
-		for ( ; tokenIterator != parameters.end(); ++tokenIterator)
-		{
-			this->comm->engineExecuteMove(*tokenIterator);
-		}
+	        std::vector<std::string>::iterator tokenIterator = parameters.begin();
+	        ++tokenIterator; // skip command
+	        std::string token = *tokenIterator;
+
+	        std::string fen = Fen::startPos;
+	        if (token.compare("startpos") == 0)
+	        {
+	                ++tokenIterator;
+	        }
+	        else if (token.compare("fen") == 0)
+	        {
+	                if (parameters.size() < 8)
+	                {
+	                        this->sendString("info string Error: position fen requires 6 fields\n");
+	                        return;
+	                }
+	                ++tokenIterator; // skip 'fen'
+	                std::ostringstream f;
+	                for (int i = 0; i < 6; ++i, ++tokenIterator)
+	                {
+	                        f << *tokenIterator;
+	                        if (i < 5) f << " ";
+	                }
+	                fen = f.str();
+	        }
+	        else
+	        {
+	                this->sendString("info string Error: position requires 'startpos' or 'fen'\n");
+	                return;
+	        }
+
+	        this->comm->engineSetPosition(fen);
+
+	        if (tokenIterator != parameters.end() && (*tokenIterator).compare("moves") == 0)
+	        {
+	                ++tokenIterator; // skip 'moves'
+	                for ( ; tokenIterator != parameters.end(); ++tokenIterator)
+	                {
+	                        this->comm->engineExecuteMove(*tokenIterator);
+	                }
+	        }
 	}
 	
 	// custom commands
@@ -106,13 +122,47 @@ void Uci::parse(std::string p_parameters)
 	}
 	else if (command.compare("perft") == 0)
 	{
-		int depth = std::stoi(parameters[1]);
-		this->comm->enginePerft(depth);
+	        if (parameters.size() < 2 || parameters[1].empty())
+	        {
+	                this->sendString("info string Error: perft requires depth parameter\n");
+	                return;
+	        }
+	        try
+	        {
+	                int depth = std::stoi(parameters[1]);
+	                if (depth < 0)
+	                {
+	                        this->sendString("info string Error: perft depth must be non-negative\n");
+	                        return;
+	                }
+	                this->comm->enginePerft(depth);
+	        }
+	        catch(const std::exception &)
+	        {
+	                this->sendString("info string Error: perft requires numeric depth\n");
+	        }
 	}
 	else if (command.compare("perfdiv") == 0)
 	{
-		int depth = std::stoi(parameters[1]);
-		this->comm->enginePerftDivide(depth);
+	        if (parameters.size() < 2 || parameters[1].empty())
+	        {
+	                this->sendString("info string Error: perfdiv requires depth parameter\n");
+	                return;
+	        }
+	        try
+	        {
+	                int depth = std::stoi(parameters[1]);
+	                if (depth < 0)
+	                {
+	                        this->sendString("info string Error: perfdiv depth must be non-negative\n");
+	                        return;
+	                }
+	                this->comm->enginePerftDivide(depth);
+	        }
+	        catch(const std::exception &)
+	        {
+	                this->sendString("info string Error: perfdiv requires numeric depth\n");
+	        }
 	}
 	else
 	{
