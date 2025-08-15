@@ -113,7 +113,7 @@ void Uci::parse(std::string p_parameters)
                 help << prefix << std::endl;
                 help << prefix << "  board  Displays debug output." << std::endl;
                 help << prefix << "  perft <depth>  Performance test of the move generation." << std::endl;
-                help << prefix << "  perfdiv <depth>  Performance test of the move generation with debug output." << std::endl;
+                help << prefix << "  perftdiv <depth>  Performance test of the move generation with debug output." << std::endl;
                 this->sendString(help.str());
         }
 	else if (command.compare("board") == 0)
@@ -142,28 +142,28 @@ void Uci::parse(std::string p_parameters)
 	                this->sendString("info string Error: perft requires numeric depth\n");
 	        }
 	}
-	else if (command.compare("perfdiv") == 0)
-	{
-	        if (parameters.size() < 2 || parameters[1].empty())
-	        {
-	                this->sendString("info string Error: perfdiv requires depth parameter\n");
-	                return;
-	        }
-	        try
-	        {
-	                int depth = std::stoi(parameters[1]);
-	                if (depth < 0)
-	                {
-	                        this->sendString("info string Error: perfdiv depth must be non-negative\n");
-	                        return;
-	                }
-	                this->comm->enginePerftDivide(depth);
-	        }
-	        catch(const std::exception &)
-	        {
-	                this->sendString("info string Error: perfdiv requires numeric depth\n");
-	        }
-	}
+        else if (command.compare("perftdiv") == 0)
+        {
+                if (parameters.size() < 2 || parameters[1].empty())
+                {
+                        this->sendString("info string Error: perftdiv requires depth parameter\n");
+                        return;
+                }
+                try
+                {
+                        int depth = std::stoi(parameters[1]);
+                        if (depth < 0)
+                        {
+                                this->sendString("info string Error: perftdiv depth must be non-negative\n");
+                                return;
+                        }
+                        this->comm->enginePerftDivide(depth);
+                }
+                catch(const std::exception &)
+                {
+                        this->sendString("info string Error: perftdiv requires numeric depth\n");
+                }
+        }
 	else
 	{
 		// ignore unknown command
