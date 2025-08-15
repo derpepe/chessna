@@ -4357,3 +4357,1168 @@ six==1.17.0
 2025-08-15 16:56:56,685 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'gameStart', 'game': {'fullId': 'EhrjytR7M9mm', 'gameId': 'EhrjytR7', 'fen': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', 'color': 'black', 'lastMove': '', 'source': 'friend', 'status': {'id': 20, 'name': 'started'}, 'variant': {'key': 'standard', 'name': 'Standard'}, 'speed': 'correspondence', 'perf': 'correspondence', 'rated': False, 'hasMoved': False, 'opponent': {'id': 'pjsde', 'username': 'pjsde', 'rating': 1500}, 'isMyTurn': False, 'compat': {'bot': True, 'board': True}, 'id': 'EhrjytR7'}}
 2025-08-15 16:56:56,685 lib.lichess_bot (lichess_bot.py:584) INFO --- Enqueue https://lichess.org/EhrjytR7
 2025-08-15 16:57:04,844 lib.lichess_bot (lichess_bot.py:1251) INFO Termination requested - stopping restart cycle
+2025-08-15 17:19:30,535 lib.lichess_bot (lichess_bot.py:1174) INFO 
+    .   _/|
+    .  // o\
+    .  || ._)  lichess-bot 2025.8.7.1 on Darwin 24.6.0
+    .  //__\
+    .  )___(   Play on Lichess with a bot
+    
+2025-08-15 17:19:30,547 lib.config (config.py:288) DEBUG Config:
+token: logger
+url: https://lichess.org/
+engine:
+  dir: ../bin/
+  name: chessna
+  working_dir: ''
+  protocol: uci
+  ponder: false
+  polyglot:
+    enabled: false
+    book:
+      standard: null
+    min_weight: 1
+    selection: weighted_random
+    max_depth: 20
+    normalization: none
+  draw_or_resign:
+    resign_enabled: false
+    resign_score: -1000
+    resign_for_egtb_minus_two: true
+    resign_moves: 3
+    offer_draw_enabled: true
+    offer_draw_score: 0
+    offer_draw_for_egtb_zero: true
+    offer_draw_moves: 10
+    offer_draw_pieces: 10
+  online_moves:
+    max_out_of_book_moves: 10
+    max_retries: 2
+    chessdb_book:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: good
+      min_depth: 20
+    lichess_cloud_analysis:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: best
+      max_score_difference: 50
+      min_depth: 20
+      min_knodes: 0
+    lichess_opening_explorer:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      source: masters
+      player_name: ''
+      sort: winrate
+      min_games: 10
+    online_egtb:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      max_pieces: 7
+      source: lichess
+      move_quality: best
+  lichess_bot_tbs:
+    syzygy:
+      enabled: false
+      paths:
+      - engines/syzygy
+      max_pieces: 7
+      move_quality: best
+    gaviota:
+      enabled: false
+      paths:
+      - engines/gaviota
+      max_pieces: 5
+      min_dtm_to_consider_as_wdl_1: 120
+      move_quality: best
+  homemade_options: null
+  uci_options: null
+  silence_stderr: false
+abort_time: 30
+fake_think_time: false
+rate_limiting_delay: 0
+move_overhead: 2000
+max_takebacks_accepted: 0
+quit_after_all_games_finish: false
+correspondence:
+  move_time: 60
+  checkin_period: 300
+  disconnect_time: 150
+  ponder: false
+challenge:
+  concurrency: 1
+  sort_by: best
+  preference: none
+  accept_bot: true
+  only_bot: false
+  max_increment: 20
+  min_increment: 0
+  max_base: 1800
+  min_base: 0
+  max_days: 14
+  min_days: 1
+  variants:
+  - standard
+  time_controls:
+  - bullet
+  - blitz
+  - rapid
+  - classical
+  modes:
+  - casual
+  - rated
+  bullet_requires_increment: false
+  max_simultaneous_games_per_user: 5
+greeting:
+  hello: Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond
+    to.
+  goodbye: Good game!
+  hello_spectators: Hi! I'm {me}. Type !help for a list of commands I can respond
+    to.
+  goodbye_spectators: Thanks for watching!
+matchmaking:
+  allow_matchmaking: false
+  allow_during_games: false
+  challenge_variant: random
+  challenge_timeout: 30
+  challenge_initial_time:
+  - 60
+  - 180
+  challenge_increment:
+  - 1
+  - 2
+  opponent_rating_difference: 300
+  rating_preference: none
+  challenge_mode: random
+  challenge_filter: none
+  include_challenge_block_list: false
+
+2025-08-15 17:19:30,547 lib.config (config.py:289) DEBUG ====================
+2025-08-15 17:19:30,550 lib.config (config.py:288) DEBUG Config:
+token: logger
+url: https://lichess.org/
+engine:
+  dir: ../bin/
+  name: chessna
+  working_dir: /Users/peter/work/chessna/lichess-bot
+  protocol: uci
+  ponder: false
+  polyglot:
+    enabled: false
+    book:
+      standard: null
+    min_weight: 1
+    selection: weighted_random
+    max_depth: 20
+    normalization: none
+  draw_or_resign:
+    resign_enabled: false
+    resign_score: -1000
+    resign_for_egtb_minus_two: true
+    resign_moves: 3
+    offer_draw_enabled: true
+    offer_draw_score: 0
+    offer_draw_for_egtb_zero: true
+    offer_draw_moves: 10
+    offer_draw_pieces: 10
+  online_moves:
+    max_out_of_book_moves: 10
+    max_retries: 2
+    chessdb_book:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: good
+      min_depth: 20
+    lichess_cloud_analysis:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: best
+      max_score_difference: 50
+      min_depth: 20
+      min_knodes: 0
+    lichess_opening_explorer:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      source: masters
+      player_name: ''
+      sort: winrate
+      min_games: 10
+    online_egtb:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      max_pieces: 7
+      source: lichess
+      move_quality: best
+    max_depth: .inf
+  lichess_bot_tbs:
+    syzygy:
+      enabled: false
+      paths:
+      - engines/syzygy
+      max_pieces: 7
+      move_quality: best
+    gaviota:
+      enabled: false
+      paths:
+      - engines/gaviota
+      max_pieces: 5
+      min_dtm_to_consider_as_wdl_1: 120
+      move_quality: best
+  homemade_options: null
+  uci_options: null
+  silence_stderr: false
+  interpreter: null
+  interpreter_options: []
+  uci_ponder: false
+abort_time: 30
+fake_think_time: false
+rate_limiting_delay: 0
+move_overhead: 2000
+max_takebacks_accepted: 0
+quit_after_all_games_finish: false
+correspondence:
+  move_time: 60
+  checkin_period: 300
+  disconnect_time: 150
+  ponder: false
+  uci_ponder: false
+challenge:
+  concurrency: 1
+  sort_by: best
+  preference: none
+  accept_bot: true
+  only_bot: false
+  max_increment: 20
+  min_increment: 0
+  max_base: 1800
+  min_base: 0
+  max_days: 14
+  min_days: 1
+  variants:
+  - standard
+  time_controls:
+  - bullet
+  - blitz
+  - rapid
+  - classical
+  modes:
+  - casual
+  - rated
+  bullet_requires_increment: false
+  max_simultaneous_games_per_user: 5
+  block_list: []
+  online_block_list: []
+  allow_list: []
+greeting:
+  hello: Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond
+    to.
+  goodbye: Good game!
+  hello_spectators: Hi! I'm {me}. Type !help for a list of commands I can respond
+    to.
+  goodbye_spectators: Thanks for watching!
+matchmaking:
+  allow_matchmaking: false
+  allow_during_games: false
+  challenge_variant: random
+  challenge_timeout: 30
+  challenge_initial_time:
+  - 60
+  - 180
+  challenge_increment:
+  - 1
+  - 2
+  opponent_rating_difference: 300
+  rating_preference: none
+  challenge_mode: random
+  challenge_filter: none
+  include_challenge_block_list: false
+  block_list: []
+  online_block_list: []
+  challenge_days:
+  - null
+  opponent_min_rating: 600
+  opponent_max_rating: 4000
+  overrides: {}
+pgn_directory: null
+pgn_file_grouping: game
+
+2025-08-15 17:19:30,550 lib.config (config.py:289) DEBUG ====================
+2025-08-15 17:19:30,553 lib.lichess_bot (lichess_bot.py:1180) INFO Checking engine configuration ...
+2025-08-15 17:19:30,554 lib.engine_wrapper (engine_wrapper.py:69) DEBUG Starting engine: ['/Users/peter/work/chessna/bin/chessna']
+2025-08-15 17:19:30,554 asyncio (selector_events.py:64) DEBUG Using selector: KqueueSelector
+2025-08-15 17:19:30,557 chess.engine (engine.py:928) DEBUG <UciProtocol (pid=32340)>: Connection made
+2025-08-15 17:19:30,557 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32340)>: << uci
+2025-08-15 17:19:30,558 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32340)>: >> id name CHESSna 2 Version 0.01 alpha
+2025-08-15 17:19:30,558 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32340)>: >> id author Peter Schneider
+2025-08-15 17:19:30,558 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32340)>: >> uciok
+2025-08-15 17:19:30,558 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32340)>: << isready
+2025-08-15 17:19:30,558 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32340)>: >> readyok
+2025-08-15 17:19:30,558 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32340)>: << quit
+2025-08-15 17:19:30,558 chess.engine (engine.py:947) DEBUG <UciProtocol (pid=32340)>: Process exited
+2025-08-15 17:19:30,558 chess.engine (engine.py:934) DEBUG <UciProtocol (pid=32340)>: Connection lost (exit code: 0, error: None)
+2025-08-15 17:19:30,559 lib.lichess_bot (lichess_bot.py:1183) INFO Engine configuration OK
+2025-08-15 17:19:30,559 lib.lichess_bot (lichess_bot.py:1153) DEBUG Python version: 3.13.6.final.0
+2025-08-15 17:19:30,567 lib.lichess_bot (lichess_bot.py:1159) DEBUG Installed libraries:
+pip==25.2
+idna==3.10
+urllib3==2.5.0
+charset-normalizer==3.4.3
+requests==2.32.4
+typing_extensions==4.14.1
+certifi==2025.8.3
+rich==14.1.0
+markdown-it-py==4.0.0
+wrapt==1.17.3
+Deprecated==1.2.18
+mdurl==0.1.2
+python-dateutil==2.9.0.post0
+berserk==0.13.2
+Pygments==2.19.2
+chess==1.11.2
+PyYAML==6.0.2
+backoff==2.2.1
+ndjson==0.3.1
+six==1.17.0
+
+
+2025-08-15 17:19:30,573 urllib3.connectionpool (connectionpool.py:1049) DEBUG Starting new HTTPS connection (1): lichess.org:443
+2025-08-15 17:19:30,910 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/token/test HTTP/1.1" 200 None
+2025-08-15 17:19:30,968 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/account HTTP/1.1" 200 None
+2025-08-15 17:19:30,970 lib.lichess_bot (lichess_bot.py:1193) INFO Welcome chessna2!
+2025-08-15 17:19:30,973 lib.lichess_bot (lichess_bot.py:260) INFO You're now connected to https://lichess.org/ and awaiting challenges.
+2025-08-15 17:19:31,265 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/account/playing HTTP/1.1" 200 None
+2025-08-15 17:19:31,623 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'gameStart', 'game': {'fullId': 'EhrjytR7M9mm', 'gameId': 'EhrjytR7', 'fen': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', 'color': 'black', 'lastMove': '', 'source': 'friend', 'status': {'id': 20, 'name': 'started'}, 'variant': {'key': 'standard', 'name': 'Standard'}, 'speed': 'correspondence', 'perf': 'correspondence', 'rated': False, 'hasMoved': False, 'opponent': {'id': 'pjsde', 'username': 'pjsde', 'rating': 1500}, 'isMyTurn': False, 'compat': {'bot': True, 'board': True}, 'id': 'EhrjytR7'}}
+2025-08-15 17:19:31,624 lib.lichess_bot (lichess_bot.py:584) INFO --- Enqueue https://lichess.org/EhrjytR7
+2025-08-15 17:19:46,851 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'challenge', 'challenge': {'id': 'hif9cR1X', 'url': 'https://lichess.org/hif9cR1X', 'status': 'created', 'challenger': {'id': 'pjsde', 'name': 'pjsde', 'rating': 897, 'title': None, 'online': True}, 'destUser': {'id': 'chessna2', 'name': 'chessna2', 'rating': 2000, 'title': 'BOT', 'provisional': True, 'online': True}, 'variant': {'key': 'standard', 'name': 'Standard', 'short': 'Std'}, 'rated': False, 'speed': 'blitz', 'timeControl': {'type': 'clock', 'limit': 300, 'increment': 3, 'show': '5+3'}, 'color': 'random', 'finalColor': 'black', 'perf': {'icon': '\ue008', 'name': 'Blitz'}}, 'compat': {'bot': True, 'board': True}}
+2025-08-15 17:19:46,853 urllib3.connectionpool (connectionpool.py:289) DEBUG Resetting dropped connection: lichess.org
+2025-08-15 17:19:47,090 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/account/playing HTTP/1.1" 200 None
+2025-08-15 17:19:47,092 lib.lichess_bot (lichess_bot.py:498) INFO Accept Blitz casual challenge from pjsde (897) (hif9cR1X)
+2025-08-15 17:19:47,201 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/challenge/hif9cR1X/accept HTTP/1.1" 200 11
+2025-08-15 17:19:47,202 lib.lichess_bot (lichess_bot.py:320) INFO --- Process Queued. Count: 1. IDs: {'hif9cR1X'}
+2025-08-15 17:19:47,203 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'gameStart', 'game': {'fullId': 'hif9cR1XqT3Y', 'gameId': 'hif9cR1X', 'fen': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', 'color': 'white', 'lastMove': '', 'source': 'friend', 'status': {'id': 20, 'name': 'started'}, 'variant': {'key': 'standard', 'name': 'Standard'}, 'speed': 'blitz', 'perf': 'blitz', 'rated': False, 'hasMoved': False, 'opponent': {'id': 'pjsde', 'username': 'pjsde', 'rating': 897}, 'isMyTurn': True, 'secondsLeft': 300, 'compat': {'bot': True, 'board': True}, 'id': 'hif9cR1X'}}
+2025-08-15 17:19:47,203 lib.lichess_bot (lichess_bot.py:320) INFO --- Process Used. Count: 1. IDs: {'hif9cR1X'}
+2025-08-15 17:19:47,232 urllib3.connectionpool (connectionpool.py:1049) DEBUG Starting new HTTPS connection (1): lichess.org:443
+2025-08-15 17:19:47,415 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/bot/game/stream/hif9cR1X HTTP/1.1" 200 None
+2025-08-15 17:19:47,417 lib.lichess_bot (lichess_bot.py:655) DEBUG Initial state: {'id': 'hif9cR1X', 'variant': {'key': 'standard', 'name': 'Standard', 'short': 'Std'}, 'speed': 'blitz', 'perf': {'name': 'Blitz'}, 'rated': False, 'createdAt': 1755271187168, 'white': {'id': 'chessna2', 'name': 'chessna2', 'title': 'BOT', 'rating': 2000, 'provisional': True}, 'black': {'id': 'pjsde', 'name': 'pjsde', 'title': None, 'rating': 897}, 'initialFen': 'startpos', 'clock': {'initial': 300000, 'increment': 3000}, 'type': 'gameFull', 'state': {'type': 'gameState', 'moves': '', 'wtime': 300000, 'btime': 300000, 'winc': 3000, 'binc': 3000, 'status': 'started'}}
+2025-08-15 17:19:47,418 lib.engine_wrapper (engine_wrapper.py:69) DEBUG Starting engine: ['/Users/peter/work/chessna/bin/chessna']
+2025-08-15 17:19:47,419 asyncio (selector_events.py:64) DEBUG Using selector: KqueueSelector
+2025-08-15 17:19:47,433 chess.engine (engine.py:928) DEBUG <UciProtocol (pid=32362)>: Connection made
+2025-08-15 17:19:47,440 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << uci
+2025-08-15 17:19:47,441 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> id name CHESSna 2 Version 0.01 alpha
+2025-08-15 17:19:47,441 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> id author Peter Schneider
+2025-08-15 17:19:47,441 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> uciok
+2025-08-15 17:19:47,442 lib.lichess_bot (lichess_bot.py:661) DEBUG The engine for game hif9cR1X has pid=32362
+2025-08-15 17:19:47,443 lib.lichess_bot (lichess_bot.py:664) INFO +++ https://lichess.org/hif9cR1X/white Blitz vs pjsde (897) (hif9cR1X)
+2025-08-15 17:19:47,444 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': '', 'wtime': 300000, 'btime': 300000, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:19:47,444 lib.conversation (conversation.py:99) INFO *** https://lichess.org/hif9cR1X/white [player] chessna2: Hi! I'm chessna2. Good luck! Type !help for a list of commands I can respond to.
+2025-08-15 17:19:47,446 urllib3.connectionpool (connectionpool.py:1049) DEBUG Starting new HTTPS connection (2): lichess.org:443
+2025-08-15 17:19:47,626 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/chat HTTP/1.1" 200 11
+2025-08-15 17:19:47,626 lib.conversation (conversation.py:99) INFO *** https://lichess.org/hif9cR1X/white [spectator] chessna2: Hi! I'm chessna2. Type !help for a list of commands I can respond to.
+2025-08-15 17:19:47,681 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/chat HTTP/1.1" 200 11
+2025-08-15 17:19:47,682 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:19:47,682 lib.lichess_bot (lichess_bot.py:818) INFO move: 1
+2025-08-15 17:19:47,682 lib.engine_wrapper (engine_wrapper.py:700) INFO Searching for time 10 seconds for game hif9cR1X
+2025-08-15 17:19:47,682 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << ucinewgame
+2025-08-15 17:19:47,682 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << isready
+2025-08-15 17:19:47,682 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> readyok
+2025-08-15 17:19:47,682 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos
+2025-08-15 17:19:47,682 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go movetime 10000
+2025-08-15 17:19:47,683 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:19:47,683 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:19:47,683 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 20 moves
+2025-08-15 17:19:47,683 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove d2d4
+2025-08-15 17:19:47,683 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:19:47,729 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/d2d4?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:19:47,730 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'chatLine', 'room': 'player', 'username': 'chessna2', 'text': "Hi! I'm chessna2. Good luck! Type !help for a list of commands I can respond to."}
+2025-08-15 17:19:47,730 lib.conversation (conversation.py:57) INFO *** https://lichess.org/hif9cR1X/white [player] chessna2: Hi! I'm chessna2. Good luck! Type !help for a list of commands I can respond to.
+2025-08-15 17:19:47,730 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'chatLine', 'room': 'spectator', 'username': 'chessna2', 'text': "Hi! I'm chessna2. Type !help for a list of commands I can respond to."}
+2025-08-15 17:19:47,730 lib.conversation (conversation.py:57) INFO *** https://lichess.org/hif9cR1X/white [spectator] chessna2: Hi! I'm chessna2. Type !help for a list of commands I can respond to.
+2025-08-15 17:19:47,731 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4', 'wtime': 300000, 'btime': 300000, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:19:59,910 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5', 'wtime': 300000, 'btime': 300000, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:19:59,910 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:19:59,910 lib.lichess_bot (lichess_bot.py:818) INFO move: 2
+2025-08-15 17:19:59,910 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 298000 btime 300000 for game hif9cR1X
+2025-08-15 17:19:59,910 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5
+2025-08-15 17:19:59,910 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 298000 btime 300000 winc 3000 binc 3000
+2025-08-15 17:19:59,911 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:19:59,911 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:19:59,911 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:19:59,911 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:19:59,911 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 27 moves
+2025-08-15 17:19:59,911 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e2e4
+2025-08-15 17:19:59,911 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:19:59,912 urllib3.connectionpool (connectionpool.py:289) DEBUG Resetting dropped connection: lichess.org
+2025-08-15 17:20:00,157 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e2e4?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:00,158 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4', 'wtime': 302760, 'btime': 300000, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:01,491 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4', 'wtime': 302760, 'btime': 301810, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:01,492 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:01,492 lib.lichess_bot (lichess_bot.py:818) INFO move: 3
+2025-08-15 17:20:01,492 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 300760 btime 301810 for game hif9cR1X
+2025-08-15 17:20:01,492 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4
+2025-08-15 17:20:01,492 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 300760 btime 301810 winc 3000 binc 3000
+2025-08-15 17:20:01,492 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 37 moves
+2025-08-15 17:20:01,493 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove d4d5
+2025-08-15 17:20:01,493 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:01,556 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/d4d5?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:01,556 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5', 'wtime': 305690, 'btime': 301810, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:08,079 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6', 'wtime': 305690, 'btime': 298350, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:08,080 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:08,080 lib.lichess_bot (lichess_bot.py:818) INFO move: 4
+2025-08-15 17:20:08,080 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 303690 btime 298350 for game hif9cR1X
+2025-08-15 17:20:08,080 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6
+2025-08-15 17:20:08,080 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 303690 btime 298350 winc 3000 binc 3000
+2025-08-15 17:20:08,080 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:08,080 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:08,080 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:08,080 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:08,080 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:08,081 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:08,081 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:08,081 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:08,081 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 38 moves
+2025-08-15 17:20:08,081 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove d1d4
+2025-08-15 17:20:08,081 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:08,127 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/d1d4?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:08,131 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4', 'wtime': 308640, 'btime': 298350, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:14,614 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6', 'wtime': 308640, 'btime': 294970, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:14,615 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:14,615 lib.lichess_bot (lichess_bot.py:818) INFO move: 5
+2025-08-15 17:20:14,615 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 306640 btime 294970 for game hif9cR1X
+2025-08-15 17:20:14,615 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6
+2025-08-15 17:20:14,615 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 306640 btime 294970 winc 3000 binc 3000
+2025-08-15 17:20:14,615 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:14,615 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:14,615 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 47 moves
+2025-08-15 17:20:14,616 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove d4e4
+2025-08-15 17:20:14,616 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:14,671 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/d4e4?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:14,671 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4', 'wtime': 311580, 'btime': 294970, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:18,071 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4', 'wtime': 311580, 'btime': 294620, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:18,071 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:18,072 lib.lichess_bot (lichess_bot.py:818) INFO move: 6
+2025-08-15 17:20:18,072 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 309580 btime 294620 for game hif9cR1X
+2025-08-15 17:20:18,072 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4
+2025-08-15 17:20:18,072 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 309580 btime 294620 winc 3000 binc 3000
+2025-08-15 17:20:18,072 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:18,072 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 32 moves
+2025-08-15 17:20:18,073 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove d5e6
+2025-08-15 17:20:18,073 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:18,125 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/d5e6?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:18,125 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6', 'wtime': 314530, 'btime': 294620, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:25,054 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6', 'wtime': 314530, 'btime': 290750, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:25,054 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:25,054 lib.lichess_bot (lichess_bot.py:818) INFO move: 7
+2025-08-15 17:20:25,054 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 312530 btime 290750 for game hif9cR1X
+2025-08-15 17:20:25,054 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6
+2025-08-15 17:20:25,054 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 312530 btime 290750 winc 3000 binc 3000
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:25,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:25,056 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:25,056 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 29 moves
+2025-08-15 17:20:25,056 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e1e2
+2025-08-15 17:20:25,056 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:25,115 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e1e2?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:25,116 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2', 'wtime': 317470, 'btime': 290750, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:27,781 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4', 'wtime': 317470, 'btime': 291130, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:27,782 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:27,782 lib.lichess_bot (lichess_bot.py:818) INFO move: 8
+2025-08-15 17:20:27,782 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 315470 btime 291130 for game hif9cR1X
+2025-08-15 17:20:27,782 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4
+2025-08-15 17:20:27,782 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 315470 btime 291130 winc 3000 binc 3000
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 23 moves
+2025-08-15 17:20:27,783 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e2e3
+2025-08-15 17:20:27,784 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:27,830 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e2e3?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:27,831 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3', 'wtime': 320420, 'btime': 291130, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:29,750 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6', 'wtime': 320420, 'btime': 292370, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:29,751 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:29,751 lib.lichess_bot (lichess_bot.py:818) INFO move: 9
+2025-08-15 17:20:29,751 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 318420 btime 292370 for game hif9cR1X
+2025-08-15 17:20:29,751 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6
+2025-08-15 17:20:29,751 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 318420 btime 292370 winc 3000 binc 3000
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 27 moves
+2025-08-15 17:20:29,752 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e3e4
+2025-08-15 17:20:29,753 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:29,835 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e3e4?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:29,836 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4', 'wtime': 323310, 'btime': 292370, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:38,053 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5', 'wtime': 323310, 'btime': 287310, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:38,054 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:38,054 lib.lichess_bot (lichess_bot.py:818) INFO move: 10
+2025-08-15 17:20:38,054 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 321310 btime 287310 for game hif9cR1X
+2025-08-15 17:20:38,054 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5
+2025-08-15 17:20:38,054 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 321310 btime 287310 winc 3000 binc 3000
+2025-08-15 17:20:38,054 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e4'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd8d5'
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 2 moves
+2025-08-15 17:20:38,055 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e4e3
+2025-08-15 17:20:38,056 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:38,116 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e4e3?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:38,116 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3', 'wtime': 326240, 'btime': 287310, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:45,969 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8', 'wtime': 326240, 'btime': 282590, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:45,970 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:45,970 lib.lichess_bot (lichess_bot.py:818) INFO move: 11
+2025-08-15 17:20:45,970 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 324240 btime 282590 for game hif9cR1X
+2025-08-15 17:20:45,971 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8
+2025-08-15 17:20:45,971 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 324240 btime 282590 winc 3000 binc 3000
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:45,971 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e4'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd8d5'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e4e3'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e8c8'
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 25 moves
+2025-08-15 17:20:45,972 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e3e2
+2025-08-15 17:20:45,973 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:46,029 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e3e2?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:46,030 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2', 'wtime': 329180, 'btime': 282590, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:47,972 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5', 'wtime': 329180, 'btime': 283750, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:47,973 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:47,973 lib.lichess_bot (lichess_bot.py:818) INFO move: 12
+2025-08-15 17:20:47,973 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 327180 btime 283750 for game hif9cR1X
+2025-08-15 17:20:47,973 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5
+2025-08-15 17:20:47,973 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 327180 btime 283750 winc 3000 binc 3000
+2025-08-15 17:20:47,973 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:47,973 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e4'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd8d5'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e4e3'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e8c8'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e2'
+2025-08-15 17:20:47,974 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e5'
+2025-08-15 17:20:47,975 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:47,975 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 2 moves
+2025-08-15 17:20:47,975 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove e2f3
+2025-08-15 17:20:47,975 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:48,028 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/e2f3?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:48,029 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3', 'wtime': 332120, 'btime': 283750, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:50,616 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5', 'wtime': 332120, 'btime': 284220, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:50,616 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:50,616 lib.lichess_bot (lichess_bot.py:818) INFO move: 13
+2025-08-15 17:20:50,616 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 330120 btime 284220 for game hif9cR1X
+2025-08-15 17:20:50,617 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5
+2025-08-15 17:20:50,617 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 330120 btime 284220 winc 3000 binc 3000
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:50,617 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e4'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd8d5'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e4e3'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e8c8'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e2'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e5'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2f3'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e5f5'
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 4 moves
+2025-08-15 17:20:50,618 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove f3g3
+2025-08-15 17:20:50,618 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:50,698 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/f3g3?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:50,699 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3', 'wtime': 335030, 'btime': 284220, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:54,212 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6', 'wtime': 335030, 'btime': 283780, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:20:54,212 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:20:54,212 lib.lichess_bot (lichess_bot.py:818) INFO move: 14
+2025-08-15 17:20:54,213 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 333030 btime 283780 for game hif9cR1X
+2025-08-15 17:20:54,213 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6
+2025-08-15 17:20:54,213 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 333030 btime 283780 winc 3000 binc 3000
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:20:54,213 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e4'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd8d5'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e4e3'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e8c8'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e2'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e5'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2f3'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e5f5'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f3g3'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b4d6'
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 3 moves
+2025-08-15 17:20:54,214 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove g3h4
+2025-08-15 17:20:54,215 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:20:54,271 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/g3h4?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:20:54,271 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6 g3h4', 'wtime': 337970, 'btime': 283780, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:21:05,555 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6 g3h4 d6e7', 'wtime': 337970, 'btime': 275550, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:21:05,555 lib.lichess_bot (lichess_bot.py:817) INFO 
+2025-08-15 17:21:05,555 lib.lichess_bot (lichess_bot.py:818) INFO move: 15
+2025-08-15 17:21:05,555 lib.engine_wrapper (engine_wrapper.py:722) INFO Searching for wtime 335970 btime 275550 for game hif9cR1X
+2025-08-15 17:21:05,556 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << position startpos moves d2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6 g3h4 d6e7
+2025-08-15 17:21:05,556 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << go wtime 335970 btime 275550 winc 3000 binc 3000
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine:setPosition] settings position to 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd2d4'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd7d5'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e4'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e4'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4d5'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g8f6'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd1d4'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e7e6'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd4e4'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f6e4'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e6'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'c8e6'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e1e2'
+2025-08-15 17:21:05,556 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f8b4'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2e3'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b8c6'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e4'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd8d5'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e4e3'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e8c8'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e3e2'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd5e5'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e2f3'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'e5f5'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'f3g3'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'b4d6'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'g3h4'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::executeMove] execute move 'd6e7'
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] let's go!
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> info string [Engine::go] found 2 moves
+2025-08-15 17:21:05,557 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> bestmove h4g3
+2025-08-15 17:21:05,557 lib.engine_wrapper (engine_wrapper.py:332) INFO Source: Engine
+2025-08-15 17:21:05,558 urllib3.connectionpool (connectionpool.py:289) DEBUG Resetting dropped connection: lichess.org
+2025-08-15 17:21:05,749 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/move/h4g3?offeringDraw=false HTTP/1.1" 200 11
+2025-08-15 17:21:05,754 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6 g3h4 d6e7 h4g3', 'wtime': 340770, 'btime': 275550, 'winc': 3000, 'binc': 3000, 'status': 'started'}
+2025-08-15 17:21:07,189 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'gameFinish', 'game': {'fullId': 'hif9cR1XqT3Y', 'gameId': 'hif9cR1X', 'fen': '2kr3r/ppp1bppp/2n1b3/8/6q1/6K1/PPP2PPP/RNB2BNR w - - 13 16', 'color': 'white', 'lastMove': 'f5g4', 'source': 'friend', 'status': {'id': 30, 'name': 'mate'}, 'variant': {'key': 'standard', 'name': 'Standard'}, 'speed': 'blitz', 'perf': 'blitz', 'rated': False, 'hasMoved': True, 'opponent': {'id': 'pjsde', 'username': 'pjsde', 'rating': 897}, 'isMyTurn': False, 'secondsLeft': 341, 'winner': 'black', 'compat': {'bot': True, 'board': True}, 'id': 'hif9cR1X'}}
+2025-08-15 17:21:07,190 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': 'd2d4 d7d5 e2e4 d5e4 d4d5 g8f6 d1d4 e7e6 d4e4 f6e4 d5e6 c8e6 e1e2 f8b4 e2e3 b8c6 e3e4 d8d5 e4e3 e8c8 e3e2 d5e5 e2f3 e5f5 f3g3 b4d6 g3h4 d6e7 h4g3 f5g4', 'wtime': 340770, 'btime': 274280, 'winc': 3000, 'binc': 3000, 'status': 'mate', 'winner': 'black'}
+2025-08-15 17:21:07,190 lib.lichess_bot (lichess_bot.py:928) INFO pjsde won!
+2025-08-15 17:21:07,190 lib.lichess_bot (lichess_bot.py:939) INFO Game won by checkmate.
+2025-08-15 17:21:07,191 lib.conversation (conversation.py:99) INFO *** https://lichess.org/hif9cR1X/white [player] chessna2: Good game!
+2025-08-15 17:21:07,246 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/chat HTTP/1.1" 200 11
+2025-08-15 17:21:07,246 lib.conversation (conversation.py:99) INFO *** https://lichess.org/hif9cR1X/white [spectator] chessna2: Thanks for watching!
+2025-08-15 17:21:07,301 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/hif9cR1X/chat HTTP/1.1" 200 11
+2025-08-15 17:21:07,302 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << isready
+2025-08-15 17:21:07,302 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32362)>: >> readyok
+2025-08-15 17:21:07,302 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32362)>: << quit
+2025-08-15 17:21:07,302 chess.engine (engine.py:947) DEBUG <UciProtocol (pid=32362)>: Process exited
+2025-08-15 17:21:07,302 chess.engine (engine.py:934) DEBUG <UciProtocol (pid=32362)>: Connection lost (exit code: 0, error: None)
+2025-08-15 17:21:07,303 lib.lichess_bot (lichess_bot.py:901) INFO --- https://lichess.org/hif9cR1X/white Game over
+2025-08-15 17:21:07,303 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'local_game_done', 'game': {'id': 'hif9cR1X'}}
+2025-08-15 17:21:07,303 lib.lichess_bot (lichess_bot.py:320) INFO +++ Process Freed. Count: 0. IDs: None
+2025-08-15 17:24:31,404 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'correspondence_ping'}
+2025-08-15 17:24:31,406 lib.lichess_bot (lichess_bot.py:320) INFO --- Process Used. Count: 1. IDs: {'EhrjytR7'}
+2025-08-15 17:24:31,440 urllib3.connectionpool (connectionpool.py:1049) DEBUG Starting new HTTPS connection (1): lichess.org:443
+2025-08-15 17:24:31,712 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/bot/game/stream/EhrjytR7 HTTP/1.1" 200 None
+2025-08-15 17:24:31,715 lib.lichess_bot (lichess_bot.py:655) DEBUG Initial state: {'id': 'EhrjytR7', 'variant': {'key': 'standard', 'name': 'Standard', 'short': 'Std'}, 'speed': 'correspondence', 'perf': {'name': 'Fernschach'}, 'rated': False, 'createdAt': 1755268505979, 'white': {'id': 'pjsde', 'name': 'pjsde', 'title': None, 'rating': 1500, 'provisional': True}, 'black': {'id': 'chessna2', 'name': 'chessna2', 'title': 'BOT', 'rating': 2000, 'provisional': True}, 'initialFen': 'startpos', 'type': 'gameFull', 'state': {'type': 'gameState', 'moves': '', 'wtime': 2147483647, 'btime': 2147483647, 'winc': 0, 'binc': 0, 'status': 'started'}}
+2025-08-15 17:24:31,716 lib.engine_wrapper (engine_wrapper.py:69) DEBUG Starting engine: ['/Users/peter/work/chessna/bin/chessna']
+2025-08-15 17:24:31,717 asyncio (selector_events.py:64) DEBUG Using selector: KqueueSelector
+2025-08-15 17:24:31,733 chess.engine (engine.py:928) DEBUG <UciProtocol (pid=32448)>: Connection made
+2025-08-15 17:24:31,734 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32448)>: << uci
+2025-08-15 17:24:31,734 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32448)>: >> id name CHESSna 2 Version 0.01 alpha
+2025-08-15 17:24:31,734 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32448)>: >> id author Peter Schneider
+2025-08-15 17:24:31,734 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32448)>: >> uciok
+2025-08-15 17:24:31,735 lib.lichess_bot (lichess_bot.py:661) DEBUG The engine for game EhrjytR7 has pid=32448
+2025-08-15 17:24:31,735 lib.lichess_bot (lichess_bot.py:664) INFO +++ https://lichess.org/EhrjytR7/black Fernschach vs pjsde (1500?) (EhrjytR7)
+2025-08-15 17:24:31,735 lib.lichess_bot (lichess_bot.py:826) DEBUG Game state: {'type': 'gameState', 'moves': '', 'wtime': 2147483647, 'btime': 2147483647, 'winc': 0, 'binc': 0, 'status': 'started'}
+2025-08-15 17:25:06,793 lib.lichess_bot (lichess_bot.py:879) INFO Aborting https://lichess.org/EhrjytR7/black by lack of activity
+2025-08-15 17:25:06,795 urllib3.connectionpool (connectionpool.py:1049) DEBUG Starting new HTTPS connection (2): lichess.org:443
+2025-08-15 17:25:06,964 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/bot/game/EhrjytR7/abort HTTP/1.1" 200 11
+2025-08-15 17:25:06,965 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32448)>: << isready
+2025-08-15 17:25:06,965 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32448)>: >> readyok
+2025-08-15 17:25:06,965 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32448)>: << quit
+2025-08-15 17:25:06,965 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'gameFinish', 'game': {'fullId': 'EhrjytR7M9mm', 'gameId': 'EhrjytR7', 'fen': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', 'color': 'black', 'lastMove': '', 'source': 'friend', 'status': {'id': 25, 'name': 'aborted'}, 'variant': {'key': 'standard', 'name': 'Standard'}, 'speed': 'correspondence', 'perf': 'correspondence', 'rated': False, 'hasMoved': False, 'opponent': {'id': 'pjsde', 'username': 'pjsde', 'rating': 1500}, 'isMyTurn': False, 'compat': {'bot': True, 'board': True}, 'id': 'EhrjytR7'}}
+2025-08-15 17:25:06,966 chess.engine (engine.py:947) DEBUG <UciProtocol (pid=32448)>: Process exited
+2025-08-15 17:25:06,966 chess.engine (engine.py:934) DEBUG <UciProtocol (pid=32448)>: Connection lost (exit code: 0, error: None)
+2025-08-15 17:25:06,966 lib.lichess_bot (lichess_bot.py:898) INFO --- Disconnecting from https://lichess.org/EhrjytR7/black
+2025-08-15 17:25:06,966 lib.lichess_bot (lichess_bot.py:447) DEBUG Event: {'type': 'local_game_done', 'game': {'id': 'EhrjytR7'}}
+2025-08-15 17:25:06,966 lib.lichess_bot (lichess_bot.py:320) INFO +++ Process Freed. Count: 0. IDs: None
+2025-08-15 17:27:43,808 lib.lichess_bot (lichess_bot.py:1251) INFO Termination requested - stopping restart cycle
+2025-08-15 17:27:46,704 lib.lichess_bot (lichess_bot.py:1174) INFO 
+    .   _/|
+    .  // o\
+    .  || ._)  lichess-bot 2025.8.7.1 on Darwin 24.6.0
+    .  //__\
+    .  )___(   Play on Lichess with a bot
+    
+2025-08-15 17:27:46,716 lib.config (config.py:288) DEBUG Config:
+token: logger
+url: https://lichess.org/
+engine:
+  dir: ../bin/
+  name: chessna
+  working_dir: ''
+  protocol: uci
+  ponder: false
+  polyglot:
+    enabled: false
+    book:
+      standard: null
+    min_weight: 1
+    selection: weighted_random
+    max_depth: 20
+    normalization: none
+  draw_or_resign:
+    resign_enabled: false
+    resign_score: -1000
+    resign_for_egtb_minus_two: true
+    resign_moves: 3
+    offer_draw_enabled: true
+    offer_draw_score: 0
+    offer_draw_for_egtb_zero: true
+    offer_draw_moves: 10
+    offer_draw_pieces: 10
+  online_moves:
+    max_out_of_book_moves: 10
+    max_retries: 2
+    chessdb_book:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: good
+      min_depth: 20
+    lichess_cloud_analysis:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: best
+      max_score_difference: 50
+      min_depth: 20
+      min_knodes: 0
+    lichess_opening_explorer:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      source: masters
+      player_name: ''
+      sort: winrate
+      min_games: 10
+    online_egtb:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      max_pieces: 7
+      source: lichess
+      move_quality: best
+  lichess_bot_tbs:
+    syzygy:
+      enabled: false
+      paths:
+      - engines/syzygy
+      max_pieces: 7
+      move_quality: best
+    gaviota:
+      enabled: false
+      paths:
+      - engines/gaviota
+      max_pieces: 5
+      min_dtm_to_consider_as_wdl_1: 120
+      move_quality: best
+  homemade_options: null
+  uci_options: null
+  silence_stderr: false
+abort_time: 30
+fake_think_time: false
+rate_limiting_delay: 0
+move_overhead: 2000
+max_takebacks_accepted: 0
+quit_after_all_games_finish: false
+correspondence:
+  move_time: 60
+  checkin_period: 300
+  disconnect_time: 150
+  ponder: false
+challenge:
+  concurrency: 1
+  sort_by: best
+  preference: none
+  accept_bot: true
+  only_bot: false
+  max_increment: 20
+  min_increment: 0
+  max_base: 1800
+  min_base: 0
+  max_days: 14
+  min_days: 1
+  variants:
+  - standard
+  time_controls:
+  - bullet
+  - blitz
+  - rapid
+  - classical
+  modes:
+  - casual
+  - rated
+  bullet_requires_increment: false
+  max_simultaneous_games_per_user: 5
+greeting:
+  hello: Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond
+    to.
+  goodbye: Good game!
+  hello_spectators: Hi! I'm {me}. Type !help for a list of commands I can respond
+    to.
+  goodbye_spectators: Thanks for watching!
+matchmaking:
+  allow_matchmaking: false
+  allow_during_games: false
+  challenge_variant: random
+  challenge_timeout: 30
+  challenge_initial_time:
+  - 60
+  - 180
+  challenge_increment:
+  - 1
+  - 2
+  opponent_rating_difference: 300
+  rating_preference: none
+  challenge_mode: random
+  challenge_filter: none
+  include_challenge_block_list: false
+
+2025-08-15 17:27:46,716 lib.config (config.py:289) DEBUG ====================
+2025-08-15 17:27:46,719 lib.config (config.py:288) DEBUG Config:
+token: logger
+url: https://lichess.org/
+engine:
+  dir: ../bin/
+  name: chessna
+  working_dir: /Users/peter/work/chessna/lichess-bot
+  protocol: uci
+  ponder: false
+  polyglot:
+    enabled: false
+    book:
+      standard: null
+    min_weight: 1
+    selection: weighted_random
+    max_depth: 20
+    normalization: none
+  draw_or_resign:
+    resign_enabled: false
+    resign_score: -1000
+    resign_for_egtb_minus_two: true
+    resign_moves: 3
+    offer_draw_enabled: true
+    offer_draw_score: 0
+    offer_draw_for_egtb_zero: true
+    offer_draw_moves: 10
+    offer_draw_pieces: 10
+  online_moves:
+    max_out_of_book_moves: 10
+    max_retries: 2
+    chessdb_book:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: good
+      min_depth: 20
+    lichess_cloud_analysis:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      move_quality: best
+      max_score_difference: 50
+      min_depth: 20
+      min_knodes: 0
+    lichess_opening_explorer:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      source: masters
+      player_name: ''
+      sort: winrate
+      min_games: 10
+    online_egtb:
+      enabled: false
+      min_time: 20
+      max_time: 10800
+      max_pieces: 7
+      source: lichess
+      move_quality: best
+    max_depth: .inf
+  lichess_bot_tbs:
+    syzygy:
+      enabled: false
+      paths:
+      - engines/syzygy
+      max_pieces: 7
+      move_quality: best
+    gaviota:
+      enabled: false
+      paths:
+      - engines/gaviota
+      max_pieces: 5
+      min_dtm_to_consider_as_wdl_1: 120
+      move_quality: best
+  homemade_options: null
+  uci_options: null
+  silence_stderr: false
+  interpreter: null
+  interpreter_options: []
+  uci_ponder: false
+abort_time: 30
+fake_think_time: false
+rate_limiting_delay: 0
+move_overhead: 2000
+max_takebacks_accepted: 0
+quit_after_all_games_finish: false
+correspondence:
+  move_time: 60
+  checkin_period: 300
+  disconnect_time: 150
+  ponder: false
+  uci_ponder: false
+challenge:
+  concurrency: 1
+  sort_by: best
+  preference: none
+  accept_bot: true
+  only_bot: false
+  max_increment: 20
+  min_increment: 0
+  max_base: 1800
+  min_base: 0
+  max_days: 14
+  min_days: 1
+  variants:
+  - standard
+  time_controls:
+  - bullet
+  - blitz
+  - rapid
+  - classical
+  modes:
+  - casual
+  - rated
+  bullet_requires_increment: false
+  max_simultaneous_games_per_user: 5
+  block_list: []
+  online_block_list: []
+  allow_list: []
+greeting:
+  hello: Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond
+    to.
+  goodbye: Good game!
+  hello_spectators: Hi! I'm {me}. Type !help for a list of commands I can respond
+    to.
+  goodbye_spectators: Thanks for watching!
+matchmaking:
+  allow_matchmaking: false
+  allow_during_games: false
+  challenge_variant: random
+  challenge_timeout: 30
+  challenge_initial_time:
+  - 60
+  - 180
+  challenge_increment:
+  - 1
+  - 2
+  opponent_rating_difference: 300
+  rating_preference: none
+  challenge_mode: random
+  challenge_filter: none
+  include_challenge_block_list: false
+  block_list: []
+  online_block_list: []
+  challenge_days:
+  - null
+  opponent_min_rating: 600
+  opponent_max_rating: 4000
+  overrides: {}
+pgn_directory: null
+pgn_file_grouping: game
+
+2025-08-15 17:27:46,719 lib.config (config.py:289) DEBUG ====================
+2025-08-15 17:27:46,722 lib.lichess_bot (lichess_bot.py:1180) INFO Checking engine configuration ...
+2025-08-15 17:27:46,723 lib.engine_wrapper (engine_wrapper.py:69) DEBUG Starting engine: ['/Users/peter/work/chessna/bin/chessna']
+2025-08-15 17:27:46,723 asyncio (selector_events.py:64) DEBUG Using selector: KqueueSelector
+2025-08-15 17:27:46,726 chess.engine (engine.py:928) DEBUG <UciProtocol (pid=32607)>: Connection made
+2025-08-15 17:27:46,727 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32607)>: << uci
+2025-08-15 17:27:46,727 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32607)>: >> id name CHESSna 2 Version 0.01 alpha
+2025-08-15 17:27:46,727 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32607)>: >> id author Peter Schneider
+2025-08-15 17:27:46,727 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32607)>: >> uciok
+2025-08-15 17:27:46,728 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32607)>: << isready
+2025-08-15 17:27:46,728 chess.engine (engine.py:976) DEBUG <UciProtocol (pid=32607)>: >> readyok
+2025-08-15 17:27:46,728 chess.engine (engine.py:950) DEBUG <UciProtocol (pid=32607)>: << quit
+2025-08-15 17:27:46,728 chess.engine (engine.py:947) DEBUG <UciProtocol (pid=32607)>: Process exited
+2025-08-15 17:27:46,728 chess.engine (engine.py:934) DEBUG <UciProtocol (pid=32607)>: Connection lost (exit code: 0, error: None)
+2025-08-15 17:27:46,728 lib.lichess_bot (lichess_bot.py:1183) INFO Engine configuration OK
+2025-08-15 17:27:46,729 lib.lichess_bot (lichess_bot.py:1153) DEBUG Python version: 3.13.6.final.0
+2025-08-15 17:27:46,737 lib.lichess_bot (lichess_bot.py:1159) DEBUG Installed libraries:
+pip==25.2
+idna==3.10
+urllib3==2.5.0
+charset-normalizer==3.4.3
+requests==2.32.4
+typing_extensions==4.14.1
+certifi==2025.8.3
+rich==14.1.0
+markdown-it-py==4.0.0
+wrapt==1.17.3
+Deprecated==1.2.18
+mdurl==0.1.2
+python-dateutil==2.9.0.post0
+berserk==0.13.2
+Pygments==2.19.2
+chess==1.11.2
+PyYAML==6.0.2
+backoff==2.2.1
+ndjson==0.3.1
+six==1.17.0
+
+
+2025-08-15 17:27:46,742 urllib3.connectionpool (connectionpool.py:1049) DEBUG Starting new HTTPS connection (1): lichess.org:443
+2025-08-15 17:27:46,985 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "POST /api/token/test HTTP/1.1" 200 None
+2025-08-15 17:27:47,040 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/account HTTP/1.1" 200 None
+2025-08-15 17:27:47,041 lib.lichess_bot (lichess_bot.py:1193) INFO Welcome chessna2!
+2025-08-15 17:27:47,043 lib.lichess_bot (lichess_bot.py:260) INFO You're now connected to https://lichess.org/ and awaiting challenges.
+2025-08-15 17:27:47,436 urllib3.connectionpool (connectionpool.py:544) DEBUG https://lichess.org:443 "GET /api/account/playing HTTP/1.1" 200 17

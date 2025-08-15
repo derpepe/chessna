@@ -22,7 +22,6 @@ void Engine::setPosition(std::string position)
 {
 	std::cout << "info string [Engine:setPosition] settings position to '" << position << "'" << std::endl;
 	this->board->loadFen(position);
-	// TODO
 }
 
 
@@ -91,14 +90,13 @@ void Engine::perft(int depth)
 	std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
 	PerftResult result = this->perft_runner->perft(*this->board, depth);
 	std::ostringstream output;
-	output << "info string" << std::endl
-		<< " nodes " << result.nodes << std::endl
-		<< " captures " << result.captures << std::endl
-		<< " ep " << result.en_passant << std::endl
-		<< " castles " << result.castles << std::endl
-		<< " promotions " << result.promotions << std::endl
-		<< " checks " << result.checks << std::endl
-		<< " checkmates " << result.checkmates << std::endl;
+	output << "info string [Engine::perft] nodes " << result.nodes << std::endl
+		<< "info string [Engine::perft] captures " << result.captures << std::endl
+		<< "info string [Engine::perft] ep " << result.en_passant << std::endl
+		<< "info string [Engine::perft] castles " << result.castles << std::endl
+		<< "info string [Engine::perft] promotions " << result.promotions << std::endl
+		<< "info string [Engine::perft] checks " << result.checks << std::endl
+		<< "info string [Engine::perft] checkmates " << result.checkmates << std::endl;
 	this->comm->uciOutput(output.str());
 }
 

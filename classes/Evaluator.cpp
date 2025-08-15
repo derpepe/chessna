@@ -1,6 +1,7 @@
 #include "Evaluator.h"
 #include "Board.h"
 #include "Lib.h"
+#include <iostream>
 
 int Evaluator::evaluate(Board& board, const std::string& move)
 {
@@ -20,5 +21,6 @@ int Evaluator::evaluate(Board& board, const std::string& move)
 		score += 10;
 	}
 
+	std::cout << "info string [Evaluator::evaluate] " << move << ": " << score << std::endl;
 	return score;
 }

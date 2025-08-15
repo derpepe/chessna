@@ -96,6 +96,7 @@ void Uci::parse(std::string p_parameters)
 		help << "info string" << std::endl;
 		help << "info string  board  Displays debug output." << std::endl;
 		help << "info string  perft <depth>  Performance test of the move generation." << std::endl;
+		help << "info string  perfdiv <depth>  Performance test of the move generation with debug output." << std::endl;
 		this->sendString(help.str());
 	}
 	else if (command.compare("board") == 0)
