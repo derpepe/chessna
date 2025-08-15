@@ -96,6 +96,7 @@ void Perft::perftDivide(Board& board, int depth)
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
         PerftResult total_result;
 
+        const std::string prefix = "info string [Perft::perftDivide]";
         for (const auto& move : moves)
         {
                 // Determine root move characteristics
@@ -159,7 +160,7 @@ void Perft::perftDivide(Board& board, int depth)
                 child_result.checkmates += root_checkmates;
 
                 total_result += child_result;
-                std::cout << move << ": "
+                std::cout << prefix << " " << move << ": "
                         << "nodes " << child_result.nodes << " "
                         << "captures " << child_result.captures << " "
                         << "ep " << child_result.en_passant << " "
@@ -170,13 +171,13 @@ void Perft::perftDivide(Board& board, int depth)
                         << std::endl;
         }
 
-	std::cout << std::endl
-		<< "Total:" << std::endl
-		<< " nodes " << total_result.nodes << std::endl
-		<< " captures " << total_result.captures << std::endl
-		<< " ep " << total_result.en_passant << std::endl
-		<< " castles " << total_result.castles << std::endl
-		<< " promotions " << total_result.promotions << std::endl
-		<< " checks " << total_result.checks << std::endl
-		<< " checkmates " << total_result.checkmates << std::endl;
+        std::cout << prefix << std::endl
+                << prefix << " Total:" << std::endl
+                << prefix << " nodes " << total_result.nodes << std::endl
+                << prefix << " captures " << total_result.captures << std::endl
+                << prefix << " ep " << total_result.en_passant << std::endl
+                << prefix << " castles " << total_result.castles << std::endl
+                << prefix << " promotions " << total_result.promotions << std::endl
+                << prefix << " checks " << total_result.checks << std::endl
+                << prefix << " checkmates " << total_result.checkmates << std::endl;
 }
