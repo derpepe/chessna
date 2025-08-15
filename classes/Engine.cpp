@@ -4,12 +4,15 @@
 #include "Lib.h"
 #include <iostream>
 #include <sstream>
+#include <chrono>
+#include <limits>
+#include <thread>
 
 
 Engine::Engine(Comm *comm)
 {
 	this->comm = comm;
-	this->comm->registerEngineGoCallback( [this] { this->go(); } );
+        this->comm->registerEngineGoCallback( [this](int movetime) { this->go(movetime); } );
 	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
         this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
         this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
@@ -62,22 +65,26 @@ void Engine::run()
 	}
 }
 
-void Engine::go()
+void Engine::go(int movetime)
 {
         std::cout << "info string [Engine::go] let's go!" << std::endl;
 
         MoveGenerator moveGenerator;
         std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
         std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
-	
-	if (possibleMoves.empty())
-	{
-		std::cout << "info string [Engine::go] no moves found" << std::endl;
-		return;
-	}
 
-        std::vector<std::string> bestMoves;
-        int bestScore = -100000;
+        if (possibleMoves.empty())
+        {
+                std::cout << "info string [Engine::go] no moves found" << std::endl;
+                return;
+        }
+
+        using namespace std::chrono;
+        auto start = steady_clock::now();
+        auto lastInfo = start;
+
+        std::string bestMove = possibleMoves[0];
+        int bestScore = std::numeric_limits<int>::min();
 
         for (const auto& move : possibleMoves)
         {
@@ -87,28 +94,50 @@ void Engine::go()
                 if (score > bestScore)
                 {
                         bestScore = score;
-                        bestMoves.clear();
-                        bestMoves.push_back(move);
+                        bestMove = move;
                 }
-                else if (score == bestScore)
+
+                auto now = steady_clock::now();
+                if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
                 {
-                        bestMoves.push_back(move);
+                        std::ostringstream status;
+                        status << "info string [Engine::go] time "
+                               << duration_cast<milliseconds>(now - start).count()
+                               << "ms best " << bestMove << " score " << bestScore << std::endl;
+                        this->comm->uciOutput(status.str());
+                        lastInfo = now;
+                }
+
+                if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                {
+                        break;
                 }
         }
 
-        // Output all moves sharing the best score
-        std::cout << "info string [Engine::go] best moves:";
-        for (const auto& move : bestMoves)
+        // wait until allotted time has passed, emitting status each second
+        auto endTime = start + std::chrono::milliseconds(movetime);
+        while (std::chrono::steady_clock::now() < endTime)
         {
-                std::cout << ' ' << move;
+                auto now = std::chrono::steady_clock::now();
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastInfo).count() >= 1000)
+                {
+                        std::ostringstream status;
+                        status << "info string [Engine::go] time "
+                               << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
+                               << "ms best " << bestMove << " score " << bestScore << std::endl;
+                        this->comm->uciOutput(status.str());
+                        lastInfo = now;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        std::cout << " score " << bestScore << std::endl;
 
-        // Choose one of the best moves at random
-        std::random_device seed;
-        std::mt19937 engine(seed());
-        std::uniform_int_distribution<size_t> choose(0, bestMoves.size() - 1);
-        std::string bestMove = bestMoves[choose(engine)];
+        // final status update at end of allotted time
+        auto now = std::chrono::steady_clock::now();
+        std::ostringstream status;
+        status << "info string [Engine::go] time "
+               << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
+               << "ms best " << bestMove << " score " << bestScore << std::endl;
+        this->comm->uciOutput(status.str());
 
         std::ostringstream output;
         output << "info score cp " << bestScore << std::endl;
