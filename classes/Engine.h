@@ -29,7 +29,7 @@ private:
         Comm *comm;
         Perft *perft_runner;
 
-        int minimax(Board& board, int depth, bool maximizingPlayer);
+        int minimax(Board& board, int depth);
 };
 
 #endif
