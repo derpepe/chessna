@@ -8,6 +8,7 @@
 #include <limits>
 #include <thread>
 #include <vector>
+#include <random>
 
 
 Engine::Engine(Comm *comm)
@@ -119,14 +120,22 @@ void Engine::go(int movetime)
 		}
 
 		++processedMoves;
-		if (duration_cast<milliseconds>(now - start).count() >= movetime)
-		{
-			timeExpired = true;
-			break;
-		}
-	}
+                if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                {
+                        timeExpired = true;
+                        break;
+                }
+        }
 
-	auto now = std::chrono::steady_clock::now();
+        if (!bestMoves.empty())
+        {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_int_distribution<size_t> dist(0, bestMoves.size() - 1);
+                bestMove = bestMoves[dist(gen)];
+        }
+
+        auto now = std::chrono::steady_clock::now();
 	std::ostringstream status;
 	status << "info string [Engine::go] time "
 	       << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
