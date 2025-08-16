@@ -26,8 +26,8 @@ public:
 	Engine(Comm* comm);	
 	void run();
 	
-	// commands sent via UCI
-        void go(int);
+        // commands sent via UCI
+        void go(GoParams);
         void setPosition(std::string);
         void executeMove(std::string);
         void debug();

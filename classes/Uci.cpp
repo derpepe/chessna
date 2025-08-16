@@ -46,22 +46,39 @@ void Uci::parse(std::string p_parameters)
 	}
         else if (command.compare("go") == 0)
         {
-                int movetime = 1000;
+                GoParams params;
                 for (size_t i = 1; i + 1 < parameters.size(); ++i)
                 {
-                        if (parameters[i] == "movetime")
+                        try
                         {
-                                try
+                                int value = std::stoi(parameters[i + 1]);
+                                if (parameters[i] == "movetime")
                                 {
-                                        movetime = std::stoi(parameters[i + 1]);
+                                        params.movetime = value;
                                 }
-                                catch(const std::exception &)
+                                else if (parameters[i] == "wtime")
                                 {
-                                        // ignore invalid value, keep default
+                                        params.wtime = value;
+                                }
+                                else if (parameters[i] == "btime")
+                                {
+                                        params.btime = value;
+                                }
+                                else if (parameters[i] == "winc")
+                                {
+                                        params.winc = value;
+                                }
+                                else if (parameters[i] == "binc")
+                                {
+                                        params.binc = value;
                                 }
                         }
+                        catch(const std::exception &)
+                        {
+                                // ignore invalid value
+                        }
                 }
-                this->comm->engineGo(movetime);
+                this->comm->engineGo(params);
         }
         else if (command.compare("quit") == 0 || command.compare("exit") == 0)
         {
