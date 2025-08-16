@@ -37,7 +37,7 @@ namespace C {
     constexpr int PASSED_EG[8] = {0,0,0,25,45,75,120,0};
 
     // Knights
-    constexpr int KNIGHT_CORE_MG = 20;
+    constexpr int KNIGHT_CORE_MG = 30;
     constexpr int KNIGHT_CORE_EG = 20;
     constexpr int KNIGHT_EXT_MG  = 18;
     constexpr int KNIGHT_EXT_EG  = 10;
@@ -63,7 +63,7 @@ namespace C {
     constexpr int CONNECTED_ROOKS_MG = 12;
 
     // Queens
-    constexpr int QUEEN_EARLY_CORE_MG = 6;
+    constexpr int QUEEN_EARLY_CORE_MG = 8;
     constexpr int QUEEN_EARLY_EXT_MG = 3;
     constexpr int QUEEN_SEVENTH_MG = 12;
     constexpr int QUEEN_CORE_EG = 8;
