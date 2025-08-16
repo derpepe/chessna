@@ -233,6 +233,10 @@ void Engine::go(int movetime)
                 std::uniform_int_distribution<> dis(0, bestMoves.size() - 1);
                 bestMove = bestMoves[dis(gen)];
         }
+        else
+        {
+                bestScore = 0;
+        }
 
         auto now = std::chrono::steady_clock::now();
         std::ostringstream reason;
