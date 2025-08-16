@@ -33,6 +33,7 @@ private:
         Perft *perft_runner;
 
         std::atomic<bool> stopRequested;
+        unsigned long long nodes;
 
         int minimax(Board& board, int depth);
 };
