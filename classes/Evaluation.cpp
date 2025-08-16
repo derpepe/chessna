@@ -31,10 +31,18 @@
          score += 10 * whiteCentral;
          score -= 10 * blackCentral;
 
-         // Penalize knights on the rim
-         unsigned long long edgeMask = 0xff818181818181ffULL;
-         int whiteEdgeKnights = __builtin_popcountll(board.knights & board.whites & edgeMask);
-         int blackEdgeKnights = __builtin_popcountll(board.knights & board.blacks & edgeMask);
+         // Penalize knights and bishops on their starting squares
+         unsigned long long whiteStartMask = (1ULL << 1) | (1ULL << 2) | (1ULL << 5) | (1ULL << 6);
+         unsigned long long blackStartMask = (1ULL << 57) | (1ULL << 58) | (1ULL << 61) | (1ULL << 62);
+         int whiteStartPieces = __builtin_popcountll((board.knights | board.bishops) & board.whites & whiteStartMask);
+         int blackStartPieces = __builtin_popcountll((board.knights | board.bishops) & board.blacks & blackStartMask);
+         score -= 10 * whiteStartPieces;
+         score += 10 * blackStartPieces;
+
+        // Penalize knights on the rim
+        unsigned long long edgeMask = 0xff818181818181ffULL;
+        int whiteEdgeKnights = __builtin_popcountll(board.knights & board.whites & edgeMask);
+        int blackEdgeKnights = __builtin_popcountll(board.knights & board.blacks & edgeMask);
          score -= 5 * whiteEdgeKnights;
          score += 5 * blackEdgeKnights;
 
