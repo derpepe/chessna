@@ -6,6 +6,7 @@
 #include <sstream>
 #include <chrono>
 #include <limits>
+#include <climits>
 #include <thread>
 #include <vector>
 #include <random>
@@ -159,6 +160,9 @@ void Engine::go(int movetime)
                 std::vector<std::string> depthBestMoves;
                 std::vector<std::string> depthBestPV;
 
+                int alpha = INT_MIN;
+                int beta = INT_MAX;
+
                 for (const auto& move : possibleMoves)
                 {
                         Board nextBoard(*this->board);
@@ -168,8 +172,8 @@ void Engine::go(int movetime)
                         // therefore we search one ply less for the remaining moves.
                         SearchResult result = this->minimax(nextBoard,
                                                             currentDepth - 1,
-                                                            std::numeric_limits<int>::min(),
-                                                            std::numeric_limits<int>::max(),
+                                                            alpha,
+                                                            beta,
                                                             true,
                                                             timeExceeded);
                         if (result.score == ABORT_SCORE)
@@ -199,6 +203,15 @@ void Engine::go(int movetime)
                         else if (score == depthBestScore)
                         {
                                 depthBestMoves.push_back(move);
+                        }
+
+                        if (rootMaximizing)
+                        {
+                                if (score > alpha) alpha = score;
+                        }
+                        else
+                        {
+                                if (score < beta) beta = score;
                         }
 
                         auto now = steady_clock::now();
