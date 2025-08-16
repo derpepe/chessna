@@ -15,7 +15,6 @@ public:
 private:
 	void addMoveToList(Board&, std::vector<std::string> *moves, int from, int to);
 	void addMoveToList(Board&, std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
-	void addMoveToListDiag(Board&, std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty);
 	void addMoveToList(Board&, std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, int maxdist);
 	void addMoveToList(Board&, std::vector<std::string> *moves, int from, int to, std::vector<int> checkForEmpty, std::string promotion);
 	void addSlidingMoves(Board&, std::vector<std::string> *moves, int from, const std::vector<int>& directions);
