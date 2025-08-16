@@ -359,7 +359,7 @@ std::string Board::getDump()
 		result << prefix << (8 - y) << "  ";
 		for (int x = 0; x < 8; x++) {
 			std::string f = "?";
-			int bit = (7 - y) * 8 + (7 - x);
+                        int bit = (7 - y) * 8 + x;
 			unsigned long long position = 1ULL << bit;
 			if (position & figures) {
 				if (position & kings) f = "K";
