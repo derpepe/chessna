@@ -137,6 +137,10 @@ void Engine::go(GoParams params)
                         movetime = 1000;
                 }
         }
+
+        std::ostringstream movetimeInfo;
+        movetimeInfo << "info string [Engine::go] movetime " << movetime << "ms" << std::endl;
+        this->comm->uciOutput(movetimeInfo.str());
         std::cout << "info string [Engine::go] let's go!" << std::endl;
 
         MoveGenerator moveGenerator;
