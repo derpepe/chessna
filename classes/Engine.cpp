@@ -184,7 +184,12 @@ void Engine::go(GoParams params)
         for (int currentDepth = 1; currentDepth <= SEARCH_DEPTH; ++currentDepth)
         {
                 std::ostringstream depthInfo;
-                depthInfo << "info depth " << currentDepth << std::endl;
+                depthInfo << "info depth " << currentDepth;
+                if (currentDepth > 1 && !bestPV.empty())
+                {
+                        depthInfo << " bestmove " << bestPV.front() << " score cp " << bestScore;
+                }
+                depthInfo << std::endl;
                 this->comm->uciOutput(depthInfo.str());
 
                 int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
@@ -265,11 +270,10 @@ void Engine::go(GoParams params)
                         }
                 }
 
-                // Always keep track of the best move we have evaluated so
-                // far. When the search for the current depth is aborted, we
-                // still want to discard root moves that are known to be
-                // inferior to the best move found before the abort.
-                if (!depthBestPV.empty())
+                // Only update the result if the current depth finished
+                // completely. If we aborted early, keep the best result from
+                // the previous fully searched depth.
+                if (!aborted && !depthBestPV.empty())
                 {
                         bestScore = depthBestScore;
                         bestPV = depthBestPV;
