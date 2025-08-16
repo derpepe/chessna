@@ -9,6 +9,7 @@
 #include <thread>
 #include <vector>
 
+const int SEARCH_DEPTH = 1;
 
 Engine::Engine(Comm *comm)
 {
@@ -92,7 +93,7 @@ void Engine::go(int movetime)
         {
                 Board nextBoard(*this->board);
                 nextBoard.executeMove(move);
-                int score = this->minimax(nextBoard, 3, false);
+                int score = this->minimax(nextBoard, SEARCH_DEPTH, false);
                 if (score > bestScore)
                 {
                         bestScore = score;
