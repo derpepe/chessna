@@ -141,7 +141,6 @@ void Engine::go(GoParams params)
         }
 
         std::cout << "info string [Engine::go] calculated movetime " << movetime << "ms" << std::endl;
-        this->comm->uciOutput(movetimeInfo.str());
 
         MoveGenerator moveGenerator;
         std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
