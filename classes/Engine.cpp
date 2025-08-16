@@ -377,13 +377,17 @@ SearchResult Engine::minimax(Board& board,
                         {
                                 SearchResult nullRes = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded);
                                 if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
-                                if (nullRes.score >= beta) return {nullRes.score, {}};
+                                // Return the bound instead of the null move score to avoid
+                                // propagating unrealistically high values.
+                                if (nullRes.score >= beta) return {beta, {}};
                         }
                         else
                         {
                                 SearchResult nullRes = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded);
                                 if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
-                                if (nullRes.score <= alpha) return {nullRes.score, {}};
+                                // Return the bound instead of the null move score to avoid
+                                // propagating unrealistically low values.
+                                if (nullRes.score <= alpha) return {alpha, {}};
                         }
                 }
         }
