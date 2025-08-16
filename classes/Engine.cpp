@@ -164,7 +164,12 @@ void Engine::go(int movetime)
                         // currentDepth counts plies including the move just played.
                         // After making a candidate move we have already spent one ply,
                         // therefore we search one ply less for the remaining moves.
-                        int score = this->minimax(nextBoard, currentDepth - 1, timeExceeded);
+                        int score = this->minimax(nextBoard,
+                                                  currentDepth - 1,
+                                                  std::numeric_limits<int>::min(),
+                                                  std::numeric_limits<int>::max(),
+                                                  true,
+                                                  timeExceeded);
                         if (score == ABORT_SCORE)
                         {
                                 endReason = this->stopRequested ? "stop" : "movetime";
@@ -300,7 +305,12 @@ void Engine::emitInfo(unsigned long long elapsed,
         this->comm->uciOutput(uci.str());
 }
 
-int Engine::minimax(Board& board, int depth, const std::function<bool()>& timeExceeded)
+int Engine::minimax(Board& board,
+                    int depth,
+                    int alpha,
+                    int beta,
+                    bool allowNull,
+                    const std::function<bool()>& timeExceeded)
 {
         if (this->stopRequested)
         {
@@ -311,19 +321,22 @@ int Engine::minimax(Board& board, int depth, const std::function<bool()>& timeEx
                 return ABORT_SCORE;
         }
         this->nodes++;
+
         MoveGenerator moveGenerator;
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
         bool maximizingPlayer = board.getPlayerToMove() == 'w';
+
+        unsigned long long king_bb = maximizingPlayer ? (board.kings & board.whites)
+                                                       : (board.kings & board.blacks);
+        int king_sq = __builtin_ffsll(king_bb) - 1;
+        char opponent = maximizingPlayer ? 'b' : 'w';
+        bool inCheck = moveGenerator.isSquareAttacked(board, king_sq, opponent);
 
         if (depth == 0 || moves.empty())
         {
                 if (moves.empty())
                 {
-                        unsigned long long king_bb = maximizingPlayer ? (board.kings & board.whites)
-                                                                       : (board.kings & board.blacks);
-                        int king_sq = __builtin_ffsll(king_bb) - 1;
-                        char opponent = maximizingPlayer ? 'b' : 'w';
-                        if (moveGenerator.isSquareAttacked(board, king_sq, opponent))
+                        if (inCheck)
                         {
                                 return maximizingPlayer ? -100000 : 100000;
                         }
@@ -332,29 +345,59 @@ int Engine::minimax(Board& board, int depth, const std::function<bool()>& timeEx
                 return Evaluation::evaluate(board);
         }
 
+        // Null move pruning
+        if (allowNull && depth >= 3 && !inCheck)
+        {
+                unsigned long long sidePieces = maximizingPlayer ? board.whites : board.blacks;
+                unsigned long long nonPawnPieces = (board.queens | board.rooks | board.bishops | board.knights) & sidePieces;
+                if (nonPawnPieces)
+                {
+                        Board nullBoard(board);
+                        nullBoard.playerToMove = opponent;
+                        nullBoard.enPassant = "-";
+                        int R = 2;
+                        if (maximizingPlayer)
+                        {
+                                int nullScore = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded);
+                                if (this->stopRequested || nullScore == ABORT_SCORE) return ABORT_SCORE;
+                                if (nullScore >= beta) return nullScore;
+                        }
+                        else
+                        {
+                                int nullScore = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded);
+                                if (this->stopRequested || nullScore == ABORT_SCORE) return ABORT_SCORE;
+                                if (nullScore <= alpha) return nullScore;
+                        }
+                }
+        }
+
         if (maximizingPlayer)
         {
-                int maxEval = -100000;
+                int maxEval = std::numeric_limits<int>::min();
                 for (const auto& move : moves)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1, timeExceeded);
+                        int eval = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
                         if (this->stopRequested || eval == ABORT_SCORE) return ABORT_SCORE;
                         if (eval > maxEval) maxEval = eval;
+                        if (eval > alpha) alpha = eval;
+                        if (beta <= alpha) break;
                 }
                 return maxEval;
         }
         else
         {
-                int minEval = 100000;
+                int minEval = std::numeric_limits<int>::max();
                 for (const auto& move : moves)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1, timeExceeded);
+                        int eval = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
                         if (this->stopRequested || eval == ABORT_SCORE) return ABORT_SCORE;
                         if (eval < minEval) minEval = eval;
+                        if (eval < beta) beta = eval;
+                        if (beta <= alpha) break;
                 }
                 return minEval;
         }
