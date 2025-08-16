@@ -319,32 +319,15 @@ void Engine::go(GoParams params)
                 bestScore = 0;
         }
 
-        // Sanity check: irrespective of the search outcome ensure that the
-        // move reported as best actually represents the extreme score for the
-        // side to move.  Evaluation::evaluate returns a score from White's
-        // perspective, so when Black is to move we want the move with the
-        // lowest score, and when White is to move we want the highest score.
-        {
-                int extremeScore = rootMaximizing ? std::numeric_limits<int>::min()
-                                                  : std::numeric_limits<int>::max();
-                std::string extremeMove = possibleMoves[0];
-                for (const auto& mv : possibleMoves)
-                {
-                        Board tmp(*this->board);
-                        tmp.executeMove(mv);
-                        int s = Evaluation::evaluate(tmp);
-                        if ((rootMaximizing && s > extremeScore) ||
-                            (!rootMaximizing && s < extremeScore))
-                        {
-                                extremeScore = s;
-                                extremeMove = mv;
-                        }
-                }
-                bestMove = extremeMove;
-                bestScore = extremeScore;
-                bestPV.clear();
-                bestPV.push_back(bestMove);
-        }
+        // The previous implementation performed a "sanity check" by
+        // evaluating every legal root move again and replacing the
+        // search result with the move that obtained the best static
+        // evaluation.  This effectively discarded the outcome of the
+        // actual search once a deeper iteration completed, which is why
+        // moves found in shallow searches could override stronger moves
+        // discovered later.  The verification is unnecessary and
+        // counterproductive, so we simply keep the move returned by the
+        // search above.
 
         auto now = std::chrono::steady_clock::now();
         std::ostringstream reason;
