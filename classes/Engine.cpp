@@ -87,15 +87,21 @@ void Engine::go(int movetime)
         auto lastInfo = start;
 
         std::string bestMove = possibleMoves[0];
-        int bestScore = std::numeric_limits<int>::min();
+        bool rootMaximizing = this->board->getPlayerToMove() == 'w';
+        int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
+                                       : std::numeric_limits<int>::max();
         std::vector<std::string> bestMoves;
 
         for (const auto& move : possibleMoves)
         {
                 Board nextBoard(*this->board);
                 nextBoard.executeMove(move);
-                int score = this->minimax(nextBoard, SEARCH_DEPTH, false);
-                if (score > bestScore)
+                // SEARCH_DEPTH counts plies including the move just played.
+                // After making a candidate move we have already spent one ply,
+                // therefore we search one ply less for the remaining moves.
+                int score = this->minimax(nextBoard, SEARCH_DEPTH - 1);
+                bool better = rootMaximizing ? (score > bestScore) : (score < bestScore);
+                if (better)
                 {
                         bestScore = score;
                         bestMove = move;
@@ -218,7 +224,7 @@ void Engine::go(int movetime)
         this->comm->uciOutput(output.str());
 }
 
-int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
+int Engine::minimax(Board& board, int depth)
 {
         MoveGenerator moveGenerator;
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
@@ -229,6 +235,8 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
                 return Evaluation::evaluate(board);
         }
 
+        bool maximizingPlayer = board.getPlayerToMove() == 'w';
+
         if (maximizingPlayer)
         {
                 int maxEval = -100000;
@@ -236,7 +244,7 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1, false);
+                        int eval = minimax(nextBoard, depth - 1);
                         if (eval > maxEval) maxEval = eval;
                 }
                 return maxEval;
@@ -248,7 +256,7 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1, true);
+                        int eval = minimax(nextBoard, depth - 1);
                         if (eval < minEval) minEval = eval;
                 }
                 return minEval;

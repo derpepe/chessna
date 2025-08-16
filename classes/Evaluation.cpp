@@ -3,17 +3,12 @@
 
  int Evaluation::evaluate(Board& board)
  {
-         if (board.getPlayerToMove() == 'w')
-         {
-                 return evaluateColorless(board);
-         }
-
-         Board flipped(board);
-         unsigned long long temp = flipped.whites;
-         flipped.whites = flipped.blacks;
-         flipped.blacks = temp;
-
-         return evaluateColorless(flipped);
+         // Always evaluate from White's perspective. The caller is responsible
+         // for interpreting the score (e.g. by minimizing for Black). This
+         // avoids accidentally flipping the evaluation and makes expectations
+         // like a central pawn bonus (\u00b1100 cp) consistent regardless of
+         // whose turn it is.
+         return evaluateColorless(board);
  }
 
  int Evaluation::evaluateColorless(Board& board)
