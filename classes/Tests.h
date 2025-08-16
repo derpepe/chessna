@@ -8,5 +8,6 @@ private:
     bool testFenLoading();
     bool testPerft();
     bool testEvaluation();
+    bool testExecuteMove();
     std::string extractFen(const std::string& dump);
 };

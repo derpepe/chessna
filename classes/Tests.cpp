@@ -94,11 +94,48 @@ bool Tests::testEvaluation() {
     return all;
 }
 
+bool Tests::testExecuteMove() {
+    std::cout << "Running executeMove tests" << std::endl;
+    struct ExecCase { std::vector<std::string> moves; std::string fen; };
+    const std::string startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::vector<ExecCase> tests = {
+        { {"e2e4"},
+          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1" },
+        { {"e2e4", "d7d5", "e4d5"},
+          "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2" },
+        { {"g1f3", "b8c6", "e2e4", "e7e5", "f1c4", "g8f6", "e1g1"},
+          "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 3 4" },
+        { {"e2e4", "d7d5", "e4e5", "f7f5", "e5f6"},
+          "rnbqkbnr/ppp1p1pp/5P2/3p4/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 3" },
+        { {"g2g4", "e7e5", "e2e4", "g8f6", "d1f3", "b8c6", "f1h3", "f8b4", "c2c3", "b4c5", "d2d4", "e5d4", "f3f5", "d4c3", "f5c5", "d7d6", "c1g5", "e8g8"},
+          "r1bq1rk1/ppp2ppp/2np1n2/2Q3B1/4P1P1/2p4B/PP3P1P/RN2K1NR w KQ - 2 10" }
+    };
+
+    bool all = true;
+    for (size_t i = 0; i < tests.size(); ++i) {
+        Board b;
+        b.loadFen(startFen);
+        for (const auto& mv : tests[i].moves) {
+            b.executeMove(mv);
+        }
+        std::string fen = extractFen(b.getDump());
+        bool ok = (fen == tests[i].fen);
+        std::cout << "  Test " << i + 1 << (ok ? " passed" : " failed") << std::endl;
+        if (!ok) {
+            std::cout << "    expected: " << tests[i].fen << std::endl;
+            std::cout << "    got     : " << fen << std::endl;
+            all = false;
+        }
+    }
+    return all;
+}
+
 bool Tests::runAll() {
     bool ok = true;
     if (!testFenLoading()) ok = false;
     if (!testPerft()) ok = false;
     if (!testEvaluation()) ok = false;
+    if (!testExecuteMove()) ok = false;
     if (ok) std::cout << "All tests passed!" << std::endl;
     else std::cout << "Some tests failed." << std::endl;
     return ok;
