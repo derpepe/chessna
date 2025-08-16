@@ -28,6 +28,7 @@ Engine::Engine(Comm *comm)
         this->board = new Board();
         this->perft_runner = new Perft();
         this->stopRequested = false;
+        this->nodes = 0;
 }
 
 void Engine::setPosition(std::string position)
@@ -90,6 +91,7 @@ void Engine::go(int movetime)
         }
 
         this->stopRequested = false;
+        this->nodes = 0;
 
         using namespace std::chrono;
         auto start = steady_clock::now();
@@ -101,7 +103,6 @@ void Engine::go(int movetime)
                                        : std::numeric_limits<int>::max();
         std::vector<std::string> bestMoves;
         std::string endReason;
-
         for (int depth = 1; depth <= MAX_SEARCH_DEPTH; ++depth)
         {
                 std::ostringstream depthMsg;
@@ -137,10 +138,15 @@ void Engine::go(int movetime)
                         auto now = steady_clock::now();
                         if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
                         {
+                                unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
+                                unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
+
                                 std::ostringstream status;
                                 status << "info string [Engine::go] time "
-                                       << duration_cast<milliseconds>(now - start).count()
-                                       << "ms best";
+                                       << elapsed
+                                       << "ms nodes " << Lib::formatThousands(this->nodes)
+                                       << " nps " << Lib::formatThousands(nps)
+                                       << " best";
                                 for (const auto& bm : depthBestMoves)
                                 {
                                         status << ' ' << bm;
@@ -149,7 +155,10 @@ void Engine::go(int movetime)
                                 this->comm->uciOutput(status.str());
 
                                 std::ostringstream uci;
-                                uci << "info score cp " << depthBestScore << " pv";
+                                uci << "info time " << elapsed
+                                    << " nodes " << this->nodes
+                                    << " nps " << nps
+                                    << " score cp " << depthBestScore << " pv";
                                 for (const auto& bm : depthBestMoves)
                                 {
                                         uci << ' ' << bm;
@@ -165,7 +174,7 @@ void Engine::go(int movetime)
                                 endReason = "stop";
                                 break;
                         }
-                        if (movetime > 0 && duration_cast<milliseconds>(now - start).count() >= movetime)
+                        if (duration_cast<milliseconds>(now - start).count() >= movetime)
                         {
                                 endReason = "movetime";
                                 break;
@@ -213,10 +222,15 @@ void Engine::go(int movetime)
         reason << std::endl;
         this->comm->uciOutput(reason.str());
 
+        unsigned long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+        unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
+
         std::ostringstream status;
         status << "info string [Engine::go] time "
-               << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
-               << "ms best";
+               << elapsed
+               << "ms nodes " << Lib::formatThousands(this->nodes)
+               << " nps " << Lib::formatThousands(nps)
+               << " best";
         for (const auto& bm : bestMoves)
         {
                 status << ' ' << bm;
@@ -225,7 +239,10 @@ void Engine::go(int movetime)
         this->comm->uciOutput(status.str());
 
         std::ostringstream uci;
-        uci << "info score cp " << bestScore << " pv";
+        uci << "info time " << elapsed
+            << " nodes " << this->nodes
+            << " nps " << nps
+            << " score cp " << bestScore << " pv";
         for (const auto& bm : bestMoves)
         {
                 uci << ' ' << bm;
@@ -234,7 +251,10 @@ void Engine::go(int movetime)
         this->comm->uciOutput(uci.str());
 
         std::ostringstream output;
-        output << "info score cp " << bestScore << " pv";
+        output << "info time " << elapsed
+               << " nodes " << this->nodes
+               << " nps " << nps
+               << " score cp " << bestScore << " pv";
         for (const auto& move : bestMoves)
         {
                 output << ' ' << move;
@@ -252,6 +272,7 @@ void Engine::go(int movetime)
 
 int Engine::minimax(Board& board, int depth)
 {
+        this->nodes++;
         MoveGenerator moveGenerator;
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
 
