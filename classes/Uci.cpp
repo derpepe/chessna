@@ -36,7 +36,7 @@ void Uci::parse(std::string p_parameters)
 	
 	if (command.compare("uci") == 0)
 	{
-		this->sendId("name", "CHESSna 2 Version 1.00 - 201508161235");
+		this->sendId("name", "CHESSna 2 Version 1.10 - 202508162238");
 		this->sendId("author", "Peter Schneider");
 		this->sendUciok();
 	}

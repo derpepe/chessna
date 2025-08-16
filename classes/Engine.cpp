@@ -118,6 +118,8 @@ void Engine::stop()
 
 void Engine::go(GoParams params)
 {
+        std::cout << "info string [Engine::go] here we go" << std::endl;
+
         int movetime = params.movetime;
         if (movetime <= 0)
         {
@@ -138,14 +140,12 @@ void Engine::go(GoParams params)
                 }
         }
 
-        std::ostringstream movetimeInfo;
-        movetimeInfo << "info string [Engine::go] movetime " << movetime << "ms" << std::endl;
+        std::cout << "info string [Engine::go] calculated movetime " << movetime << "ms" << std::endl;
         this->comm->uciOutput(movetimeInfo.str());
-        std::cout << "info string [Engine::go] let's go!" << std::endl;
 
         MoveGenerator moveGenerator;
         std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
-        std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
+        std::cout << "info string [Engine::go] " << possibleMoves.size() << " moves found" << std::endl;
 
         if (possibleMoves.empty())
         {
