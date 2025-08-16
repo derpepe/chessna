@@ -143,6 +143,7 @@ void Engine::go(int movetime)
         int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                        : std::numeric_limits<int>::max();
         std::vector<std::string> bestMoves;
+        std::vector<std::string> bestPV;
         std::string endReason;
         bool aborted = false;
 
@@ -156,6 +157,7 @@ void Engine::go(int movetime)
                 int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                                     : std::numeric_limits<int>::max();
                 std::vector<std::string> depthBestMoves;
+                std::vector<std::string> depthBestPV;
 
                 for (const auto& move : possibleMoves)
                 {
@@ -164,18 +166,22 @@ void Engine::go(int movetime)
                         // currentDepth counts plies including the move just played.
                         // After making a candidate move we have already spent one ply,
                         // therefore we search one ply less for the remaining moves.
-                        int score = this->minimax(nextBoard,
-                                                  currentDepth - 1,
-                                                  std::numeric_limits<int>::min(),
-                                                  std::numeric_limits<int>::max(),
-                                                  true,
-                                                  timeExceeded);
-                        if (score == ABORT_SCORE)
+                        SearchResult result = this->minimax(nextBoard,
+                                                            currentDepth - 1,
+                                                            std::numeric_limits<int>::min(),
+                                                            std::numeric_limits<int>::max(),
+                                                            true,
+                                                            timeExceeded);
+                        if (result.score == ABORT_SCORE)
                         {
                                 endReason = this->stopRequested ? "stop" : "movetime";
                                 aborted = true;
                                 break;
                         }
+                        std::vector<std::string> line;
+                        line.push_back(move);
+                        line.insert(line.end(), result.moves.begin(), result.moves.end());
+                        int score = result.score;
                         bool better = rootMaximizing ? (score > depthBestScore) : (score < depthBestScore);
                         if (better)
                         {
@@ -183,6 +189,12 @@ void Engine::go(int movetime)
                                 depthBestMove = move;
                                 depthBestMoves.clear();
                                 depthBestMoves.push_back(move);
+                                depthBestPV = line;
+                                auto now = steady_clock::now();
+                                unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
+                                unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
+                                this->emitInfo(elapsed, this->nodes, nps,
+                                               depthBestScore, depthBestPV);
                         }
                         else if (score == depthBestScore)
                         {
@@ -195,7 +207,7 @@ void Engine::go(int movetime)
                                 unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
                                 unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
                                 this->emitInfo(elapsed, this->nodes, nps,
-                                               depthBestScore, depthBestMoves);
+                                               depthBestScore, depthBestPV);
 
                                 lastInfo = now;
                         }
@@ -219,6 +231,7 @@ void Engine::go(int movetime)
                         bestMove = depthBestMove;
                         bestScore = depthBestScore;
                         bestMoves = depthBestMoves;
+                        bestPV = depthBestPV;
                 }
                 else
                 {
@@ -264,7 +277,7 @@ void Engine::go(int movetime)
         unsigned long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
         unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
 
-        this->emitInfo(elapsed, this->nodes, nps, bestScore, bestMoves);
+        this->emitInfo(elapsed, this->nodes, nps, bestScore, bestPV);
 
         std::ostringstream output;
         output << "info string [Engine::go] best";
@@ -309,20 +322,20 @@ void Engine::emitInfo(unsigned long long elapsed,
         this->comm->uciOutput(uci.str());
 }
 
-int Engine::minimax(Board& board,
-                    int depth,
-                    int alpha,
-                    int beta,
-                    bool allowNull,
-                    const std::function<bool()>& timeExceeded)
+SearchResult Engine::minimax(Board& board,
+                             int depth,
+                             int alpha,
+                             int beta,
+                             bool allowNull,
+                             const std::function<bool()>& timeExceeded)
 {
         if (this->stopRequested)
         {
-                return Evaluation::evaluate(board);
+                return {Evaluation::evaluate(board), {}};
         }
         if (timeExceeded())
         {
-                return ABORT_SCORE;
+                return {ABORT_SCORE, {}};
         }
         this->nodes++;
 
@@ -342,11 +355,11 @@ int Engine::minimax(Board& board,
                 {
                         if (inCheck)
                         {
-                                return maximizingPlayer ? -100000 : 100000;
+                                return {maximizingPlayer ? -100000 : 100000, {}};
                         }
-                        return 0;
+                        return {0, {}};
                 }
-                return Evaluation::evaluate(board);
+                return {Evaluation::evaluate(board), {}};
         }
 
         // Null move pruning
@@ -362,15 +375,15 @@ int Engine::minimax(Board& board,
                         int R = 2;
                         if (maximizingPlayer)
                         {
-                                int nullScore = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded);
-                                if (this->stopRequested || nullScore == ABORT_SCORE) return ABORT_SCORE;
-                                if (nullScore >= beta) return nullScore;
+                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded);
+                                if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                if (nullRes.score >= beta) return {nullRes.score, {}};
                         }
                         else
                         {
-                                int nullScore = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded);
-                                if (this->stopRequested || nullScore == ABORT_SCORE) return ABORT_SCORE;
-                                if (nullScore <= alpha) return nullScore;
+                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded);
+                                if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                if (nullRes.score <= alpha) return {nullRes.score, {}};
                         }
                 }
         }
@@ -378,32 +391,44 @@ int Engine::minimax(Board& board,
         if (maximizingPlayer)
         {
                 int maxEval = std::numeric_limits<int>::min();
+                std::vector<std::string> bestLine;
                 for (const auto& move : moves)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
-                        if (this->stopRequested || eval == ABORT_SCORE) return ABORT_SCORE;
-                        if (eval > maxEval) maxEval = eval;
-                        if (eval > alpha) alpha = eval;
+                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
+                        if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                        if (result.score > maxEval)
+                        {
+                                maxEval = result.score;
+                                bestLine = result.moves;
+                                bestLine.insert(bestLine.begin(), move);
+                        }
+                        if (result.score > alpha) alpha = result.score;
                         if (beta <= alpha) break;
                 }
-                return maxEval;
+                return {maxEval, bestLine};
         }
         else
         {
                 int minEval = std::numeric_limits<int>::max();
+                std::vector<std::string> bestLine;
                 for (const auto& move : moves)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
-                        if (this->stopRequested || eval == ABORT_SCORE) return ABORT_SCORE;
-                        if (eval < minEval) minEval = eval;
-                        if (eval < beta) beta = eval;
+                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
+                        if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                        if (result.score < minEval)
+                        {
+                                minEval = result.score;
+                                bestLine = result.moves;
+                                bestLine.insert(bestLine.begin(), move);
+                        }
+                        if (result.score < beta) beta = result.score;
                         if (beta <= alpha) break;
                 }
-                return minEval;
+                return {minEval, bestLine};
         }
 }
 
