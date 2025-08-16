@@ -14,6 +14,12 @@
 #include <functional>
 #include <memory>
 
+struct SearchResult
+{
+        int score;
+        std::vector<std::string> moves;
+};
+
 class Engine
 {
 public:
@@ -44,12 +50,12 @@ private:
         std::condition_variable taskCv;
         std::queue<std::function<void()>> tasks;
 
-        int minimax(Board& board,
-                    int depth,
-                    int alpha,
-                    int beta,
-                    bool allowNull,
-                    const std::function<bool()>& timeExceeded);
+        SearchResult minimax(Board& board,
+                             int depth,
+                             int alpha,
+                             int beta,
+                             bool allowNull,
+                             const std::function<bool()>& timeExceeded);
 
         void emitInfo(unsigned long long elapsed,
                        unsigned long long nodes,
