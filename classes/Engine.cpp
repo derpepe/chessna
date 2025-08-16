@@ -319,33 +319,6 @@ void Engine::go(GoParams params)
                 bestScore = 0;
         }
 
-        // Sanity check: irrespective of the search outcome ensure that the
-        // move reported as best actually represents the extreme score for the
-        // side to move.  Evaluation::evaluate returns a score from White's
-        // perspective, so when Black is to move we want the move with the
-        // lowest score, and when White is to move we want the highest score.
-        {
-                int extremeScore = rootMaximizing ? std::numeric_limits<int>::min()
-                                                  : std::numeric_limits<int>::max();
-                std::string extremeMove = possibleMoves[0];
-                for (const auto& mv : possibleMoves)
-                {
-                        Board tmp(*this->board);
-                        tmp.executeMove(mv);
-                        int s = Evaluation::evaluate(tmp);
-                        if ((rootMaximizing && s > extremeScore) ||
-                            (!rootMaximizing && s < extremeScore))
-                        {
-                                extremeScore = s;
-                                extremeMove = mv;
-                        }
-                }
-                bestMove = extremeMove;
-                bestScore = extremeScore;
-                bestPV.clear();
-                bestPV.push_back(bestMove);
-        }
-
         auto now = std::chrono::steady_clock::now();
         std::ostringstream reason;
         reason << "info string [Engine::go] search finished: ";
