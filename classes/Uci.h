@@ -5,9 +5,9 @@
 #include <sstream>
 #include <iterator>
 #include <vector>
+#include <string>
 #include "Comm.h"
 #include "Lib.h"
-#include "Fen.h"
 
 class Uci
 {

@@ -1,5 +1,8 @@
 #include "Uci.h"
 
+namespace {
+const std::string START_POS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+}
 
 Uci::Uci(Comm *comm)
 {
@@ -79,9 +82,9 @@ void Uci::parse(std::string p_parameters)
 
 	        std::vector<std::string>::iterator tokenIterator = parameters.begin();
 	        ++tokenIterator; // skip command
-	        std::string token = *tokenIterator;
+                std::string token = *tokenIterator;
 
-	        std::string fen = Fen::startPos;
+                std::string fen = START_POS;
 	        if (token.compare("startpos") == 0)
 	        {
 	                ++tokenIterator;
