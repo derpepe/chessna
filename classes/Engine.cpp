@@ -213,7 +213,8 @@ void Engine::go(GoParams params)
                                                             alpha,
                                                             beta,
                                                             true,
-                                                            timeExceeded);
+                                                            timeExceeded,
+                                                            1);
                         if (result.score == ABORT_SCORE)
                         {
                                 endReason = this->stopRequested ? "stop" : "movetime";
@@ -374,7 +375,8 @@ SearchResult Engine::minimax(Board& board,
                              int alpha,
                              int beta,
                              bool allowNull,
-                             const std::function<bool()>& timeExceeded)
+                             const std::function<bool()>& timeExceeded,
+                             int ply)
 {
         if (this->stopRequested)
         {
@@ -394,13 +396,15 @@ SearchResult Engine::minimax(Board& board,
                                                        : (board.kings & board.blacks);
         if (king_bb == 0)
         {
-                return {maximizingPlayer ? -CHECKMATE_SCORE : CHECKMATE_SCORE, {}};
+                int mateScore = CHECKMATE_SCORE - ply;
+                return {maximizingPlayer ? -mateScore : mateScore, {}};
         }
         unsigned long long opponent_king_bb = maximizingPlayer ? (board.kings & board.blacks)
                                                                : (board.kings & board.whites);
         if (opponent_king_bb == 0)
         {
-                return {maximizingPlayer ? CHECKMATE_SCORE : -CHECKMATE_SCORE, {}};
+                int mateScore = CHECKMATE_SCORE - ply;
+                return {maximizingPlayer ? mateScore : -mateScore, {}};
         }
         char opponent = maximizingPlayer ? 'b' : 'w';
         int king_sq = -1;
@@ -417,7 +421,8 @@ SearchResult Engine::minimax(Board& board,
                 {
                         if (inCheck)
                         {
-                                return {maximizingPlayer ? -CHECKMATE_SCORE : CHECKMATE_SCORE, {}};
+                                int mateScore = CHECKMATE_SCORE - ply;
+                                return {maximizingPlayer ? -mateScore : mateScore, {}};
                         }
                         return {0, {}};
                 }
@@ -437,7 +442,7 @@ SearchResult Engine::minimax(Board& board,
                         int R = 2;
                         if (maximizingPlayer)
                         {
-                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded);
+                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded, ply + 1);
                                 if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
                                 // Return the bound instead of the null move score to avoid
                                 // propagating unrealistically high values.
@@ -445,7 +450,7 @@ SearchResult Engine::minimax(Board& board,
                         }
                         else
                         {
-                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded);
+                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded, ply + 1);
                                 if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
                                 // Return the bound instead of the null move score to avoid
                                 // propagating unrealistically low values.
@@ -462,7 +467,7 @@ SearchResult Engine::minimax(Board& board,
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
+                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded, ply + 1);
                         if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
                         if (result.score > maxEval)
                         {
@@ -483,7 +488,7 @@ SearchResult Engine::minimax(Board& board,
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded);
+                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded, ply + 1);
                         if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
                         if (result.score < minEval)
                         {
