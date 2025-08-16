@@ -345,6 +345,16 @@ SearchResult Engine::minimax(Board& board,
 
         unsigned long long king_bb = maximizingPlayer ? (board.kings & board.whites)
                                                        : (board.kings & board.blacks);
+        if (king_bb == 0)
+        {
+                return {maximizingPlayer ? -100000 : 100000, {}};
+        }
+        unsigned long long opponent_king_bb = maximizingPlayer ? (board.kings & board.blacks)
+                                                               : (board.kings & board.whites);
+        if (opponent_king_bb == 0)
+        {
+                return {maximizingPlayer ? 100000 : -100000, {}};
+        }
         char opponent = maximizingPlayer ? 'b' : 'w';
         int king_sq = -1;
         bool inCheck = false;
