@@ -24,70 +24,111 @@ namespace C {
     constexpr int SCORE_CLAMP  = 30000;
 
     // Game phase & mobility tuning
-    constexpr int PHASE_TOTAL  = 5180;   // total non-pawn material for phase
-    constexpr int MOBILITY_CAP = 30;     // difference in legal moves considered
-    constexpr int MOBILITY_WEIGHT = 2;   // cp per mobility point
+    // Gesamtwert allen Nicht-Bauernmaterials zu Beginn der Partie.
+    // Wird genutzt, um den Übergang zwischen Mittel- und Endspiel zu skalieren.
+    constexpr int PHASE_TOTAL  = 5180;
+    // Maximale Differenz der legalen Züge, die bei der Beweglichkeit berücksichtigt wird.
+    constexpr int MOBILITY_CAP = 30;
+    // Wie stark sich ein Beweglichkeitspunkt in Zentipunkten auf den Wert auswirkt.
+    constexpr int MOBILITY_WEIGHT = 2;
 
     // Pawn structure
-    constexpr int PAWN_CORE_MG = 30;     // pawn in the core centre
-    constexpr int PAWN_EXT_MG  = 6;      // pawn in the extended centre
+    // Bonus im Mittelspiel für einen Bauern in den vier zentralen Feldern (d4,e4,d5,e5)
+    constexpr int PAWN_CORE_MG = 30;
+    // Bonus für einen Bauern im erweiterten Zentrum
+    constexpr int PAWN_EXT_MG  = 6;
+    // Malus für einen verdoppelten Bauern auf derselben Linie
     constexpr int DOUBLED_PAWN = -12;
+    // Malus für einen isolierten Bauern ohne Nachbarbauern
     constexpr int ISOLATED_PAWN = -15;
+    // Boni für verbundene Freibauern im Mittelspiel je Reihe (aus Weißer Sicht)
     constexpr int PASSED_MG[8] = {0,0,0,20,35,60,95,0};
+    // Boni für verbundene Freibauern im Endspiel je Reihe
     constexpr int PASSED_EG[8] = {0,0,0,25,45,75,120,0};
 
     // Knights
+    // Springer im Kernzentrum (d4,e4,d5,e5) im Mittel-/Endspiel
     constexpr int KNIGHT_CORE_MG = 30;
     constexpr int KNIGHT_CORE_EG = 20;
+    // Springer im erweiterten Zentrum
     constexpr int KNIGHT_EXT_MG  = 18;
     constexpr int KNIGHT_EXT_EG  = 10;
+    // Bestrafung für Springer auf Randlinien
     constexpr int KNIGHT_EDGE_MG = -12;
     constexpr int KNIGHT_EDGE_EG = -8;
+    // Starker Malus für Springer in den Ecken
     constexpr int KNIGHT_CORNER_MG = -20;
+    // Bonus für einen sicheren Vorposten-Springer
     constexpr int KNIGHT_OUTPOST_MG = 25;
+    // Bonus, wenn ein Springer die sechste Reihe erreicht
     constexpr int KNIGHT_SIXTH_MG = 10;
 
     // Bishops
+    // Vorteil für das Läuferpaar im Mittelspiel
     constexpr int BISHOP_PAIR_MG = 30;
+    // Vorteil für das Läuferpaar im Endspiel
     constexpr int BISHOP_PAIR_EG = 20;
-    constexpr int BISHOP_OPEN_MG = 8;    // open diagonal
+    // Bonus für Läufer auf offenen Diagonalen (keine Bauern)
+    constexpr int BISHOP_OPEN_MG = 8;
     constexpr int BISHOP_OPEN_EG = 10;
+    // Zusätzlicher Bonus für Läufer auf langen Diagonalen
     constexpr int BISHOP_LONG_DIAG_MG = 10;
 
     // Rooks
+    // Turm auf völlig offener Linie
     constexpr int ROOK_OPEN_MG = 18;
     constexpr int ROOK_OPEN_EG = 14;
+    // Turm auf halb-offener Linie (eigener Bauer fehlt)
     constexpr int ROOK_HALF_OPEN_MG = 10;
+    // Turm auf der siebten Reihe
     constexpr int ROOK_SEVENTH_MG = 22;
     constexpr int ROOK_SEVENTH_EG = 16;
+    // Verbundene Türme auf gleicher Reihe oder Linie ohne Hindernisse
     constexpr int CONNECTED_ROOKS_MG = 12;
 
     // Queens
+    // Frühe Dame im Kernzentrum in den ersten Zügen
     constexpr int QUEEN_EARLY_CORE_MG = 8;
+    // Frühe Dame im erweiterten Zentrum
     constexpr int QUEEN_EARLY_EXT_MG = 3;
+    // Dame auf der siebten Reihe
     constexpr int QUEEN_SEVENTH_MG = 12;
+    // Position der Dame im Endspiel
     constexpr int QUEEN_CORE_EG = 8;
     constexpr int QUEEN_EXT_EG = 4;
 
     // Kings
+    // Bonus wenn der König rochiert hat
     constexpr int CASTLED_BONUS_MG = 20;
-    constexpr int UNCASTLED_PENALTY_MG = -35; // after move 12 on starting square
+    // Malus für einen unrochierten König nach Zug 12 auf dem Ausgangsfeld
+    constexpr int UNCASTLED_PENALTY_MG = -35;
+    // Schutzbauern vor dem König vorhanden
     constexpr int SHIELD_BONUS_MG = 12;
+    // Fehlende Schutzbauern vor dem König
     constexpr int SHIELD_MISSING_MG = -10;
+    // Aktivität des Königs im Endspiel
     constexpr int KING_CORE_EG = 28;
     constexpr int KING_EXT_EG  = 16;
 
     // Aggressive extras
+    // Druck auf den gegnerischen König durch Springer/Bischoff/Turm/Dame
     constexpr int KING_PRESSURE_KNIGHT = 4;
     constexpr int KING_PRESSURE_BISHOP = 6;
     constexpr int KING_PRESSURE_ROOK   = 8;
     constexpr int KING_PRESSURE_QUEEN  = 8;
-    constexpr int HOTSPOT_KNIGHT_MG = 10; // knights on f6/f3/e6/e3
+    // Spezieller Bonus für Springer auf den Angriffspunkten f6, f3, e6 und e3
+    constexpr int HOTSPOT_KNIGHT_MG = 10;
 }
 
+// Spiegelung eines Feldes entlang der horizontalen Achse.
+// sq: Feldindex (0=a1, 63=h8).
 inline int mirrorSquare(int sq) { return 63 - sq; }
+// Bitmaske für eine bestimmte Linie (Datei).
+// file: Nummer der Linie 0=a bis 7=h.
 inline unsigned long long fileMask(int file) { return 0x0101010101010101ULL << file; }
 
+// Liefert alle von einem Springer auf Feld sq angegriffenen Felder als Bitboard.
+// sq: Feldindex des Springers.
 unsigned long long knightAttacks(int sq) {
     unsigned long long b = 0ULL;
     int r = Lib::getRank(sq);
@@ -101,6 +142,8 @@ unsigned long long knightAttacks(int sq) {
     return b;
 }
 
+// Liefert alle Felder, die ein König von Feld sq aus erreichen kann.
+// sq: Feldindex des Königs.
 unsigned long long kingAttacks(int sq) {
     unsigned long long b = 0ULL;
     int r = Lib::getRank(sq); int f = Lib::getFile(sq);
@@ -113,6 +156,8 @@ unsigned long long kingAttacks(int sq) {
     return b;
 }
 
+// Gibt die Angriffsfelder eines Bauern zurück.
+// sq: Feldindex des Bauern, white: true für weiße, false für schwarze Bauern.
 unsigned long long pawnAttacks(int sq, bool white) {
     unsigned long long b = 0ULL;
     int r = Lib::getRank(sq); int f = Lib::getFile(sq);
@@ -126,6 +171,8 @@ unsigned long long pawnAttacks(int sq, bool white) {
     return b;
 }
 
+// Berechnet die Bewegungs- und Angriffsmaske eines Läufers.
+// sq: Ausgangsfeld, occ: Bitboard aller Figuren zur Blockade.
 unsigned long long bishopAttacks(int sq, unsigned long long occ) {
     unsigned long long b=0ULL;
     const int dirs[4]={9,7,-9,-7};
@@ -143,6 +190,8 @@ unsigned long long bishopAttacks(int sq, unsigned long long occ) {
     return b;
 }
 
+// Berechnet die Bewegungs- und Angriffsmaske eines Turms.
+// sq: Ausgangsfeld, occ: Bitboard aller Figuren zur Blockade.
 unsigned long long rookAttacks(int sq, unsigned long long occ) {
     unsigned long long b=0ULL;
     const int dirs[4]={1,-1,8,-8};
@@ -163,6 +212,7 @@ unsigned long long rookAttacks(int sq, unsigned long long occ) {
 } // namespace
 
 // Evaluate a position from white's perspective in centipawns.
+// board: enthält die komplette Brettstellung, die bewertet wird.
 int Evaluation::evaluate(Board& board)
 {
     MoveGenerator gen;
@@ -193,12 +243,14 @@ int Evaluation::evaluate(Board& board)
         C::QUEEN_VALUE  * __builtin_popcountll(board.queens  & board.blacks);
     int materialScore = whiteMaterial - blackMaterial;
 
-    // Phase: blend middle-game and endgame components depending on material
+    // Phase: Anteil des Mittelspiels basierend auf verbleibendem Material.
+    // nonPawn misst das gesamte Figurenmaterial ohne Bauern beider Seiten.
     int nonPawn = (whiteMaterial + blackMaterial) -
                   C::PAWN_VALUE * __builtin_popcountll(board.pawns & (board.whites|board.blacks));
+    // phase ist ein Wert zwischen 1 (volle Figuren -> Mittelspiel) und 0 (nur wenige Figuren -> Endspiel).
     double phase = std::max(0.0, std::min(1.0, nonPawn / (double)C::PHASE_TOTAL));
 
-    int mg = 0, eg = 0; // middle-game and endgame scores
+    int mg = 0, eg = 0; // Zwischenspeicher für Mittelspiel- und Endspielpunkte
     unsigned long long occupied = board.whites | board.blacks;
 
     // Board masks used for piece-square reasoning
@@ -215,6 +267,10 @@ int Evaluation::evaluate(Board& board)
         (1ULL<<0)|(1ULL<<7)|(1ULL<<56)|(1ULL<<63);
 
     // --- Pawns ------------------------------------------------------------
+    // pawns: Bitboard der zu bewertenden Bauern
+    // own: Bitboard aller eigenen Figuren
+    // opp: Bitboard aller gegnerischen Figuren
+    // white: true für weiße, false für schwarze Bauern
     auto evalPawns = [&](unsigned long long pawns, unsigned long long own, unsigned long long opp, bool white){
         while (pawns) {
             int sq = __builtin_ffsll(pawns)-1;
@@ -251,6 +307,9 @@ int Evaluation::evaluate(Board& board)
     evalPawns(board.pawns & board.blacks, board.blacks, board.whites, false);
 
     // --- Knights ----------------------------------------------------------
+    // pieces: Bitboard der zu bewertenden Springer
+    // own/opp: eigene bzw. gegnerische Figuren
+    // white: Farbe der Springer
     auto evalKnights = [&](unsigned long long pieces, unsigned long long own, unsigned long long opp, bool white){
         while (pieces) {
             int sq=__builtin_ffsll(pieces)-1; unsigned long long bit=1ULL<<sq;
@@ -272,6 +331,7 @@ int Evaluation::evaluate(Board& board)
     int blackBish = __builtin_popcountll(board.bishops & board.blacks);
     if (whiteBish>=2) { mg+=C::BISHOP_PAIR_MG; eg+=C::BISHOP_PAIR_EG; }
     if (blackBish>=2) { mg-=C::BISHOP_PAIR_MG; eg-=C::BISHOP_PAIR_EG; }
+    // pieces: Bitboard der Läufer, white: Farbe der Läufer
     auto evalBish = [&](unsigned long long pieces, bool white){
         while (pieces) {
             int sq=__builtin_ffsll(pieces)-1;
@@ -285,6 +345,9 @@ int Evaluation::evaluate(Board& board)
     evalBish(board.bishops & board.blacks, false);
 
     // --- Rooks ------------------------------------------------------------
+    // pieces: Bitboard der Türme
+    // own/opp: eigene bzw. gegnerische Figuren zur Linienprüfung
+    // white: Farbe der Türme
     auto evalRooks = [&](unsigned long long pieces, unsigned long long own, unsigned long long opp, bool white){
         while (pieces) {
             int sq=__builtin_ffsll(pieces)-1;
@@ -303,6 +366,7 @@ int Evaluation::evaluate(Board& board)
     evalRooks(board.rooks & board.blacks, board.blacks, board.whites, false);
 
     // connected rooks
+    // pieces: Bitboard der Türme, white: Farbe
     auto connected = [&](unsigned long long pieces, bool white){
         if (__builtin_popcountll(pieces)>=2) {
             unsigned long long temp=pieces;
@@ -323,6 +387,7 @@ int Evaluation::evaluate(Board& board)
     connected(board.rooks & board.blacks, false);
 
     // --- Queens -----------------------------------------------------------
+    // pieces: Bitboard der Damen, white: Farbe
     auto evalQueens = [&](unsigned long long pieces, bool white){
         while (pieces) {
             int sq=__builtin_ffsll(pieces)-1; unsigned long long bit=1ULL<<sq;
@@ -341,6 +406,9 @@ int Evaluation::evaluate(Board& board)
     evalQueens(board.queens & board.blacks, false);
 
     // --- King -------------------------------------------------------------
+    // king: Bitboard mit genau einem König
+    // own: Bitboard der eigenen Figuren (für Schutzbauern)
+    // white: Farbe des Königs
     auto evalKing = [&](unsigned long long king, unsigned long long own, bool white){
         int sq=__builtin_ffsll(king)-1; unsigned long long bit=1ULL<<sq;
         if ((white && (sq==6 || sq==2)) || (!white && (sq==62 || sq==58)))
@@ -374,6 +442,8 @@ int Evaluation::evaluate(Board& board)
     evalKing(board.kings & board.blacks, board.blacks, false);
 
     // mobility
+    // Hilfsfunktion zur Beweglichkeitsbewertung
+    // b: kopiertes Brett, side: Seite, deren Züge gezählt werden
     auto countMoves = [&](Board b, char side){ b.playerToMove=side; return (int)gen.getAllMoves(b).size(); };
     int mobW=countMoves(board,'w');
     int mobB=countMoves(board,'b');
@@ -381,6 +451,8 @@ int Evaluation::evaluate(Board& board)
     mg += diff*C::MOBILITY_WEIGHT;
 
     // king pressure: count attackers around opponent king
+    // attackerPieces: Bitboard der angreifenden Figuren einer Seite
+    // white: true wenn Weiß angreift, sonst schwarz
     auto kingPressure = [&](unsigned long long attackerPieces, bool white){
         unsigned long long king = board.kings & (white?board.blacks:board.whites);
         int ksq = __builtin_ffsll(king)-1;
@@ -402,6 +474,7 @@ int Evaluation::evaluate(Board& board)
     kingPressure(board.whites,true);
     kingPressure(board.blacks,false);
 
+    // sq: Feldindex eines potentiellen Springervorpostens
     auto hotspot=[&](int sq){ if(board.knights & (1ULL<<sq)){ if(board.whites & (1ULL<<sq)) mg+=C::HOTSPOT_KNIGHT_MG; else mg-=C::HOTSPOT_KNIGHT_MG; } };
     hotspot(Lib::getBitnumFromCoordinates("f6"));
     hotspot(Lib::getBitnumFromCoordinates("f3"));
