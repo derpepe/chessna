@@ -133,7 +133,6 @@ void Engine::go(int movetime)
 
         using namespace std::chrono;
         auto start = steady_clock::now();
-        auto lastInfo = start;
         auto timeExceeded = [&]() {
                 return duration_cast<milliseconds>(steady_clock::now() - start).count() >= movetime;
         };
@@ -144,7 +143,6 @@ void Engine::go(int movetime)
                                        : std::numeric_limits<int>::max();
         std::vector<std::string> bestMoves;
         std::string endReason;
-        bool aborted = false;
 
         for (int currentDepth = 1; currentDepth <= SEARCH_DEPTH; ++currentDepth)
         {
@@ -157,73 +155,85 @@ void Engine::go(int movetime)
                                                     : std::numeric_limits<int>::max();
                 std::vector<std::string> depthBestMoves;
 
-                for (const auto& move : possibleMoves)
+                std::atomic<std::size_t> nextIndex{0};
+                unsigned int threadCount = std::thread::hardware_concurrency();
+                if (threadCount == 0) threadCount = 1;
+                if (threadCount > possibleMoves.size()) threadCount = possibleMoves.size();
+                std::mutex bestMutex;
+                std::vector<std::thread> workers;
+                std::atomic<bool> depthAborted{false};
+
+                auto worker = [&]() {
+                        while (true)
+                        {
+                                std::size_t idx = nextIndex.fetch_add(1);
+                                if (idx >= possibleMoves.size() || depthAborted.load())
+                                {
+                                        break;
+                                }
+                                const auto &move = possibleMoves[idx];
+                                Board nextBoard(*this->board);
+                                nextBoard.executeMove(move);
+                                int score = this->minimax(nextBoard,
+                                                          currentDepth - 1,
+                                                          std::numeric_limits<int>::min(),
+                                                          std::numeric_limits<int>::max(),
+                                                          true,
+                                                          timeExceeded);
+                                if (score == ABORT_SCORE)
+                                {
+                                        depthAborted = true;
+                                        break;
+                                }
+                                {
+                                        std::lock_guard<std::mutex> lock(bestMutex);
+                                        bool better = rootMaximizing ? (score > depthBestScore)
+                                                                     : (score < depthBestScore);
+                                        if (better)
+                                        {
+                                                depthBestScore = score;
+                                                depthBestMove = move;
+                                                depthBestMoves.clear();
+                                                depthBestMoves.push_back(move);
+                                        }
+                                        else if (score == depthBestScore)
+                                        {
+                                                depthBestMoves.push_back(move);
+                                        }
+                                }
+                                if (this->stopRequested || timeExceeded())
+                                {
+                                        depthAborted = true;
+                                        break;
+                                }
+                        }
+                };
+
+                for (unsigned int i = 0; i < threadCount; ++i)
                 {
-                        Board nextBoard(*this->board);
-                        nextBoard.executeMove(move);
-                        // currentDepth counts plies including the move just played.
-                        // After making a candidate move we have already spent one ply,
-                        // therefore we search one ply less for the remaining moves.
-                        int score = this->minimax(nextBoard,
-                                                  currentDepth - 1,
-                                                  std::numeric_limits<int>::min(),
-                                                  std::numeric_limits<int>::max(),
-                                                  true,
-                                                  timeExceeded);
-                        if (score == ABORT_SCORE)
-                        {
-                                endReason = this->stopRequested ? "stop" : "movetime";
-                                aborted = true;
-                                break;
-                        }
-                        bool better = rootMaximizing ? (score > depthBestScore) : (score < depthBestScore);
-                        if (better)
-                        {
-                                depthBestScore = score;
-                                depthBestMove = move;
-                                depthBestMoves.clear();
-                                depthBestMoves.push_back(move);
-                        }
-                        else if (score == depthBestScore)
-                        {
-                                depthBestMoves.push_back(move);
-                        }
+                        workers.emplace_back(worker);
+                }
+                for (auto &t : workers)
+                {
+                        t.join();
+                }
 
-                        auto now = steady_clock::now();
-                        if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
-                        {
-                                unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
-                                unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
-                                this->emitInfo(elapsed, this->nodes, nps,
-                                               depthBestScore, depthBestMoves);
-
-                                lastInfo = now;
-                        }
-
+                if (depthAborted.load())
+                {
                         if (this->stopRequested)
                         {
                                 endReason = "stop";
-                                aborted = true;
-                                break;
                         }
-                        if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                        else if (timeExceeded())
                         {
                                 endReason = "movetime";
-                                aborted = true;
-                                break;
                         }
-                }
-
-                if (!aborted)
-                {
-                        bestMove = depthBestMove;
-                        bestScore = depthBestScore;
-                        bestMoves = depthBestMoves;
-                }
-                else
-                {
                         break;
                 }
+
+                bestMove = depthBestMove;
+                bestScore = depthBestScore;
+                bestMoves = depthBestMoves;
         }
 
         if (endReason.empty())
@@ -262,9 +272,9 @@ void Engine::go(int movetime)
         this->comm->uciOutput(reason.str());
 
         unsigned long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-        unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
+        unsigned long long nps = elapsed ? (this->nodes.load() * 1000) / elapsed : 0;
 
-        this->emitInfo(elapsed, this->nodes, nps, bestScore, bestMoves);
+        this->emitInfo(elapsed, this->nodes.load(), nps, bestScore, bestMoves);
 
         std::ostringstream output;
         output << "info string [Engine::go] best";

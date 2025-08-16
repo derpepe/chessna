@@ -38,7 +38,7 @@ private:
         std::unique_ptr<Perft> perft_runner;
 
         std::atomic<bool> stopRequested;
-        unsigned long long nodes;
+        std::atomic<unsigned long long> nodes;
 
         std::mutex taskMutex;
         std::condition_variable taskCv;
