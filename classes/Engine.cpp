@@ -345,9 +345,14 @@ SearchResult Engine::minimax(Board& board,
 
         unsigned long long king_bb = maximizingPlayer ? (board.kings & board.whites)
                                                        : (board.kings & board.blacks);
-        int king_sq = __builtin_ffsll(king_bb) - 1;
         char opponent = maximizingPlayer ? 'b' : 'w';
-        bool inCheck = moveGenerator.isSquareAttacked(board, king_sq, opponent);
+        int king_sq = -1;
+        bool inCheck = false;
+        if (king_bb)
+        {
+                king_sq = __builtin_ffsll(king_bb) - 1;
+                inCheck = moveGenerator.isSquareAttacked(board, king_sq, opponent);
+        }
 
         if (depth == 0 || moves.empty())
         {
