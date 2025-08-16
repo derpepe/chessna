@@ -32,6 +32,7 @@ public:
         void executeMove(std::string);
         void debug();
         void listMoves();
+        void evaluate();
         void perft(int);
         void perftDivide(int);
         unsigned long long perftNodes(int);

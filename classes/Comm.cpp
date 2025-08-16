@@ -25,6 +25,9 @@ Comm::Comm() {
   engineListMovesCallback = []() {
     std::cerr << "Warning: engineListMoves callback not set" << std::endl;
   };
+  engineEvaluateCallback = []() {
+    std::cerr << "Warning: engineEvaluate callback not set" << std::endl;
+  };
   enginePerftCallback = [](int) {
     std::cerr << "Warning: enginePerft callback not set" << std::endl;
   };
@@ -117,6 +120,18 @@ void Comm::engineListMoves() {
     engineListMovesCallback();
   } else {
     throw std::runtime_error("engineListMoves callback not set");
+  }
+}
+
+void Comm::registerEngineEvaluateCallback(
+    std::function<void()> engineEvaluateCallback) {
+  this->engineEvaluateCallback = engineEvaluateCallback;
+}
+void Comm::engineEvaluate() {
+  if (engineEvaluateCallback) {
+    engineEvaluateCallback();
+  } else {
+    throw std::runtime_error("engineEvaluate callback not set");
   }
 }
 

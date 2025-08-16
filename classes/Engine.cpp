@@ -34,6 +34,8 @@ Engine::Engine(Comm *comm)
                 [this] { this->enqueueTask([this] { this->debug(); }); });
         this->comm->registerEngineListMovesCallback(
                 [this] { this->enqueueTask([this] { this->listMoves(); }); });
+        this->comm->registerEngineEvaluateCallback(
+                [this] { this->enqueueTask([this] { this->evaluate(); }); });
         this->comm->registerEnginePerftCallback(
                 [this](int depth) {
                         this->enqueueTask([this, depth] { this->perft(depth); });
@@ -83,6 +85,14 @@ void Engine::listMoves()
                 output << ' ' << move;
         }
         output << std::endl;
+        this->comm->uciOutput(output.str());
+}
+
+void Engine::evaluate()
+{
+        int score = Evaluation::evaluate(*this->board);
+        std::ostringstream output;
+        output << "info string [Engine::evaluate] score " << score << std::endl;
         this->comm->uciOutput(output.str());
 }
 

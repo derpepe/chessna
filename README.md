@@ -91,5 +91,11 @@ Zusätzlich zu den Standard-UCI-Befehlen unterstützt CHESSna einige benutzerdef
 -   `perftdiv <Tiefe>`
     Führt einen `perft`-Test mit zusätzlicher Aufschlüsselung nach einzelnen Zügen durch.
 
+-   `evaluate`
+    Bewertet die aktuelle Stellung und gibt den Wert in Centipawns aus.
+
+-   `Zug` (z. B. `e2e4`)
+    Ein Zug in UCI-Notation kann direkt eingegeben werden, um ihn auf dem Brett auszuführen.
+
 -   `help`
     Zeigt eine Übersicht aller benutzerdefinierten Befehle an.

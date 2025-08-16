@@ -150,6 +150,8 @@ void Uci::parse(std::string p_parameters)
                 help << prefix << "  moves  Lists all legal moves for the current position." << std::endl;
                 help << prefix << "  perft <depth>  Performance test of the move generation." << std::endl;
                 help << prefix << "  perftdiv <depth>  Performance test of the move generation with debug output." << std::endl;
+                help << prefix << "  evaluate  Evaluate the current position." << std::endl;
+                help << prefix << "  <move>  Enter a move like e2e4 to play it." << std::endl;
                 this->sendString(help.str());
         }
         else if (command.compare("board") == 0)
@@ -207,10 +209,23 @@ void Uci::parse(std::string p_parameters)
                         this->sendString(prefix + " Error: perftdiv requires numeric depth\n");
                 }
         }
-	else
-	{
-		// ignore unknown command
-	}
+        else if (command.compare("evaluate") == 0)
+        {
+                this->comm->engineEvaluate();
+        }
+        else if ((command.length() == 4 || command.length() == 5) &&
+                 command[0] >= 'a' && command[0] <= 'h' &&
+                 command[1] >= '1' && command[1] <= '8' &&
+                 command[2] >= 'a' && command[2] <= 'h' &&
+                 command[3] >= '1' && command[3] <= '8' &&
+                 (command.length() == 4 || command[4] == 'q' || command[4] == 'r' || command[4] == 'b' || command[4] == 'n'))
+        {
+                this->comm->engineExecuteMove(command);
+        }
+        else
+        {
+                // ignore unknown command
+        }
 }
 
 

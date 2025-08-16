@@ -31,6 +31,8 @@ public:
   void engineDebug();
   void registerEngineListMovesCallback(std::function<void()>);
   void engineListMoves();
+  void registerEngineEvaluateCallback(std::function<void()>);
+  void engineEvaluate();
   void registerEnginePerftCallback(std::function<void(int)>);
   void enginePerft(int);
   void registerEnginePerftDivideCallback(std::function<void(int)>);
@@ -47,6 +49,7 @@ private:
   std::function<void(std::string)> engineExecuteMoveCallback;
   std::function<void()> engineDebugCallback;
   std::function<void()> engineListMovesCallback;
+  std::function<void()> engineEvaluateCallback;
   std::function<void(int)> enginePerftCallback;
   std::function<void(int)> enginePerftDivideCallback;
   std::function<unsigned long long(int)> enginePerftNodesCallback;
