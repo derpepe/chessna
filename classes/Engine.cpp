@@ -175,10 +175,6 @@ void Engine::go(GoParams params)
         std::string bestMove = possibleMoves[0];
         int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                        : std::numeric_limits<int>::max();
-        // `bestMoves` keeps all root moves that tie for the best score.
-        // It is used as a fallback in case we abort before a principal
-        // variation could be established.
-        std::vector<std::string> bestMoves;
         // `bestPV` holds the principal variation returned by the search.
         // The first move in this line is the move reported as bestmove.
         std::vector<std::string> bestPV;
@@ -191,13 +187,10 @@ void Engine::go(GoParams params)
                 depthInfo << "info depth " << currentDepth << std::endl;
                 this->comm->uciOutput(depthInfo.str());
 
-                std::string depthBestMove = possibleMoves[0];
                 int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                                     : std::numeric_limits<int>::max();
-                // Per-depth containers storing all moves with the best
-                // score and the principal variation for the best move at
-                // the current depth.
-                std::vector<std::string> depthBestMoves;
+                // Principal variation for the best move at the current
+                // depth.
                 std::vector<std::string> depthBestPV;
 
                 int alpha = INT_MIN;
@@ -230,19 +223,12 @@ void Engine::go(GoParams params)
                         if (better)
                         {
                                 depthBestScore = score;
-                                depthBestMove = move;
-                                depthBestMoves.clear();
-                                depthBestMoves.push_back(move);
                                 depthBestPV = line;
                                 auto now = steady_clock::now();
                                 unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
                                 unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
                                 this->emitInfo(elapsed, this->nodes, nps,
                                                depthBestScore, depthBestPV);
-                        }
-                        else if (score == depthBestScore)
-                        {
-                                depthBestMoves.push_back(move);
                         }
 
                         if (rootMaximizing)
@@ -279,15 +265,13 @@ void Engine::go(GoParams params)
                         }
                 }
 
-                // Always keep track of the best moves we have evaluated so
-                // far.  When the search for the current depth is aborted, we
+                // Always keep track of the best move we have evaluated so
+                // far. When the search for the current depth is aborted, we
                 // still want to discard root moves that are known to be
                 // inferior to the best move found before the abort.
-                if (!depthBestMoves.empty())
+                if (!depthBestPV.empty())
                 {
-                        bestMove = depthBestMove;
                         bestScore = depthBestScore;
-                        bestMoves = depthBestMoves;
                         bestPV = depthBestPV;
                 }
 
@@ -304,46 +288,15 @@ void Engine::go(GoParams params)
 
         // Prefer the first move from the principal variation as it reflects
         // the search path we consider strongest. If no PV is available (for
-        // example due to an early abort) fall back to the list of equally
-        // good root moves. If both are empty, no legal move was found.
+        // example due to an early abort) fall back to the first legal move.
         if (!bestPV.empty())
         {
                 bestMove = bestPV.front();
         }
-        else if (!bestMoves.empty())
-        {
-                bestMove = bestMoves.front();
-        }
         else
         {
+                bestMove = possibleMoves.front();
                 bestScore = 0;
-        }
-
-        // Sanity check: irrespective of the search outcome ensure that the
-        // move reported as best actually represents the extreme score for the
-        // side to move.  Evaluation::evaluate returns a score from White's
-        // perspective, so when Black is to move we want the move with the
-        // lowest score, and when White is to move we want the highest score.
-        {
-                int extremeScore = rootMaximizing ? std::numeric_limits<int>::min()
-                                                  : std::numeric_limits<int>::max();
-                std::string extremeMove = possibleMoves[0];
-                for (const auto& mv : possibleMoves)
-                {
-                        Board tmp(*this->board);
-                        tmp.executeMove(mv);
-                        int s = Evaluation::evaluate(tmp);
-                        if ((rootMaximizing && s > extremeScore) ||
-                            (!rootMaximizing && s < extremeScore))
-                        {
-                                extremeScore = s;
-                                extremeMove = mv;
-                        }
-                }
-                bestMove = extremeMove;
-                bestScore = extremeScore;
-                bestPV.clear();
-                bestPV.push_back(bestMove);
         }
 
         auto now = std::chrono::steady_clock::now();
