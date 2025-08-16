@@ -190,6 +190,8 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
+                        if (depth > 1)
+                                std::cout << "info string [Engine::minimax] depth " << (depth - 1) << std::endl;
                         int eval = minimax(nextBoard, depth - 1, false);
                         if (eval > maxEval) maxEval = eval;
                 }
@@ -202,6 +204,8 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
+                        if (depth > 1)
+                                std::cout << "info string [Engine::minimax] depth " << (depth - 1) << std::endl;
                         int eval = minimax(nextBoard, depth - 1, true);
                         if (eval < minEval) minEval = eval;
                 }
