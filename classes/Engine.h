@@ -36,6 +36,12 @@ private:
         unsigned long long nodes;
 
         int minimax(Board& board, int depth);
+
+        void emitInfo(unsigned long long elapsed,
+                       unsigned long long nodes,
+                       unsigned long long nps,
+                       int score,
+                       const std::vector<std::string>& pv);
 };
 
 #endif
