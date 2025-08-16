@@ -10,7 +10,7 @@
 #include <vector>
 #include <random>
 
-const int SEARCH_DEPTH = 1;
+const int SEARCH_DEPTH = 4;
 
 Engine::Engine(Comm *comm)
 {
@@ -97,76 +97,79 @@ void Engine::go(int movetime)
         auto start = steady_clock::now();
         auto lastInfo = start;
 
-        std::string bestMove = possibleMoves[0];
         bool rootMaximizing = this->board->getPlayerToMove() == 'w';
+        std::string bestMove = possibleMoves[0];
         int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                        : std::numeric_limits<int>::max();
         std::vector<std::string> bestMoves;
         std::string endReason;
+        bool aborted = false;
 
-        for (const auto& move : possibleMoves)
+        for (int currentDepth = 1; currentDepth <= SEARCH_DEPTH; ++currentDepth)
         {
-                Board nextBoard(*this->board);
-                nextBoard.executeMove(move);
-                // SEARCH_DEPTH counts plies including the move just played.
-                // After making a candidate move we have already spent one ply,
-                // therefore we search one ply less for the remaining moves.
-                int score = this->minimax(nextBoard, SEARCH_DEPTH - 1);
-                bool better = rootMaximizing ? (score > bestScore) : (score < bestScore);
-                if (better)
-                {
-                        bestScore = score;
-                        bestMove = move;
-                        bestMoves.clear();
-                        bestMoves.push_back(move);
-                }
-                else if (score == bestScore)
-                {
-                        bestMoves.push_back(move);
-                }
+                std::ostringstream depthInfo;
+                depthInfo << "info depth " << currentDepth << std::endl;
+                this->comm->uciOutput(depthInfo.str());
 
-                auto now = steady_clock::now();
-                if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
-                {
-                        unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
-                        unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
+                std::string depthBestMove = possibleMoves[0];
+                int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
+                                                    : std::numeric_limits<int>::max();
+                std::vector<std::string> depthBestMoves;
 
-                        std::ostringstream status;
-                        status << "info string [Engine::go] time "
-                               << elapsed
-                               << "ms nodes " << Lib::formatThousands(this->nodes)
-                               << " nps " << Lib::formatThousands(nps)
-                               << " best";
-                        for (const auto& bm : bestMoves)
+                for (const auto& move : possibleMoves)
+                {
+                        Board nextBoard(*this->board);
+                        nextBoard.executeMove(move);
+                        // currentDepth counts plies including the move just played.
+                        // After making a candidate move we have already spent one ply,
+                        // therefore we search one ply less for the remaining moves.
+                        int score = this->minimax(nextBoard, currentDepth - 1);
+                        bool better = rootMaximizing ? (score > depthBestScore) : (score < depthBestScore);
+                        if (better)
                         {
-                                status << ' ' << bm;
+                                depthBestScore = score;
+                                depthBestMove = move;
+                                depthBestMoves.clear();
+                                depthBestMoves.push_back(move);
                         }
-                        status << " score " << bestScore << std::endl;
-                        this->comm->uciOutput(status.str());
-
-                        std::ostringstream uci;
-                        uci << "info time " << elapsed
-                            << " nodes " << this->nodes
-                            << " nps " << nps
-                            << " score cp " << bestScore << " pv";
-                        for (const auto& bm : bestMoves)
+                        else if (score == depthBestScore)
                         {
-                                uci << ' ' << bm;
+                                depthBestMoves.push_back(move);
                         }
-                        uci << std::endl;
-                        this->comm->uciOutput(uci.str());
 
-                        lastInfo = now;
+                        auto now = steady_clock::now();
+                        if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
+                        {
+                                unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
+                                unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
+                                this->emitInfo(elapsed, this->nodes, nps,
+                                               depthBestScore, depthBestMoves);
+
+                                lastInfo = now;
+                        }
+
+                        if (this->stopRequested)
+                        {
+                                endReason = "stop";
+                                aborted = true;
+                                break;
+                        }
+                        if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                        {
+                                endReason = "movetime";
+                                aborted = true;
+                                break;
+                        }
                 }
 
-                if (this->stopRequested)
+                if (!aborted)
                 {
-                        endReason = "stop";
-                        break;
+                        bestMove = depthBestMove;
+                        bestScore = depthBestScore;
+                        bestMoves = depthBestMoves;
                 }
-                if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                else
                 {
-                        endReason = "movetime";
                         break;
                 }
         }
@@ -205,41 +208,9 @@ void Engine::go(int movetime)
         unsigned long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
         unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
 
-        std::ostringstream status;
-        status << "info string [Engine::go] time "
-               << elapsed
-               << "ms nodes " << Lib::formatThousands(this->nodes)
-               << " nps " << Lib::formatThousands(nps)
-               << " best";
-        for (const auto& bm : bestMoves)
-        {
-                status << ' ' << bm;
-        }
-        status << " score " << bestScore << std::endl;
-        this->comm->uciOutput(status.str());
-
-        std::ostringstream uci;
-        uci << "info time " << elapsed
-            << " nodes " << this->nodes
-            << " nps " << nps
-            << " score cp " << bestScore << " pv";
-        for (const auto& bm : bestMoves)
-        {
-                uci << ' ' << bm;
-        }
-        uci << std::endl;
-        this->comm->uciOutput(uci.str());
+        this->emitInfo(elapsed, this->nodes, nps, bestScore, bestMoves);
 
         std::ostringstream output;
-        output << "info time " << elapsed
-               << " nodes " << this->nodes
-               << " nps " << nps
-               << " score cp " << bestScore << " pv";
-        for (const auto& move : bestMoves)
-        {
-                output << ' ' << move;
-        }
-        output << std::endl;
         output << "info string [Engine::go] best";
         for (const auto& move : bestMoves)
         {
@@ -248,6 +219,38 @@ void Engine::go(int movetime)
         output << std::endl;
         output << "bestmove " << bestMove << std::endl;
         this->comm->uciOutput(output.str());
+}
+
+void Engine::emitInfo(unsigned long long elapsed,
+                      unsigned long long nodes,
+                      unsigned long long nps,
+                      int score,
+                      const std::vector<std::string>& pv)
+{
+        std::ostringstream status;
+        status << "info string [Engine::go] time "
+               << elapsed
+               << "ms nodes " << Lib::formatThousands(nodes)
+               << " nps " << Lib::formatThousands(nps)
+               << " best";
+        for (const auto& mv : pv)
+        {
+                status << ' ' << mv;
+        }
+        status << " score " << score << std::endl;
+        this->comm->uciOutput(status.str());
+
+        std::ostringstream uci;
+        uci << "info time " << elapsed
+            << " nodes " << nodes
+            << " nps " << nps
+            << " score cp " << score << " pv";
+        for (const auto& mv : pv)
+        {
+                uci << ' ' << mv;
+        }
+        uci << std::endl;
+        this->comm->uciOutput(uci.str());
 }
 
 int Engine::minimax(Board& board, int depth)
