@@ -5,6 +5,61 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include <algorithm>
+#include <cctype>
+
+static bool isNumber(const std::string& s)
+{
+        return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
+}
+
+static bool isValidPiecePlacement(const std::string& pieces)
+{
+        int file = 0;
+        int rank = 0;
+        for (char c : pieces)
+        {
+                if (c == '/')
+                {
+                        if (file != 8) return false;
+                        file = 0;
+                        rank++;
+                }
+                else if (c >= '1' && c <= '8')
+                {
+                        file += c - '0';
+                }
+                else if (std::string("KQRBNPkqrbnp").find(c) != std::string::npos)
+                {
+                        file++;
+                }
+                else
+                {
+                        return false;
+                }
+                if (file > 8) return false;
+        }
+        return rank == 7 && file == 8;
+}
+
+static bool isValidCastling(const std::string& c)
+{
+        if (c == "-") return true;
+        for (char ch : c)
+        {
+                if (std::string("KQkq").find(ch) == std::string::npos) return false;
+        }
+        return true;
+}
+
+static bool isValidEnPassant(const std::string& ep)
+{
+        if (ep == "-") return true;
+        if (ep.size() != 2) return false;
+        char file = ep[0];
+        char rank = ep[1];
+        return file >= 'a' && file <= 'h' && (rank == '3' || rank == '6');
+}
 
 Board::Board()
 {
@@ -195,8 +250,39 @@ void Board::executeMove(std::string move, bool incrementCounters)
 
 void Board::loadFen(const std::string& fen)
 {
-	std::vector<std::string> token = Lib::split(fen, ' ');
-	this->loadFen(token[0], token[1][0], token[2], token[3], atol(token[4].c_str()), atol(token[5].c_str()));
+        std::string prefix = "info string [Board::loadFen] ";
+        std::vector<std::string> token = Lib::split(fen, ' ');
+        if (token.size() != 6)
+        {
+                std::cout << prefix << "Error: FEN requires 6 fields" << std::endl;
+                return;
+        }
+        if (!isValidPiecePlacement(token[0]))
+        {
+                std::cout << prefix << "Error: invalid piece placement" << std::endl;
+                return;
+        }
+        if (token[1] != "w" && token[1] != "b")
+        {
+                std::cout << prefix << "Error: invalid active color" << std::endl;
+                return;
+        }
+        if (!isValidCastling(token[2]))
+        {
+                std::cout << prefix << "Error: invalid castling rights" << std::endl;
+                return;
+        }
+        if (!isValidEnPassant(token[3]))
+        {
+                std::cout << prefix << "Error: invalid en passant square" << std::endl;
+                return;
+        }
+        if (!isNumber(token[4]) || !isNumber(token[5]))
+        {
+                std::cout << prefix << "Error: invalid move counters" << std::endl;
+                return;
+        }
+        this->loadFen(token[0], token[1][0], token[2], token[3], atol(token[4].c_str()), atol(token[5].c_str()));
 }
 
 void Board::loadFen(const std::string& figures, char playerToMove, const std::string& casteling, const std::string& enPassant,
