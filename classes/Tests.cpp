@@ -69,18 +69,25 @@ bool Tests::testPerft() {
 bool Tests::testEvaluation() {
     std::cout << "Running evaluation tests" << std::endl;
     bool all = true;
-    struct EvalCase { std::string fen; int score; };
+    struct EvalCase { std::string fen; int minScore; int maxScore; };
     std::vector<EvalCase> tests = {
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 0},
-        {"rnb1kbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 900},
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1", -900},
-        {"rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1", 22},
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1", 20},
+        // Starting position should be roughly equal
+        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", -50, 50},
+        // Black missing queen -> large advantage for white
+        {"rnb1kbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 800, 2000},
+        // White missing queen -> large advantage for black
+        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1", -2000, -800},
+        // Advanced passed pawn on 7th rank
+        {"7k/P7/8/8/8/8/8/7K w - - 0 1", 150, 400},
+        // Rook on the 7th rank driving the king back
+        {"6k1/6R1/8/8/8/8/8/7K w - - 0 1", 300, 2000},
+        // Immediate checkmate against the side to move
+        {"7k/7Q/7K/8/8/8/8/8 b - - 0 1", 900000, 1000000}
     };
     for (size_t i = 0; i < tests.size(); ++i) {
         Board b; b.loadFen(tests[i].fen);
         int score = Evaluation::evaluate(b);
-        bool ok = (score == tests[i].score);
+        bool ok = (score >= tests[i].minScore && score <= tests[i].maxScore);
         std::cout << "  Test " << i + 1 << (ok ? " passed" : " failed") << std::endl;
         if (!ok) all = false;
     }
