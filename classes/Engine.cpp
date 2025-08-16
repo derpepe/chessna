@@ -8,6 +8,7 @@
 #include <limits>
 #include <thread>
 #include <vector>
+#include <random>
 
 const int SEARCH_DEPTH = 1;
 
@@ -93,7 +94,7 @@ void Engine::go(int movetime)
         {
                 Board nextBoard(*this->board);
                 nextBoard.executeMove(move);
-                int score = this->minimax(nextBoard, SEARCH_DEPTH, false);
+                int score = this->minimax(nextBoard, SEARCH_DEPTH - 1, false);
                 if (score > bestScore)
                 {
                         bestScore = score;
@@ -121,6 +122,14 @@ void Engine::go(int movetime)
                 {
                         break;
                 }
+        }
+
+        if (!bestMoves.empty())
+        {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_int_distribution<> dis(0, bestMoves.size() - 1);
+                bestMove = bestMoves[dis(gen)];
         }
 
         // wait until allotted time has passed, emitting status each second
