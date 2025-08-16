@@ -258,14 +258,24 @@ int Engine::minimax(Board& board, int depth)
         this->nodes++;
         MoveGenerator moveGenerator;
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
+        bool maximizingPlayer = board.getPlayerToMove() == 'w';
 
         if (depth == 0 || moves.empty())
         {
-                if (moves.empty()) return 0;
+                if (moves.empty())
+                {
+                        unsigned long long king_bb = maximizingPlayer ? (board.kings & board.whites)
+                                                                       : (board.kings & board.blacks);
+                        int king_sq = __builtin_ffsll(king_bb) - 1;
+                        char opponent = maximizingPlayer ? 'b' : 'w';
+                        if (moveGenerator.isSquareAttacked(board, king_sq, opponent))
+                        {
+                                return maximizingPlayer ? -100000 : 100000;
+                        }
+                        return 0;
+                }
                 return Evaluation::evaluate(board);
         }
-
-        bool maximizingPlayer = board.getPlayerToMove() == 'w';
 
         if (maximizingPlayer)
         {
