@@ -50,7 +50,7 @@ Installieren Sie die benötigte Python-Bibliothek mit dem folgenden Befehl:
 ```sh
 cd lichess-bot/
 source ./bin/activate
-python3 -m pip install -r requirements.txt
+python3.9 -m pip install -r requirements.txt
 ```
 
 **2. Konfiguration:**
