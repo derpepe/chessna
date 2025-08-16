@@ -7,7 +7,7 @@ Comm::Comm() {
     std::cerr << "Warning: uciOutput callback not set. Message: " << message
               << std::endl;
   };
-  engineGoCallback = [](int) {
+  engineGoCallback = [](GoParams) {
     std::cerr << "Warning: engineGo callback not set" << std::endl;
   };
   engineStopCallback = []() {
@@ -49,12 +49,12 @@ void Comm::uciOutput(std::string message) {
   }
 }
 
-void Comm::registerEngineGoCallback(std::function<void(int)> engineGoCallback) {
+void Comm::registerEngineGoCallback(std::function<void(GoParams)> engineGoCallback) {
   this->engineGoCallback = engineGoCallback;
 }
-void Comm::engineGo(int movetime) {
+void Comm::engineGo(GoParams params) {
   if (engineGoCallback) {
-    engineGoCallback(movetime);
+    engineGoCallback(params);
   } else {
     throw std::runtime_error("engineGo callback not set");
   }

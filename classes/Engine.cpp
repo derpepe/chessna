@@ -19,8 +19,8 @@ Engine::Engine(Comm *comm)
 {
         this->comm = comm;
         this->comm->registerEngineGoCallback(
-                [this](int movetime) {
-                        this->enqueueTask([this, movetime] { this->go(movetime); });
+                [this](GoParams params) {
+                        this->enqueueTask([this, params] { this->go(params); });
                 });
         this->comm->registerEngineStopCallback([this] { this->stop(); });
         this->comm->registerEngineSetPositionCallback(
@@ -116,8 +116,27 @@ void Engine::stop()
         this->stopRequested = true;
 }
 
-void Engine::go(int movetime)
+void Engine::go(GoParams params)
 {
+        int movetime = params.movetime;
+        if (movetime <= 0)
+        {
+                char player = this->board->getPlayerToMove();
+                int time = (player == 'w') ? params.wtime : params.btime;
+                int inc = (player == 'w') ? params.winc : params.binc;
+                if (time > 0)
+                {
+                        movetime = time / 40 + inc;
+                        if (movetime <= 0)
+                        {
+                                movetime = time / 40;
+                        }
+                }
+                if (movetime <= 0)
+                {
+                        movetime = 1000;
+                }
+        }
         std::cout << "info string [Engine::go] let's go!" << std::endl;
 
         MoveGenerator moveGenerator;

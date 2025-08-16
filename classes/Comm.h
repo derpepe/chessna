@@ -5,14 +5,22 @@
 #include <iostream>
 #include <string>
 
+struct GoParams {
+  int movetime = 0;
+  int wtime = 0;
+  int btime = 0;
+  int winc = 0;
+  int binc = 0;
+};
+
 class Comm {
 public:
   Comm();
   void registerUciOutputCallback(std::function<void(std::string)>);
   void uciOutput(std::string);
 
-  void registerEngineGoCallback(std::function<void(int)>);
-  void engineGo(int);
+  void registerEngineGoCallback(std::function<void(GoParams)>);
+  void engineGo(GoParams);
   void registerEngineStopCallback(std::function<void()>);
   void engineStop();
   void registerEngineSetPositionCallback(std::function<void(std::string)>);
@@ -33,7 +41,7 @@ public:
 private:
   std::function<void(std::string)> uciOutputCallback;
 
-  std::function<void(int)> engineGoCallback;
+  std::function<void(GoParams)> engineGoCallback;
   std::function<void()> engineStopCallback;
   std::function<void(std::string)> engineSetPositionCallback;
   std::function<void(std::string)> engineExecuteMoveCallback;
