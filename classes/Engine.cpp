@@ -331,7 +331,7 @@ SearchResult Engine::minimax(Board& board,
 {
         if (this->stopRequested)
         {
-                return {Evaluation::evaluate(board), {}};
+                return {ABORT_SCORE, {}};
         }
         if (timeExceeded())
         {
