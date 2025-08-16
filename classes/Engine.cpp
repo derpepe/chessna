@@ -269,17 +269,19 @@ void Engine::go(GoParams params)
                         }
                 }
 
-                if (!aborted)
+                // Always keep track of the best moves we have evaluated so
+                // far.  When the search for the current depth is aborted, we
+                // still want to discard root moves that are known to be
+                // inferior to the best move found before the abort.
+                if (!depthBestMoves.empty())
                 {
-                        // Save the results of the fully searched depth so
-                        // that we can fall back to them if a later depth is
-                        // aborted.
                         bestMove = depthBestMove;
                         bestScore = depthBestScore;
                         bestMoves = depthBestMoves;
                         bestPV = depthBestPV;
                 }
-                else
+
+                if (aborted)
                 {
                         break;
                 }
