@@ -14,9 +14,10 @@ const int SEARCH_DEPTH = 1;
 
 Engine::Engine(Comm *comm)
 {
-	this->comm = comm;
+        this->comm = comm;
         this->comm->registerEngineGoCallback( [this](int movetime) { this->go(movetime); } );
-	this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
+        this->comm->registerEngineStopCallback( [this] { this->stop(); } );
+        this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
         this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
         this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
         this->comm->registerEngineListMovesCallback( [this] { this->listMoves(); } );
@@ -24,8 +25,9 @@ Engine::Engine(Comm *comm)
         this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
         this->comm->registerEnginePerftNodesCallback( [this](int depth) { return this->perftNodes(depth); } );
 	
-	this->board = new Board();
-	this->perft_runner = new Perft();
+        this->board = new Board();
+        this->perft_runner = new Perft();
+        this->stopRequested = false;
 }
 
 void Engine::setPosition(std::string position)
@@ -62,10 +64,15 @@ void Engine::listMoves()
 
 void Engine::run()
 {
-	while(true)
-	{
-		// main computation should go here
-	}
+        while(true)
+        {
+                // main computation should go here
+        }
+}
+
+void Engine::stop()
+{
+        this->stopRequested = true;
 }
 
 void Engine::go(int movetime)
@@ -82,6 +89,8 @@ void Engine::go(int movetime)
                 return;
         }
 
+        this->stopRequested = false;
+
         using namespace std::chrono;
         auto start = steady_clock::now();
         auto lastInfo = start;
@@ -91,6 +100,7 @@ void Engine::go(int movetime)
         int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                        : std::numeric_limits<int>::max();
         std::vector<std::string> bestMoves;
+        std::string endReason;
 
         for (const auto& move : possibleMoves)
         {
@@ -139,10 +149,21 @@ void Engine::go(int movetime)
                         lastInfo = now;
                 }
 
-                if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                if (this->stopRequested)
                 {
+                        endReason = "stop";
                         break;
                 }
+                if (duration_cast<milliseconds>(now - start).count() >= movetime)
+                {
+                        endReason = "movetime";
+                        break;
+                }
+        }
+
+        if (endReason.empty())
+        {
+                endReason = "moves";
         }
 
         if (!bestMoves.empty())
@@ -153,40 +174,24 @@ void Engine::go(int movetime)
                 bestMove = bestMoves[dis(gen)];
         }
 
-        // wait until allotted time has passed, emitting status each second
-        auto endTime = start + std::chrono::milliseconds(movetime);
-        while (std::chrono::steady_clock::now() < endTime)
-        {
-                auto now = std::chrono::steady_clock::now();
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastInfo).count() >= 1000)
-                {
-                        std::ostringstream status;
-                        status << "info string [Engine::go] time "
-                               << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
-                               << "ms best";
-                        for (const auto& bm : bestMoves)
-                        {
-                                status << ' ' << bm;
-                        }
-                        status << " score " << bestScore << std::endl;
-                        this->comm->uciOutput(status.str());
-
-                        std::ostringstream uci;
-                        uci << "info score cp " << bestScore << " pv";
-                        for (const auto& bm : bestMoves)
-                        {
-                                uci << ' ' << bm;
-                        }
-                        uci << std::endl;
-                        this->comm->uciOutput(uci.str());
-
-                        lastInfo = now;
-                }
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-
-        // final status update at end of allotted time
         auto now = std::chrono::steady_clock::now();
+        std::ostringstream reason;
+        reason << "info string [Engine::go] search finished: ";
+        if (endReason == "movetime")
+        {
+                reason << "movetime";
+        }
+        else if (endReason == "stop")
+        {
+                reason << "stop command";
+        }
+        else
+        {
+                reason << "all moves searched";
+        }
+        reason << std::endl;
+        this->comm->uciOutput(reason.str());
+
         std::ostringstream status;
         status << "info string [Engine::go] time "
                << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()

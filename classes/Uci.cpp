@@ -68,10 +68,10 @@ void Uci::parse(std::string p_parameters)
                 //this->comm->engineStop();
                 std::exit(0);
         }
-	else if (command.compare("stop") == 0)
-	{
-		this->sendBestmove("e2e4", ""); // TODO: get best move from engine
-	}
+        else if (command.compare("stop") == 0)
+        {
+                this->comm->engineStop();
+        }
 	else if (command.compare("position") == 0)
 	{
 	        if (parameters.size() < 2)

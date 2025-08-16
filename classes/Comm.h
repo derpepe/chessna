@@ -13,8 +13,10 @@ public:
 
         void registerEngineGoCallback(std::function<void(int)>);
         void engineGo(int);
-	void registerEngineSetPositionCallback(std::function<void(std::string)>);
-	void engineSetPosition(std::string);
+        void registerEngineStopCallback(std::function<void()>);
+        void engineStop();
+        void registerEngineSetPositionCallback(std::function<void(std::string)>);
+        void engineSetPosition(std::string);
         void registerEngineExecuteMoveCallback(std::function<void(std::string)>);
         void engineExecuteMove(std::string);
         void registerEngineDebugCallback(std::function<void()>);
@@ -32,7 +34,8 @@ private:
 	std::function<void(std::string)> uciOutputCallback;
 
         std::function<void(int)> engineGoCallback;
-	std::function<void(std::string)> engineSetPositionCallback;
+        std::function<void()> engineStopCallback;
+        std::function<void(std::string)> engineSetPositionCallback;
         std::function<void(std::string)> engineExecuteMoveCallback;
         std::function<void()> engineDebugCallback;
         std::function<void()> engineListMovesCallback;
