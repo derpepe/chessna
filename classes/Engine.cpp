@@ -10,7 +10,7 @@
 #include <vector>
 #include <random>
 
-const int SEARCH_DEPTH = 4;
+const int SEARCH_DEPTH = 6;
 
 Engine::Engine(Comm *comm)
 {
