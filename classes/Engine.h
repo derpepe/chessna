@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <atomic>
 
 class Engine
 {
@@ -24,10 +25,14 @@ public:
         void perftDivide(int);
         unsigned long long perftNodes(int);
 
+        void stop();
+
 private:
         Board *board;
         Comm *comm;
         Perft *perft_runner;
+
+        std::atomic<bool> stopRequested;
 
         int minimax(Board& board, int depth);
 };
