@@ -2,15 +2,14 @@
 #define EVALUATION_H
 
 #include "Board.h"
-#include <string>
 
 class Evaluation
 {
 public:
-        static int evaluate(Board&, const std::string&);
+        static int evaluate(Board&);
 
 private:
-        static int evaluateColorless(Board&, const std::string&);
+        static int evaluateColorless(Board&);
 };
 
 #endif
