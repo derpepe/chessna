@@ -35,8 +35,14 @@
          unsigned long long edgeMask = 0xff818181818181ffULL;
          int whiteEdgeKnights = __builtin_popcountll(board.knights & board.whites & edgeMask);
          int blackEdgeKnights = __builtin_popcountll(board.knights & board.blacks & edgeMask);
-         score -= 5 * whiteEdgeKnights;
-         score += 5 * blackEdgeKnights;
+        score -= 5 * whiteEdgeKnights;
+        score += 5 * blackEdgeKnights;
 
-         return score;
- }
+        // Reward ability to castle
+        if (board.casteling_K || board.casteling_Q)
+                score += 20;
+        if (board.casteling_k || board.casteling_q)
+                score -= 20;
+
+        return score;
+}
