@@ -47,8 +47,8 @@ Engine::Engine(Comm *comm)
                         return 0ULL;
                 });
 	
-        this->board = new Board();
-        this->perft_runner = new Perft();
+        this->board = std::unique_ptr<Board>(new Board());
+        this->perft_runner = std::unique_ptr<Perft>(new Perft());
         this->stopRequested = false;
         this->nodes = 0;
 }

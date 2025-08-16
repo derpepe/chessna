@@ -11,6 +11,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <memory>
 #include "perft_data.h"
 
 void runTests(bool deepTest, int singleTest = 0) {
@@ -172,14 +173,16 @@ int main(int argc, char** argv)
         return 0;
     }
 
-	Comm *comm = new Comm();
-	
-	Uci *uci = new Uci(comm);
-	Engine *engine = new Engine(comm);
+        auto comm = std::unique_ptr<Comm>(new Comm());
 
-	// initialize asynchronous communication
-	std::thread uci_thread( [uci] { uci->run(); } );
-	std::thread engine_thread( [engine] { engine->run(); } );
+        auto uci = std::unique_ptr<Uci>(new Uci(comm.get()));
+        auto engine = std::unique_ptr<Engine>(new Engine(comm.get()));
+
+        // initialize asynchronous communication
+        auto uci_ptr = uci.get();
+        auto engine_ptr = engine.get();
+        std::thread uci_thread([uci_ptr] { uci_ptr->run(); });
+        std::thread engine_thread([engine_ptr] { engine_ptr->run(); });
 
 	// wait for both threads
 	uci_thread.join();

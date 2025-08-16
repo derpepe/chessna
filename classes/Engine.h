@@ -12,6 +12,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <functional>
+#include <memory>
 
 class Engine
 {
@@ -32,9 +33,9 @@ public:
         void stop();
 
 private:
-        Board *board;
+        std::unique_ptr<Board> board;
         Comm *comm;
-        Perft *perft_runner;
+        std::unique_ptr<Perft> perft_runner;
 
         std::atomic<bool> stopRequested;
         unsigned long long nodes;
