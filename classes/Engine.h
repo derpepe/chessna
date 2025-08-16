@@ -56,7 +56,8 @@ private:
                              int alpha,
                              int beta,
                              bool allowNull,
-                             const std::function<bool()>& timeExceeded);
+                             const std::function<bool()>& timeExceeded,
+                             int ply);
 
         void emitInfo(unsigned long long elapsed,
                        unsigned long long nodes,
