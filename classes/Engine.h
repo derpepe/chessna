@@ -43,7 +43,7 @@ private:
         std::condition_variable taskCv;
         std::queue<std::function<void()>> tasks;
 
-        int minimax(Board& board, int depth);
+        int minimax(Board& board, int depth, const std::function<bool()>& timeExceeded);
 
         void emitInfo(unsigned long long elapsed,
                        unsigned long long nodes,

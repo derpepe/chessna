@@ -11,6 +11,7 @@
 #include <random>
 
 const int SEARCH_DEPTH = 8;
+const int ABORT_SCORE = std::numeric_limits<int>::max();
 
 Engine::Engine(Comm *comm)
 {
@@ -133,6 +134,9 @@ void Engine::go(int movetime)
         using namespace std::chrono;
         auto start = steady_clock::now();
         auto lastInfo = start;
+        auto timeExceeded = [&]() {
+                return duration_cast<milliseconds>(steady_clock::now() - start).count() >= movetime;
+        };
 
         bool rootMaximizing = this->board->getPlayerToMove() == 'w';
         std::string bestMove = possibleMoves[0];
@@ -160,7 +164,13 @@ void Engine::go(int movetime)
                         // currentDepth counts plies including the move just played.
                         // After making a candidate move we have already spent one ply,
                         // therefore we search one ply less for the remaining moves.
-                        int score = this->minimax(nextBoard, currentDepth - 1);
+                        int score = this->minimax(nextBoard, currentDepth - 1, timeExceeded);
+                        if (score == ABORT_SCORE)
+                        {
+                                endReason = this->stopRequested ? "stop" : "movetime";
+                                aborted = true;
+                                break;
+                        }
                         bool better = rootMaximizing ? (score > depthBestScore) : (score < depthBestScore);
                         if (better)
                         {
@@ -290,8 +300,16 @@ void Engine::emitInfo(unsigned long long elapsed,
         this->comm->uciOutput(uci.str());
 }
 
-int Engine::minimax(Board& board, int depth)
+int Engine::minimax(Board& board, int depth, const std::function<bool()>& timeExceeded)
 {
+        if (this->stopRequested)
+        {
+                return Evaluation::evaluate(board);
+        }
+        if (timeExceeded())
+        {
+                return ABORT_SCORE;
+        }
         this->nodes++;
         MoveGenerator moveGenerator;
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
@@ -321,7 +339,8 @@ int Engine::minimax(Board& board, int depth)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1);
+                        int eval = minimax(nextBoard, depth - 1, timeExceeded);
+                        if (this->stopRequested || eval == ABORT_SCORE) return ABORT_SCORE;
                         if (eval > maxEval) maxEval = eval;
                 }
                 return maxEval;
@@ -333,7 +352,8 @@ int Engine::minimax(Board& board, int depth)
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        int eval = minimax(nextBoard, depth - 1);
+                        int eval = minimax(nextBoard, depth - 1, timeExceeded);
+                        if (this->stopRequested || eval == ABORT_SCORE) return ABORT_SCORE;
                         if (eval < minEval) minEval = eval;
                 }
                 return minEval;
