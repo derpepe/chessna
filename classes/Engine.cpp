@@ -9,7 +9,6 @@
 #include <climits>
 #include <thread>
 #include <vector>
-#include <random>
 
 const int SEARCH_DEPTH = 8;
 const int ABORT_SCORE = std::numeric_limits<int>::max();
@@ -166,7 +165,12 @@ void Engine::go(GoParams params)
         std::string bestMove = possibleMoves[0];
         int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                        : std::numeric_limits<int>::max();
+        // `bestMoves` keeps all root moves that tie for the best score.
+        // It is used as a fallback in case we abort before a principal
+        // variation could be established.
         std::vector<std::string> bestMoves;
+        // `bestPV` holds the principal variation returned by the search.
+        // The first move in this line is the move reported as bestmove.
         std::vector<std::string> bestPV;
         std::string endReason;
         bool aborted = false;
@@ -180,6 +184,9 @@ void Engine::go(GoParams params)
                 std::string depthBestMove = possibleMoves[0];
                 int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                                     : std::numeric_limits<int>::max();
+                // Per-depth containers storing all moves with the best
+                // score and the principal variation for the best move at
+                // the current depth.
                 std::vector<std::string> depthBestMoves;
                 std::vector<std::string> depthBestPV;
 
@@ -264,6 +271,9 @@ void Engine::go(GoParams params)
 
                 if (!aborted)
                 {
+                        // Save the results of the fully searched depth so
+                        // that we can fall back to them if a later depth is
+                        // aborted.
                         bestMove = depthBestMove;
                         bestScore = depthBestScore;
                         bestMoves = depthBestMoves;
@@ -280,12 +290,17 @@ void Engine::go(GoParams params)
                 endReason = "moves";
         }
 
-        if (!bestMoves.empty())
+        // Prefer the first move from the principal variation as it reflects
+        // the search path we consider strongest. If no PV is available (for
+        // example due to an early abort) fall back to the list of equally
+        // good root moves. If both are empty, no legal move was found.
+        if (!bestPV.empty())
         {
-                std::random_device rd;
-                std::mt19937 gen(rd());
-                std::uniform_int_distribution<> dis(0, bestMoves.size() - 1);
-                bestMove = bestMoves[dis(gen)];
+                bestMove = bestPV.front();
+        }
+        else if (!bestMoves.empty())
+        {
+                bestMove = bestMoves.front();
         }
         else
         {
@@ -317,7 +332,7 @@ void Engine::go(GoParams params)
 
         std::ostringstream output;
         output << "info string [Engine::go] best";
-        for (const auto& move : bestMoves)
+        for (const auto& move : bestPV)
         {
                 output << ' ' << move;
         }
