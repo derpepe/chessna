@@ -199,7 +199,12 @@ void Uci::parse(std::string p_parameters)
 
 void Uci::sendString(std::string message)
 {
-	std::cout << message;
+        // When the engine communicates with another process (e.g. lichess-bot),
+        // std::cout is fully buffered. Without an explicit flush the final
+        // "bestmove" line might remain in the buffer, causing the bot to think
+        // the engine timed out. Flush after every message to ensure it is
+        // delivered immediately.
+        std::cout << message << std::flush;
 }
 
 void Uci::sendId(std::string key, std::string value)
