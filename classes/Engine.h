@@ -25,11 +25,14 @@ public:
         unsigned long long perftNodes(int);
 
 private:
+        static constexpr int MAX_DEPTH = 5;
+
         Board *board;
         Comm *comm;
         Perft *perft_runner;
 
-        int minimax(Board& board, int depth, bool maximizingPlayer);
+        int minimax(Board& board, int depth, bool maximizingPlayer, int currentDepth);
+        int lastLoggedDepth;
 };
 
 #endif

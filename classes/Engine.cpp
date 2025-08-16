@@ -22,8 +22,9 @@ Engine::Engine(Comm *comm)
 	this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
 	this->comm->registerEnginePerftNodesCallback( [this](int depth) { return this->perftNodes(depth); } );
 	
-	this->board = new Board();
-	this->perft_runner = new Perft();
+        this->board = new Board();
+        this->perft_runner = new Perft();
+        this->lastLoggedDepth = 0;
 }
 
 void Engine::setPosition(std::string position)
@@ -70,9 +71,10 @@ void Engine::go(int movetime)
 {
 	std::cout << "info string [Engine::go] let's go!" << std::endl;
 
-	MoveGenerator moveGenerator;
-	std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
-	std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
+        MoveGenerator moveGenerator;
+        std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
+        std::cout << "info string [Engine::go] found " << possibleMoves.size() << " moves" << std::endl;
+        this->lastLoggedDepth = 0;
 
 	if (possibleMoves.empty())
 	{
@@ -92,9 +94,9 @@ void Engine::go(int movetime)
 	size_t processedMoves = 0;
 	for (const auto& move : possibleMoves)
 	{
-		Board nextBoard(*this->board);
-		nextBoard.executeMove(move);
-		int score = this->minimax(nextBoard, 3, false);
+                Board nextBoard(*this->board);
+                nextBoard.executeMove(move);
+                int score = this->minimax(nextBoard, MAX_DEPTH, false, 1);
 		if (score > bestScore)
 		{
 			bestScore = score;
@@ -156,58 +158,60 @@ void Engine::go(int movetime)
 	this->comm->uciOutput(output.str());
 }
 
-int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
+int Engine::minimax(Board& board, int depth, bool maximizingPlayer, int currentDepth)
 {
-	MoveGenerator moveGenerator;
-	std::vector<std::string> moves = moveGenerator.getAllMoves(board);
+        MoveGenerator moveGenerator;
+        std::vector<std::string> moves = moveGenerator.getAllMoves(board);
 
-	if (depth == 0 || moves.empty())
-	{
-		if (moves.empty()) return 0;
-		int bestScore = maximizingPlayer ? -100000 : 100000;
-		for (const auto& move : moves)
-		{
-			int score = Evaluation::evaluate(board, move);
-			if (maximizingPlayer)
-			{
-				if (score > bestScore) bestScore = score;
-			}
-			else
-			{
-				if (score < bestScore) bestScore = score;
-			}
-		}
-		return bestScore;
-	}
+        if (depth > 0 && currentDepth > this->lastLoggedDepth)
+        {
+                std::cout << "info string [Engine::minimax] depth " << currentDepth << std::endl;
+                this->lastLoggedDepth = currentDepth;
+        }
 
-	if (maximizingPlayer)
-	{
-		int maxEval = -100000;
-		for (const auto& move : moves)
-		{
-			Board nextBoard(board);
-			nextBoard.executeMove(move);
-			if (depth > 1)
-				std::cout << "info string [Engine::minimax] depth " << (depth - 1) << std::endl;
-			int eval = minimax(nextBoard, depth - 1, false);
-			if (eval > maxEval) maxEval = eval;
-		}
-		return maxEval;
-	}
-	else
-	{
-		int minEval = 100000;
-		for (const auto& move : moves)
-		{
-			Board nextBoard(board);
-			nextBoard.executeMove(move);
-			if (depth > 1)
-				std::cout << "info string [Engine::minimax] depth " << (depth - 1) << std::endl;
-			int eval = minimax(nextBoard, depth - 1, true);
-			if (eval < minEval) minEval = eval;
-		}
-		return minEval;
-	}
+        if (depth == 0 || moves.empty())
+        {
+                if (moves.empty()) return 0;
+                int bestScore = maximizingPlayer ? -100000 : 100000;
+                for (const auto& move : moves)
+                {
+                        int score = Evaluation::evaluate(board, move);
+                        if (maximizingPlayer)
+                        {
+                                if (score > bestScore) bestScore = score;
+                        }
+                        else
+                        {
+                                if (score < bestScore) bestScore = score;
+                        }
+                }
+                return bestScore;
+        }
+
+        if (maximizingPlayer)
+        {
+                int maxEval = -100000;
+                for (const auto& move : moves)
+                {
+                        Board nextBoard(board);
+                        nextBoard.executeMove(move);
+                        int eval = minimax(nextBoard, depth - 1, false, currentDepth + 1);
+                        if (eval > maxEval) maxEval = eval;
+                }
+                return maxEval;
+        }
+        else
+        {
+                int minEval = 100000;
+                for (const auto& move : moves)
+                {
+                        Board nextBoard(board);
+                        nextBoard.executeMove(move);
+                        int eval = minimax(nextBoard, depth - 1, true, currentDepth + 1);
+                        if (eval < minEval) minEval = eval;
+                }
+                return minEval;
+        }
 }
 
 void Engine::perft(int depth)
