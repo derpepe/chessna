@@ -10,7 +10,7 @@
 #include <vector>
 #include <random>
 
-const int SEARCH_DEPTH = 1;
+const int MAX_SEARCH_DEPTH = 4;
 
 Engine::Engine(Comm *comm)
 {
@@ -102,61 +102,82 @@ void Engine::go(int movetime)
         std::vector<std::string> bestMoves;
         std::string endReason;
 
-        for (const auto& move : possibleMoves)
+        for (int depth = 1; depth <= MAX_SEARCH_DEPTH; ++depth)
         {
-                Board nextBoard(*this->board);
-                nextBoard.executeMove(move);
-                // SEARCH_DEPTH counts plies including the move just played.
-                // After making a candidate move we have already spent one ply,
-                // therefore we search one ply less for the remaining moves.
-                int score = this->minimax(nextBoard, SEARCH_DEPTH - 1);
-                bool better = rootMaximizing ? (score > bestScore) : (score < bestScore);
-                if (better)
-                {
-                        bestScore = score;
-                        bestMove = move;
-                        bestMoves.clear();
-                        bestMoves.push_back(move);
-                }
-                else if (score == bestScore)
-                {
-                        bestMoves.push_back(move);
-                }
+                std::ostringstream depthMsg;
+                depthMsg << "info depth " << depth << std::endl;
+                this->comm->uciOutput(depthMsg.str());
 
-                auto now = steady_clock::now();
-                if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
+                std::string depthBestMove = possibleMoves[0];
+                int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
+                                                    : std::numeric_limits<int>::max();
+                std::vector<std::string> depthBestMoves;
+
+                for (const auto& move : possibleMoves)
                 {
-                        std::ostringstream status;
-                        status << "info string [Engine::go] time "
-                               << duration_cast<milliseconds>(now - start).count()
-                               << "ms best";
-                        for (const auto& bm : bestMoves)
+                        Board nextBoard(*this->board);
+                        nextBoard.executeMove(move);
+                        // depth counts plies including the move just played.
+                        // After making a candidate move we have already spent one ply,
+                        // therefore we search one ply less for the remaining moves.
+                        int score = this->minimax(nextBoard, depth - 1);
+                        bool better = rootMaximizing ? (score > depthBestScore) : (score < depthBestScore);
+                        if (better)
                         {
-                                status << ' ' << bm;
+                                depthBestScore = score;
+                                depthBestMove = move;
+                                depthBestMoves.clear();
+                                depthBestMoves.push_back(move);
                         }
-                        status << " score " << bestScore << std::endl;
-                        this->comm->uciOutput(status.str());
-
-                        std::ostringstream uci;
-                        uci << "info score cp " << bestScore << " pv";
-                        for (const auto& bm : bestMoves)
+                        else if (score == depthBestScore)
                         {
-                                uci << ' ' << bm;
+                                depthBestMoves.push_back(move);
                         }
-                        uci << std::endl;
-                        this->comm->uciOutput(uci.str());
 
-                        lastInfo = now;
+                        auto now = steady_clock::now();
+                        if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
+                        {
+                                std::ostringstream status;
+                                status << "info string [Engine::go] time "
+                                       << duration_cast<milliseconds>(now - start).count()
+                                       << "ms best";
+                                for (const auto& bm : depthBestMoves)
+                                {
+                                        status << ' ' << bm;
+                                }
+                                status << " score " << depthBestScore << std::endl;
+                                this->comm->uciOutput(status.str());
+
+                                std::ostringstream uci;
+                                uci << "info score cp " << depthBestScore << " pv";
+                                for (const auto& bm : depthBestMoves)
+                                {
+                                        uci << ' ' << bm;
+                                }
+                                uci << std::endl;
+                                this->comm->uciOutput(uci.str());
+
+                                lastInfo = now;
+                        }
+
+                        if (this->stopRequested)
+                        {
+                                endReason = "stop";
+                                break;
+                        }
+                        if (movetime > 0 && duration_cast<milliseconds>(now - start).count() >= movetime)
+                        {
+                                endReason = "movetime";
+                                break;
+                        }
                 }
 
-                if (this->stopRequested)
+                bestMove = depthBestMove;
+                bestScore = depthBestScore;
+                bestMoves = depthBestMoves;
+
+                if (!endReason.empty())
                 {
-                        endReason = "stop";
-                        break;
-                }
-                if (duration_cast<milliseconds>(now - start).count() >= movetime)
-                {
-                        endReason = "movetime";
                         break;
                 }
         }
