@@ -113,8 +113,23 @@ void Engine::go(int movetime)
                         std::ostringstream status;
                         status << "info string [Engine::go] time "
                                << duration_cast<milliseconds>(now - start).count()
-                               << "ms best " << bestMove << " score " << bestScore << std::endl;
+                               << "ms best";
+                        for (const auto& bm : bestMoves)
+                        {
+                                status << ' ' << bm;
+                        }
+                        status << " score " << bestScore << std::endl;
                         this->comm->uciOutput(status.str());
+
+                        std::ostringstream uci;
+                        uci << "info score cp " << bestScore << " pv";
+                        for (const auto& bm : bestMoves)
+                        {
+                                uci << ' ' << bm;
+                        }
+                        uci << std::endl;
+                        this->comm->uciOutput(uci.str());
+
                         lastInfo = now;
                 }
 
@@ -142,8 +157,23 @@ void Engine::go(int movetime)
                         std::ostringstream status;
                         status << "info string [Engine::go] time "
                                << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
-                               << "ms best " << bestMove << " score " << bestScore << std::endl;
+                               << "ms best";
+                        for (const auto& bm : bestMoves)
+                        {
+                                status << ' ' << bm;
+                        }
+                        status << " score " << bestScore << std::endl;
                         this->comm->uciOutput(status.str());
+
+                        std::ostringstream uci;
+                        uci << "info score cp " << bestScore << " pv";
+                        for (const auto& bm : bestMoves)
+                        {
+                                uci << ' ' << bm;
+                        }
+                        uci << std::endl;
+                        this->comm->uciOutput(uci.str());
+
                         lastInfo = now;
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -154,12 +184,31 @@ void Engine::go(int movetime)
         std::ostringstream status;
         status << "info string [Engine::go] time "
                << std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
-               << "ms best " << bestMove << " score " << bestScore << std::endl;
+               << "ms best";
+        for (const auto& bm : bestMoves)
+        {
+                status << ' ' << bm;
+        }
+        status << " score " << bestScore << std::endl;
         this->comm->uciOutput(status.str());
 
+        std::ostringstream uci;
+        uci << "info score cp " << bestScore << " pv";
+        for (const auto& bm : bestMoves)
+        {
+                uci << ' ' << bm;
+        }
+        uci << std::endl;
+        this->comm->uciOutput(uci.str());
+
         std::ostringstream output;
-        output << "info score cp " << bestScore << std::endl;
-        output << "info string [Engine::go] equal";
+        output << "info score cp " << bestScore << " pv";
+        for (const auto& move : bestMoves)
+        {
+                output << ' ' << move;
+        }
+        output << std::endl;
+        output << "info string [Engine::go] best";
         for (const auto& move : bestMoves)
         {
                 output << ' ' << move;
