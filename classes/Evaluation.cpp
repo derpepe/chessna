@@ -3,16 +3,6 @@
 
  int Evaluation::evaluate(Board& board)
  {
-         // Always evaluate from White's perspective. The caller is responsible
-         // for interpreting the score (e.g. by minimizing for Black). This
-         // avoids accidentally flipping the evaluation and makes expectations
-         // like a central pawn bonus (\u00b1100 cp) consistent regardless of
-         // whose turn it is.
-         return evaluateColorless(board);
- }
-
- int Evaluation::evaluateColorless(Board& board)
- {
          int score = 0;
 
          // 0. Evaluate material on the board

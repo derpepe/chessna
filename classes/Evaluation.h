@@ -7,9 +7,6 @@ class Evaluation
 {
 public:
         static int evaluate(Board&);
-
-private:
-        static int evaluateColorless(Board&);
 };
 
 #endif
