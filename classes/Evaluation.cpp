@@ -29,7 +29,7 @@ namespace C {
     constexpr int MOBILITY_WEIGHT = 2;   // cp per mobility point
 
     // Pawn structure
-    constexpr int PAWN_CORE_MG = 12;     // pawn in the core centre
+    constexpr int PAWN_CORE_MG = 30;     // pawn in the core centre
     constexpr int PAWN_EXT_MG  = 6;      // pawn in the extended centre
     constexpr int DOUBLED_PAWN = -12;
     constexpr int ISOLATED_PAWN = -15;
@@ -37,7 +37,7 @@ namespace C {
     constexpr int PASSED_EG[8] = {0,0,0,25,45,75,120,0};
 
     // Knights
-    constexpr int KNIGHT_CORE_MG = 30;
+    constexpr int KNIGHT_CORE_MG = 20;
     constexpr int KNIGHT_CORE_EG = 20;
     constexpr int KNIGHT_EXT_MG  = 18;
     constexpr int KNIGHT_EXT_EG  = 10;
