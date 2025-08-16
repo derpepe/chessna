@@ -94,7 +94,7 @@ void Engine::go(int movetime)
         {
                 Board nextBoard(*this->board);
                 nextBoard.executeMove(move);
-                int score = this->minimax(nextBoard, SEARCH_DEPTH - 1, false);
+                int score = this->minimax(nextBoard, SEARCH_DEPTH, false);
                 if (score > bestScore)
                 {
                         bestScore = score;
