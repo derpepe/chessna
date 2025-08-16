@@ -8,6 +8,10 @@
 #include <string>
 #include <random>
 #include <atomic>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <functional>
 
 class Engine
 {
@@ -35,6 +39,10 @@ private:
         std::atomic<bool> stopRequested;
         unsigned long long nodes;
 
+        std::mutex taskMutex;
+        std::condition_variable taskCv;
+        std::queue<std::function<void()>> tasks;
+
         int minimax(Board& board, int depth);
 
         void emitInfo(unsigned long long elapsed,
@@ -42,6 +50,8 @@ private:
                        unsigned long long nps,
                        int score,
                        const std::vector<std::string>& pv);
+
+        void enqueueTask(std::function<void()> task);
 };
 
 #endif

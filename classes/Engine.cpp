@@ -15,15 +15,36 @@ const int SEARCH_DEPTH = 8;
 Engine::Engine(Comm *comm)
 {
         this->comm = comm;
-        this->comm->registerEngineGoCallback( [this](int movetime) { this->go(movetime); } );
-        this->comm->registerEngineStopCallback( [this] { this->stop(); } );
-        this->comm->registerEngineSetPositionCallback( [this](std::string position) { this->setPosition(position); } );
-        this->comm->registerEngineExecuteMoveCallback( [this](std::string move) { this->executeMove(move); } );
-        this->comm->registerEngineDebugCallback( [this] { this->debug(); } );
-        this->comm->registerEngineListMovesCallback( [this] { this->listMoves(); } );
-        this->comm->registerEnginePerftCallback( [this](int depth) { this->perft(depth); } );
-        this->comm->registerEnginePerftDivideCallback( [this](int depth) { this->perftDivide(depth); } );
-        this->comm->registerEnginePerftNodesCallback( [this](int depth) { return this->perftNodes(depth); } );
+        this->comm->registerEngineGoCallback(
+                [this](int movetime) {
+                        this->enqueueTask([this, movetime] { this->go(movetime); });
+                });
+        this->comm->registerEngineStopCallback([this] { this->stop(); });
+        this->comm->registerEngineSetPositionCallback(
+                [this](std::string position) {
+                        this->enqueueTask([this, position] { this->setPosition(position); });
+                });
+        this->comm->registerEngineExecuteMoveCallback(
+                [this](std::string move) {
+                        this->enqueueTask([this, move] { this->executeMove(move); });
+                });
+        this->comm->registerEngineDebugCallback(
+                [this] { this->enqueueTask([this] { this->debug(); }); });
+        this->comm->registerEngineListMovesCallback(
+                [this] { this->enqueueTask([this] { this->listMoves(); }); });
+        this->comm->registerEnginePerftCallback(
+                [this](int depth) {
+                        this->enqueueTask([this, depth] { this->perft(depth); });
+                });
+        this->comm->registerEnginePerftDivideCallback(
+                [this](int depth) {
+                        this->enqueueTask([this, depth] { this->perftDivide(depth); });
+                });
+        this->comm->registerEnginePerftNodesCallback(
+                [this](int depth) {
+                        this->enqueueTask([this, depth] { this->perftNodes(depth); });
+                        return 0ULL;
+                });
 	
         this->board = new Board();
         this->perft_runner = new Perft();
@@ -65,10 +86,26 @@ void Engine::listMoves()
 
 void Engine::run()
 {
-        while(true)
+        for (;;)
         {
-                // main computation should go here
+                std::function<void()> task;
+                {
+                        std::unique_lock<std::mutex> lock(this->taskMutex);
+                        this->taskCv.wait(lock, [this] { return !this->tasks.empty(); });
+                        task = std::move(this->tasks.front());
+                        this->tasks.pop();
+                }
+                task();
         }
+}
+
+void Engine::enqueueTask(std::function<void()> task)
+{
+        {
+                std::lock_guard<std::mutex> lock(this->taskMutex);
+                this->tasks.push(std::move(task));
+        }
+        this->taskCv.notify_one();
 }
 
 void Engine::stop()
