@@ -168,20 +168,7 @@ int Engine::minimax(Board& board, int depth, bool maximizingPlayer)
         if (depth == 0 || moves.empty())
         {
                 if (moves.empty()) return 0;
-                int bestScore = maximizingPlayer ? -100000 : 100000;
-                for (const auto& move : moves)
-                {
-                        int score = Evaluation::evaluate(board, move);
-                        if (maximizingPlayer)
-                        {
-                                if (score > bestScore) bestScore = score;
-                        }
-                        else
-                        {
-                                if (score < bestScore) bestScore = score;
-                        }
-                }
-                return bestScore;
+                return Evaluation::evaluate(board);
         }
 
         if (maximizingPlayer)
