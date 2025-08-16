@@ -22,16 +22,18 @@ Dadurch wird die ausführbare Datei `chessna` im Verzeichnis `bin` erstellt.
 
 Die ausführbare Datei akzeptiert folgende optionale Parameter:
 
-- `--test [Nr]` führt eine Reihe interner `perft`-Tests bis zur Tiefe 5 durch und beendet die Engine danach. Die Tests werden dabei auf alle verfügbaren CPU-Kerne verteilt, um die Ausführung zu beschleunigen. Wird optional eine Testnummer `Nr` angegeben, so wird nur der entsprechende Test ausgeführt.
-- `--deep-test` führt sämtliche eingebauten `perft`-Tests in voller Tiefe aus.
+- `--perft [Nr]` führt eine Reihe interner `perft`-Tests bis zur Tiefe 5 durch und beendet die Engine danach. Die Tests werden dabei auf alle verfügbaren CPU-Kerne verteilt, um die Ausführung zu beschleunigen. Wird optional eine Testnummer `Nr` angegeben, so wird nur der entsprechende Test ausgeführt.
+- `--full-perft` führt sämtliche eingebauten `perft`-Tests in voller Tiefe aus.
+- `--test` führt eine kleine Test-Suite aus (FEN-Ladevorgänge, `perft`-Tests und Bewertungsbeispiele).
 
 Ohne Parameter startet die Engine im normalen UCI-Modus und wartet auf Befehle von der Standardeingabe.
 
 Beispiel:
 
 ```sh
+./bin/chessna --perft
+./bin/chessna --perft 3
 ./bin/chessna --test
-./bin/chessna --test 3
 ```
 
 #### Als Lichess-Bot

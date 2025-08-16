@@ -6,6 +6,7 @@
 #include "Comm.h"
 #include "Board.h"
 #include "Perft.h"
+#include "Tests.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -14,7 +15,7 @@
 #include <memory>
 #include "perft_data.h"
 
-void runTests(bool deepTest, int singleTest = 0) {
+void runPerftTests(bool deepTest, int singleTest = 0) {
     struct PerftTest {
         std::string fen;
         std::vector<unsigned long long> nodes;
@@ -150,26 +151,34 @@ void runTests(bool deepTest, int singleTest = 0) {
 
 int main(int argc, char** argv)
 {
-    bool run_tests = false;
-    bool deep_test = false;
+    bool run_perft = false;
+    bool full_perft = false;
+    bool run_suite = false;
     int test_number = 0;
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "--test") {
-            run_tests = true;
+        if (arg == "--perft") {
+            run_perft = true;
             if (i + 1 < argc && argv[i + 1][0] != '-') {
                 test_number = std::stoi(argv[++i]);
             }
-        } else if (arg == "--deep-test") {
-            run_tests = true;
-            deep_test = true;
+        } else if (arg == "--full-perft") {
+            run_perft = true;
+            full_perft = true;
             if (i + 1 < argc && argv[i + 1][0] != '-') {
                 test_number = std::stoi(argv[++i]);
             }
+        } else if (arg == "--test") {
+            run_suite = true;
         }
     }
-    if (run_tests) {
-        runTests(deep_test, test_number);
+    if (run_perft) {
+        runPerftTests(full_perft, test_number);
+        return 0;
+    }
+    if (run_suite) {
+        Tests t;
+        t.runAll();
         return 0;
     }
 
