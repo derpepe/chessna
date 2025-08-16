@@ -12,6 +12,7 @@
 
 const int SEARCH_DEPTH = 8;
 const int ABORT_SCORE = std::numeric_limits<int>::max();
+const int CHECKMATE_SCORE = 100000;
 
 Engine::Engine(Comm *comm)
 {
@@ -347,13 +348,13 @@ SearchResult Engine::minimax(Board& board,
                                                        : (board.kings & board.blacks);
         if (king_bb == 0)
         {
-                return {maximizingPlayer ? -100000 : 100000, {}};
+                return {maximizingPlayer ? -CHECKMATE_SCORE : CHECKMATE_SCORE, {}};
         }
         unsigned long long opponent_king_bb = maximizingPlayer ? (board.kings & board.blacks)
                                                                : (board.kings & board.whites);
         if (opponent_king_bb == 0)
         {
-                return {maximizingPlayer ? 100000 : -100000, {}};
+                return {maximizingPlayer ? CHECKMATE_SCORE : -CHECKMATE_SCORE, {}};
         }
         char opponent = maximizingPlayer ? 'b' : 'w';
         int king_sq = -1;
@@ -370,7 +371,7 @@ SearchResult Engine::minimax(Board& board,
                 {
                         if (inCheck)
                         {
-                                return {maximizingPlayer ? -100000 : 100000, {}};
+                                return {maximizingPlayer ? -CHECKMATE_SCORE : CHECKMATE_SCORE, {}};
                         }
                         return {0, {}};
                 }
