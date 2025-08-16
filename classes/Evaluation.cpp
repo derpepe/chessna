@@ -87,7 +87,6 @@ namespace C {
 
 inline int mirrorSquare(int sq) { return 63 - sq; }
 inline unsigned long long fileMask(int file) { return 0x0101010101010101ULL << file; }
-inline unsigned long long rankMask(int rank) { return 0xffULL << (rank * 8); }
 
 unsigned long long knightAttacks(int sq) {
     unsigned long long b = 0ULL;
