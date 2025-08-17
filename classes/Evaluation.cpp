@@ -89,7 +89,7 @@ inline U64 pawnAttacks(int sq, bool white) {
     return b;
 }
 // Indizes wichtiger Felder
-constexpr int SQ_A1 = 0, SQ_C1 = 2, SQ_D1 = 3, SQ_E1 = 4, SQ_G1 = 6;
+constexpr int /*SQ_A1 = 0, */SQ_C1 = 2, SQ_D1 = 3, SQ_E1 = 4, SQ_G1 = 6;
 constexpr int SQ_C8 = 58, SQ_D8 = 59, SQ_E8 = 60, SQ_G8 = 62;
 
 // Bitboards für Zentrum und Rand
