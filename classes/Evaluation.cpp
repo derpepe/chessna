@@ -366,12 +366,40 @@ int Evaluation::evaluate(Board& board)
     mobility = std::max(-MOBILITY_CAP, std::min(MOBILITY_CAP, mobility));
     int mobilityScore = mobility * MOBILITY_WEIGHT;
 
+    // --- 2.6 Hanging pieces --------------------------------------------
+    // Penalize pieces that are attacked by the opponent and not defended
+    // by any friendly piece.  This helps the search avoid obviously
+    // losing moves where a piece is simply left en prise.
+    int hangingScore = 0;
+    auto addHangingPenalty = [&](U64 pieces, char attacker, char defender, int value) {
+        U64 tmpPieces = pieces;
+        while (tmpPieces) {
+            int sq = popLSB(tmpPieces);
+            if (gen.isSquareAttacked(board, sq, attacker) &&
+                !gen.isSquareAttacked(board, sq, defender))
+            {
+                // Apply a severe penalty – twice the piece value – to
+                // strongly discourage leaving material hanging.
+                hangingScore += (defender == 'w') ? -2 * value : 2 * value;
+            }
+        }
+    };
+
+    addHangingPenalty(whiteKnights, 'b', 'w', KNIGHT_VALUE);
+    addHangingPenalty(whiteBishops, 'b', 'w', BISHOP_VALUE);
+    addHangingPenalty(whiteRooks,   'b', 'w', ROOK_VALUE);
+    addHangingPenalty(whiteQueens,  'b', 'w', QUEEN_VALUE);
+    addHangingPenalty(blackKnights, 'w', 'b', KNIGHT_VALUE);
+    addHangingPenalty(blackBishops, 'w', 'b', BISHOP_VALUE);
+    addHangingPenalty(blackRooks,   'w', 'b', ROOK_VALUE);
+    addHangingPenalty(blackQueens,  'w', 'b', QUEEN_VALUE);
+
     // --- 3) Phasenmischung -----------------------------------------------
     int centerScore = static_cast<int>(centerMG * mg + centerEG * eg);
     int kingScore   = static_cast<int>(kingMG   * mg + kingEG   * eg);
 
     // --- 4) Gesamtsumme und Kappung --------------------------------------
-    int score = materialScore + centerScore + pawnScore + rookScore + kingScore + mobilityScore;
+    int score = materialScore + centerScore + pawnScore + rookScore + kingScore + mobilityScore + hangingScore;
     score = std::max(-SCORE_CLAMP, std::min(SCORE_CLAMP, score));
     return score;
 }

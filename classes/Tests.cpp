@@ -79,8 +79,10 @@ bool Tests::testEvaluation() {
         {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1", -2000, -800},
         // Advanced passed pawn on 7th rank
         {"7k/P7/8/8/8/8/8/7K w - - 0 1", 50, 150},
-        // Rook on the 7th rank driving the king back
-        {"6k1/6R1/8/8/8/8/8/7K w - - 0 1", 300, 2000},
+        // Unprotected rook on the 7th rank is now considered risky
+        // because it can be captured without recourse. The evaluation
+        // should therefore be clearly negative for White.
+        {"6k1/6R1/8/8/8/8/8/7K w - - 0 1", -600, -300},
         // Immediate checkmate against the side to move
         {"7k/7Q/7K/8/8/8/8/8 b - - 0 1", 900000, 1000000}
     };
