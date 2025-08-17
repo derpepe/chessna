@@ -7,7 +7,6 @@
 #include <chrono>
 #include <limits>
 #include <climits>
-#include <thread>
 #include <vector>
 
 const int SEARCH_DEPTH = 8;
@@ -17,67 +16,43 @@ const int CHECKMATE_SCORE = 100000;
 Engine::Engine(Comm *comm)
 {
         this->comm = comm;
-        this->comm->registerEngineGoCallback(
-                [this](GoParams params) {
-                        this->enqueueTask([this, params] { this->go(params); });
-                });
+        this->comm->registerEngineGoCallback([this](GoParams params) { this->go(params); });
         this->comm->registerEngineStopCallback([this] { this->stop(); });
-        this->comm->registerEngineSetPositionCallback(
-                [this](std::string position) {
-                        this->enqueueTask([this, position] { this->setPosition(position); });
-                });
-        this->comm->registerEngineExecuteMoveCallback(
-                [this](std::string move) {
-                        this->enqueueTask([this, move] { this->executeMove(move); });
-                });
-        this->comm->registerEngineDebugCallback(
-                [this] { this->enqueueTask([this] { this->debug(); }); });
-        this->comm->registerEngineListMovesCallback(
-                [this] { this->enqueueTask([this] { this->listMoves(); }); });
-        this->comm->registerEngineEvaluateCallback(
-                [this] { this->enqueueTask([this] { this->evaluate(); }); });
-        this->comm->registerEnginePerftCallback(
-                [this](int depth) {
-                        this->enqueueTask([this, depth] { this->perft(depth); });
-                });
-        this->comm->registerEnginePerftDivideCallback(
-                [this](int depth) {
-                        this->enqueueTask([this, depth] { this->perftDivide(depth); });
-                });
-        this->comm->registerEnginePerftNodesCallback(
-                [this](int depth) {
-                        this->enqueueTask([this, depth] { this->perftNodes(depth); });
-                        return 0ULL;
-                });
-	
-        this->board = std::unique_ptr<Board>(new Board());
-        this->perft_runner = std::unique_ptr<Perft>(new Perft());
+        this->comm->registerEngineSetPositionCallback([this](std::string position) { this->setPosition(position); });
+        this->comm->registerEngineExecuteMoveCallback([this](std::string move) { this->executeMove(move); });
+        this->comm->registerEngineDebugCallback([this] { this->debug(); });
+        this->comm->registerEngineListMovesCallback([this] { this->listMoves(); });
+        this->comm->registerEngineEvaluateCallback([this] { this->evaluate(); });
+        this->comm->registerEnginePerftCallback([this](int depth) { this->perft(depth); });
+        this->comm->registerEnginePerftDivideCallback([this](int depth) { this->perftDivide(depth); });
+        this->comm->registerEnginePerftNodesCallback([this](int depth) { return this->perftNodes(depth); });
+
         this->stopRequested = false;
         this->nodes = 0;
 }
 
 void Engine::setPosition(std::string position)
 {
-	std::cout << "info string [Engine:setPosition] settings position to '" << position << "'" << std::endl;
-	this->board->loadFen(position);
+        std::cout << "info string [Engine:setPosition] settings position to '" << position << "'" << std::endl;
+        this->board.loadFen(position);
 }
 
 
 void Engine::executeMove(std::string move)
 {
-	std::cout << "info string [Engine::executeMove] execute move '" << move << "'" << std::endl;
-	this->board->executeMove(move);
+        std::cout << "info string [Engine::executeMove] execute move '" << move << "'" << std::endl;
+        this->board.executeMove(move);
 }
 
 void Engine::debug()
 {
-        this->comm->uciOutput(this->board->getDump());
+        this->comm->uciOutput(this->board.getDump());
 }
 
 void Engine::listMoves()
 {
         MoveGenerator moveGenerator;
-        std::vector<std::string> moves = moveGenerator.getAllMoves(*this->board);
+        std::vector<std::string> moves = moveGenerator.getAllMoves(this->board);
         std::ostringstream output;
         output << "info string [Engine::listMoves]";
         for (const auto& move : moves)
@@ -90,34 +65,10 @@ void Engine::listMoves()
 
 void Engine::evaluate()
 {
-        int score = Evaluation::evaluate(*this->board);
+        int score = Evaluation::evaluate(this->board);
         std::ostringstream output;
         output << "info string [Engine::evaluate] score " << score << std::endl;
         this->comm->uciOutput(output.str());
-}
-
-void Engine::run()
-{
-        for (;;)
-        {
-                std::function<void()> task;
-                {
-                        std::unique_lock<std::mutex> lock(this->taskMutex);
-                        this->taskCv.wait(lock, [this] { return !this->tasks.empty(); });
-                        task = std::move(this->tasks.front());
-                        this->tasks.pop();
-                }
-                task();
-        }
-}
-
-void Engine::enqueueTask(std::function<void()> task)
-{
-        {
-                std::lock_guard<std::mutex> lock(this->taskMutex);
-                this->tasks.push(std::move(task));
-        }
-        this->taskCv.notify_one();
 }
 
 void Engine::stop()
@@ -132,7 +83,7 @@ void Engine::go(GoParams params)
         int movetime = params.movetime;
         if (movetime <= 0)
         {
-                char player = this->board->getPlayerToMove();
+                char player = this->board.getPlayerToMove();
                 int time = (player == 'w') ? params.wtime : params.btime;
                 int inc = (player == 'w') ? params.winc : params.binc;
                 if (time > 0)
@@ -152,7 +103,7 @@ void Engine::go(GoParams params)
         std::cout << "info string [Engine::go] calculated movetime " << movetime << "ms" << std::endl;
 
         MoveGenerator moveGenerator;
-        std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(*this->board);
+        std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(this->board);
         std::cout << "info string [Engine::go] " << possibleMoves.size() << " moves found" << std::endl;
 
         if (possibleMoves.empty())
@@ -171,7 +122,7 @@ void Engine::go(GoParams params)
                 return duration_cast<milliseconds>(steady_clock::now() - start).count() >= movetime;
         };
 
-        bool rootMaximizing = this->board->getPlayerToMove() == 'w';
+        bool rootMaximizing = this->board.getPlayerToMove() == 'w';
         std::string bestMove = possibleMoves[0];
         int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
                                        : std::numeric_limits<int>::max();
@@ -203,7 +154,7 @@ void Engine::go(GoParams params)
 
                 for (const auto& move : possibleMoves)
                 {
-                        Board nextBoard(*this->board);
+                        Board nextBoard(this->board);
                         nextBoard.executeMove(move);
                         // currentDepth counts plies including the move just played.
                         // After making a candidate move we have already spent one ply,
@@ -212,7 +163,6 @@ void Engine::go(GoParams params)
                                                             currentDepth - 1,
                                                             alpha,
                                                             beta,
-                                                            true,
                                                             timeExceeded,
                                                             1);
                         if (result.score == ABORT_SCORE)
@@ -374,7 +324,6 @@ SearchResult Engine::minimax(Board& board,
                              int depth,
                              int alpha,
                              int beta,
-                             bool allowNull,
                              const std::function<bool()>& timeExceeded,
                              int ply)
 {
@@ -429,36 +378,6 @@ SearchResult Engine::minimax(Board& board,
                 return {Evaluation::evaluate(board), {}};
         }
 
-        // Null move pruning
-        if (allowNull && depth >= 3 && !inCheck)
-        {
-                unsigned long long sidePieces = maximizingPlayer ? board.whites : board.blacks;
-                unsigned long long nonPawnPieces = (board.queens | board.rooks | board.bishops | board.knights) & sidePieces;
-                if (nonPawnPieces)
-                {
-                        Board nullBoard(board);
-                        nullBoard.playerToMove = opponent;
-                        nullBoard.enPassant = "-";
-                        int R = 2;
-                        if (maximizingPlayer)
-                        {
-                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, beta - 1, beta, false, timeExceeded, ply + 1);
-                                if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
-                                // Return the bound instead of the null move score to avoid
-                                // propagating unrealistically high values.
-                                if (nullRes.score >= beta) return {beta, {}};
-                        }
-                        else
-                        {
-                                SearchResult nullRes = minimax(nullBoard, depth - R - 1, alpha, alpha + 1, false, timeExceeded, ply + 1);
-                                if (this->stopRequested || nullRes.score == ABORT_SCORE) return {ABORT_SCORE, {}};
-                                // Return the bound instead of the null move score to avoid
-                                // propagating unrealistically low values.
-                                if (nullRes.score <= alpha) return {alpha, {}};
-                        }
-                }
-        }
-
         if (maximizingPlayer)
         {
                 int maxEval = std::numeric_limits<int>::min();
@@ -467,7 +386,7 @@ SearchResult Engine::minimax(Board& board,
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded, ply + 1);
+                                SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, timeExceeded, ply + 1);
                         if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
                         if (result.score > maxEval)
                         {
@@ -488,7 +407,7 @@ SearchResult Engine::minimax(Board& board,
                 {
                         Board nextBoard(board);
                         nextBoard.executeMove(move);
-                        SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, true, timeExceeded, ply + 1);
+                                SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, timeExceeded, ply + 1);
                         if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
                         if (result.score < minEval)
                         {
@@ -505,8 +424,8 @@ SearchResult Engine::minimax(Board& board,
 
 void Engine::perft(int depth)
 {
-	std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
-	PerftResult result = this->perft_runner->perft(*this->board, depth);
+        std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
+        PerftResult result = this->perft_runner.perft(this->board, depth);
         std::ostringstream output;
         output << "info string [Engine::perft] nodes " << Lib::formatThousands(result.nodes) << std::endl
                 << "info string [Engine::perft] captures " << Lib::formatThousands(result.captures) << std::endl
@@ -521,12 +440,12 @@ void Engine::perft(int depth)
 void Engine::perftDivide(int depth)
 {
         std::cout << "info string [Engine::perftDivide] starting perftDivide(" << depth << ")" << std::endl;
-        this->perft_runner->perftDivide(*this->board, depth);
+        this->perft_runner.perftDivide(this->board, depth);
 }
 
 unsigned long long Engine::perftNodes(int depth)
 {
-        PerftResult result = this->perft_runner->perft(*this->board, depth);
+        PerftResult result = this->perft_runner.perft(this->board, depth);
         std::ostringstream output;
         output << "info string [Engine::perftNodes] perft(" << depth
                << ") nodes " << Lib::formatThousands(result.nodes) << std::endl;
