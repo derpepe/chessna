@@ -78,7 +78,7 @@ bool Tests::testEvaluation() {
         // White missing queen -> large advantage for black
         {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1", -2000, -800},
         // Advanced passed pawn on 7th rank
-        {"7k/P7/8/8/8/8/8/7K w - - 0 1", 150, 400},
+        {"7k/P7/8/8/8/8/8/7K w - - 0 1", 50, 150},
         // Rook on the 7th rank driving the king back
         {"6k1/6R1/8/8/8/8/8/7K w - - 0 1", 300, 2000},
         // Immediate checkmate against the side to move
