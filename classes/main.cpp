@@ -187,14 +187,6 @@ int main(int argc, char** argv)
         auto uci = std::unique_ptr<Uci>(new Uci(comm.get()));
         auto engine = std::unique_ptr<Engine>(new Engine(comm.get()));
 
-        // initialize asynchronous communication
-        auto uci_ptr = uci.get();
-        auto engine_ptr = engine.get();
-        std::thread uci_thread([uci_ptr] { uci_ptr->run(); });
-        std::thread engine_thread([engine_ptr] { engine_ptr->run(); });
-
-	// wait for both threads
-	uci_thread.join();
-	engine_thread.join();
-	return 0;
+        uci->run();
+        return 0;
 }
