@@ -23,6 +23,10 @@ namespace C {
     constexpr int ROOK_VALUE   = 500;
     constexpr int QUEEN_VALUE  = 900;
 
+    // Bonus für Bauern im Zentrum
+    constexpr int CENTER_PAWN_BONUS = 10;
+    constexpr U64 CENTER = 0x0000001818000000ULL;
+
     // Endwerte für terminale Stellungen
     constexpr int MATE_SCORE  = 1000000;
     constexpr int SCORE_CLAMP = 30000;
@@ -79,9 +83,13 @@ int Evaluation::evaluate(Board& board)
 
     int materialScore = whiteMaterial - blackMaterial;
 
+    // Bonus für Bauern im Zentrum
+    int centerPawnsScore = (__builtin_popcountll(whitePawns & CENTER)
+                            - __builtin_popcountll(blackPawns & CENTER))
+                           * CENTER_PAWN_BONUS;
 
     // --- 3) Gesamtsumme und Kappung --------------------------------------
-    int score = materialScore;
+    int score = materialScore + centerPawnsScore;
     score = std::max(-SCORE_CLAMP, std::min(SCORE_CLAMP, score));
     return score;
 }
