@@ -1,325 +1,225 @@
+// Engine.cpp
 #include "Engine.h"
-#include "MoveGenerator.h"
 #include "Evaluation.h"
+#include "MoveGenerator.h"
 #include "Lib.h"
-#include <iostream>
-#include <sstream>
-#include <chrono>
+
 #include <limits>
-#include <climits>
-#include <vector>
+#include <algorithm>
+#include <random>
+#include <array>
+#include <unordered_map>
+#include <cstdint>
+#include <chrono>
+#include <sstream>
+#include <iostream>
 
-const int SEARCH_DEPTH = 8;
-const int ABORT_SCORE = std::numeric_limits<int>::max();
-const int CHECKMATE_SCORE = 100000;
+static const int ABORT_SCORE     = std::numeric_limits<int>::max();
+static const int CHECKMATE_SCORE = 100000;
 
+// ---------------- Zobrist Hashing (TT) ----------------
+namespace {
+        bool zobristInitialized = false;
+        std::array<std::array<std::uint64_t,64>, 12> ZOBRIST_PIECE{}; // 12 piece types: WP,WN,WB,WR,WQ,WK, BP,BN,BB,BR,BQ,BK
+        std::array<std::uint64_t, 16> ZOBRIST_CASTLING{};             // 4 castling rights -> 16 combos
+        std::array<std::uint64_t, 8>  ZOBRIST_ENPASSANT_FILE{};       // en-passant file a..h
+        std::uint64_t ZOBRIST_SIDE = 0;
+
+        inline void init_zobrist()
+        {
+                if (zobristInitialized) return;
+                std::mt19937_64 rng(0xABCDEF1234567890ULL); // fixed seed for reproducibility
+                auto rnd = [&](){ return rng(); };
+
+                for (auto &arr : ZOBRIST_PIECE)
+                        for (auto &x : arr) x = rnd();
+
+                for (auto &x : ZOBRIST_CASTLING) x = rnd();
+                for (auto &x : ZOBRIST_ENPASSANT_FILE) x = rnd();
+                ZOBRIST_SIDE = rnd();
+
+                zobristInitialized = true;
+        }
+}
+
+// ---------------- Engine ----------------
 Engine::Engine(Comm *comm)
 {
         this->comm = comm;
-        this->comm->registerEngineGoCallback([this](GoParams params) { this->go(params); });
-        this->comm->registerEngineStopCallback([this] { this->stop(); });
-        this->comm->registerEngineSetPositionCallback([this](std::string position) { this->setPosition(position); });
-        this->comm->registerEngineExecuteMoveCallback([this](std::string move) { this->executeMove(move); });
-        this->comm->registerEngineDebugCallback([this] { this->debug(); });
-        this->comm->registerEngineListMovesCallback([this] { this->listMoves(); });
-        this->comm->registerEngineEvaluateCallback([this] { this->evaluate(); });
-        this->comm->registerEnginePerftCallback([this](int depth) { this->perft(depth); });
-        this->comm->registerEnginePerftDivideCallback([this](int depth) { this->perftDivide(depth); });
-        this->comm->registerEnginePerftNodesCallback([this](int depth) { return this->perftNodes(depth); });
-
-        this->stopRequested = false;
         this->nodes = 0;
+        this->stopRequested = false;
 }
 
-void Engine::setPosition(std::string position)
+// Zobrist key
+std::uint64_t Engine::computeZobristKey(const Board& b) const
 {
-        std::cout << "info string [Engine:setPosition] settings position to '" << position << "'" << std::endl;
-        this->board.loadFen(position);
-}
+        init_zobrist();
+        std::uint64_t key = 0;
 
+        auto addPieces = [&](bool white){
+                unsigned long long side = white ? b.whites : b.blacks;
 
-void Engine::executeMove(std::string move)
-{
-        std::cout << "info string [Engine::executeMove] execute move '" << move << "'" << std::endl;
-        this->board.executeMove(move);
-}
-
-void Engine::debug()
-{
-        this->comm->uciOutput(this->board.getDump());
-}
-
-void Engine::listMoves()
-{
-        MoveGenerator moveGenerator;
-        std::vector<std::string> moves = moveGenerator.getAllMoves(this->board);
-        std::ostringstream output;
-        output << "info string [Engine::listMoves]";
-        for (const auto& move : moves)
-        {
-                output << ' ' << move;
-        }
-        output << std::endl;
-        this->comm->uciOutput(output.str());
-}
-
-void Engine::evaluate()
-{
-        int score = Evaluation::evaluate(this->board);
-        std::ostringstream output;
-        output << "info string [Engine::evaluate] score " << score << std::endl;
-        this->comm->uciOutput(output.str());
-}
-
-void Engine::stop()
-{
-        this->stopRequested = true;
-}
-
-void Engine::go(GoParams params)
-{
-        std::cout << "info string [Engine::go] here we go" << std::endl;
-
-        int movetime = params.movetime;
-        if (movetime <= 0)
-        {
-                char player = this->board.getPlayerToMove();
-                int time = (player == 'w') ? params.wtime : params.btime;
-                int inc = (player == 'w') ? params.winc : params.binc;
-                if (time > 0)
-                {
-                        movetime = time / 40 + inc;
-                        if (movetime <= 0)
+                auto add = [&](unsigned long long bb, int idxWhite, int idxBlack){
+                        unsigned long long set = bb & side;
+                        while (set)
                         {
-                                movetime = time / 40;
+                                int sq = __builtin_ffsll(set) - 1;
+                                int pidx = white ? idxWhite : idxBlack;
+                                key ^= ZOBRIST_PIECE[pidx][sq];
+                                set &= (set - 1);
                         }
-                }
-                if (movetime <= 0)
-                {
-                        movetime = 1000;
-                }
-        }
-
-        std::cout << "info string [Engine::go] calculated movetime " << movetime << "ms" << std::endl;
-
-        MoveGenerator moveGenerator;
-        std::vector<std::string> possibleMoves = moveGenerator.getAllMoves(this->board);
-        std::cout << "info string [Engine::go] " << possibleMoves.size() << " moves found" << std::endl;
-
-        if (possibleMoves.empty())
-        {
-                std::cout << "info string [Engine::go] no moves found" << std::endl;
-                return;
-        }
-
-        this->stopRequested = false;
-        this->nodes = 0;
-
-        using namespace std::chrono;
-        auto start = steady_clock::now();
-        auto lastInfo = start;
-        auto timeExceeded = [&]() {
-                return duration_cast<milliseconds>(steady_clock::now() - start).count() >= movetime;
+                };
+                add(b.pawns,   0,  6);
+                add(b.knights, 1,  7);
+                add(b.bishops, 2,  8);
+                add(b.rooks,   3,  9);
+                add(b.queens,  4, 10);
+                add(b.kings,   5, 11);
         };
 
-        bool rootMaximizing = this->board.getPlayerToMove() == 'w';
-        std::string bestMove = possibleMoves[0];
-        int bestScore = rootMaximizing ? std::numeric_limits<int>::min()
-                                       : std::numeric_limits<int>::max();
-        // `bestPV` holds the principal variation returned by the search.
-        // The first move in this line is the move reported as bestmove.
-        std::vector<std::string> bestPV;
-        std::string endReason;
-        bool aborted = false;
+        addPieces(true);
+        addPieces(false);
 
-        for (int currentDepth = 1; currentDepth <= SEARCH_DEPTH; ++currentDepth)
+        int cr = 0;
+        if (b.casteling_K) cr |= 1;
+        if (b.casteling_Q) cr |= 2;
+        if (b.casteling_k) cr |= 4;
+        if (b.casteling_q) cr |= 8;
+        key ^= ZOBRIST_CASTLING[cr];
+
+        if (!b.enPassant.empty() && b.enPassant != "-")
         {
-                std::ostringstream depthInfo;
-                depthInfo << "info depth " << currentDepth;
-                if (currentDepth > 1 && !bestPV.empty())
-                {
-                        depthInfo << " bestmove " << bestPV.front() << " score cp " << bestScore;
-                }
-                depthInfo << std::endl;
-                this->comm->uciOutput(depthInfo.str());
-
-                int depthBestScore = rootMaximizing ? std::numeric_limits<int>::min()
-                                                    : std::numeric_limits<int>::max();
-                // Principal variation for the best move at the current
-                // depth.
-                std::vector<std::string> depthBestPV;
-
-                int alpha = INT_MIN;
-                int beta = INT_MAX;
-
-                for (const auto& move : possibleMoves)
-                {
-                        Board nextBoard(this->board);
-                        nextBoard.executeMove(move);
-                        // currentDepth counts plies including the move just played.
-                        // After making a candidate move we have already spent one ply,
-                        // therefore we search one ply less for the remaining moves.
-                        SearchResult result = this->minimax(nextBoard,
-                                                            currentDepth - 1,
-                                                            alpha,
-                                                            beta,
-                                                            timeExceeded,
-                                                            1);
-                        if (result.score == ABORT_SCORE)
-                        {
-                                endReason = this->stopRequested ? "stop" : "movetime";
-                                aborted = true;
-                                break;
-                        }
-                        std::vector<std::string> line;
-                        line.push_back(move);
-                        line.insert(line.end(), result.moves.begin(), result.moves.end());
-                        int score = result.score;
-                        bool better = rootMaximizing ? (score > depthBestScore) : (score < depthBestScore);
-                        if (better)
-                        {
-                                depthBestScore = score;
-                                depthBestPV = line;
-                                auto now = steady_clock::now();
-                                unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
-                                unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
-                                this->emitInfo(elapsed, this->nodes, nps,
-                                               depthBestScore, depthBestPV);
-                        }
-
-                        if (rootMaximizing)
-                        {
-                                if (score > alpha) alpha = score;
-                        }
-                        else
-                        {
-                                if (score < beta) beta = score;
-                        }
-
-                        auto now = steady_clock::now();
-                        if (duration_cast<milliseconds>(now - lastInfo).count() >= 1000)
-                        {
-                                unsigned long long elapsed = duration_cast<milliseconds>(now - start).count();
-                                unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
-                                this->emitInfo(elapsed, this->nodes, nps,
-                                               depthBestScore, depthBestPV);
-
-                                lastInfo = now;
-                        }
-
-                        if (this->stopRequested)
-                        {
-                                endReason = "stop";
-                                aborted = true;
-                                break;
-                        }
-                        if (duration_cast<milliseconds>(now - start).count() >= movetime)
-                        {
-                                endReason = "movetime";
-                                aborted = true;
-                                break;
-                        }
-                }
-
-                // Only update the result if the current depth finished
-                // completely. If we aborted early, keep the best result from
-                // the previous fully searched depth.
-                if (!aborted && !depthBestPV.empty())
-                {
-                        bestScore = depthBestScore;
-                        bestPV = depthBestPV;
-                }
-
-                if (aborted)
-                {
-                        break;
-                }
+                int sq = Lib::getBitnumFromCoordinates(b.enPassant);
+                int file = Lib::getFile(sq);
+                key ^= ZOBRIST_ENPASSANT_FILE[file];
         }
 
-        if (endReason.empty())
-        {
-                endReason = "moves";
-        }
+        if (b.playerToMove == 'w') key ^= ZOBRIST_SIDE;
 
-        // Prefer the first move from the principal variation as it reflects
-        // the search path we consider strongest. If no PV is available (for
-        // example due to an early abort) fall back to the first legal move.
-        if (!bestPV.empty())
-        {
-                bestMove = bestPV.front();
-        }
-        else
-        {
-                bestMove = possibleMoves.front();
-                bestScore = 0;
-        }
-
-        auto now = std::chrono::steady_clock::now();
-        std::ostringstream reason;
-        reason << "info string [Engine::go] search finished: ";
-        if (endReason == "movetime")
-        {
-                reason << "movetime";
-        }
-        else if (endReason == "stop")
-        {
-                reason << "stop command";
-        }
-        else
-        {
-                reason << "all moves searched";
-        }
-        reason << std::endl;
-        this->comm->uciOutput(reason.str());
-
-        unsigned long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-        unsigned long long nps = elapsed ? (this->nodes * 1000) / elapsed : 0;
-
-        this->emitInfo(elapsed, this->nodes, nps, bestScore, bestPV);
-
-        std::ostringstream output;
-        output << "info string [Engine::go] best";
-        for (const auto& move : bestPV)
-        {
-                output << ' ' << move;
-        }
-        output << std::endl;
-        output << "bestmove " << bestMove << std::endl;
-        this->comm->uciOutput(output.str());
+        return key;
 }
 
-void Engine::emitInfo(unsigned long long elapsed,
-                      unsigned long long nodes,
-                      unsigned long long nps,
-                      int score,
-                      const std::vector<std::string>& pv)
+// capture & MVV-LVA
+bool Engine::is_capture_move(const Board& b, const std::string& move, bool whiteToMove) const
 {
-        std::ostringstream status;
-        status << "info string [Engine::go] time "
-               << elapsed
-               << "ms nodes " << Lib::formatThousands(nodes)
-               << " nps " << Lib::formatThousands(nps)
-               << " best";
-        for (const auto& mv : pv)
-        {
-                status << ' ' << mv;
-        }
-        status << " score " << score << std::endl;
-        this->comm->uciOutput(status.str());
+        if (move.size() < 4) return false;
+        int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+        int to   = Lib::getBitnumFromCoordinates(move.substr(2,2));
 
-        std::ostringstream uci;
-        uci << "info time " << elapsed
-            << " nodes " << nodes
-            << " nps " << nps
-            << " score cp " << score << " pv";
-        for (const auto& mv : pv)
+        unsigned long long opp = whiteToMove ? b.blacks : b.whites;
+        if ((opp >> to) & 1ULL) return true;
+
+        if (!b.enPassant.empty() && b.enPassant != "-")
         {
-                uci << ' ' << mv;
+            int epsq = Lib::getBitnumFromCoordinates(b.enPassant);
+            if (to == epsq)
+            {
+                unsigned long long myPawns = b.pawns & (whiteToMove ? b.whites : b.blacks);
+                if ((myPawns >> from) & 1ULL)
+                {
+                    int fromFile = Lib::getFile(from);
+                    int toFile = Lib::getFile(to);
+                    if (fromFile != toFile) return true;
+                }
+            }
         }
-        uci << std::endl;
-        this->comm->uciOutput(uci.str());
+        return false;
 }
 
+int Engine::mvv_lva_score(const Board& b, const std::string& move, bool whiteToMove) const
+{
+        auto val = [&](char p){
+                switch(p){
+                        case 'P': case 'p': return 100;
+                        case 'N': case 'n': return 320;
+                        case 'B': case 'b': return 330;
+                        case 'R': case 'r': return 500;
+                        case 'Q': case 'q': return 900;
+                        case 'K': case 'k': return 20000;
+                        default: return 0;
+                }
+        };
+
+        if (move.size() < 4) return 0;
+        int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+        int to   = Lib::getBitnumFromCoordinates(move.substr(2,2));
+
+        char attacker = 0;
+        unsigned long long my = whiteToMove ? b.whites : b.blacks;
+        if ((b.pawns   & my) & (1ULL << from)) attacker = whiteToMove ? 'P' : 'p';
+        else if ((b.knights & my) & (1ULL << from)) attacker = whiteToMove ? 'N' : 'n';
+        else if ((b.bishops & my) & (1ULL << from)) attacker = whiteToMove ? 'B' : 'b';
+        else if ((b.rooks   & my) & (1ULL << from)) attacker = whiteToMove ? 'R' : 'r';
+        else if ((b.queens  & my) & (1ULL << from)) attacker = whiteToMove ? 'Q' : 'q';
+        else if ((b.kings   & my) & (1ULL << from)) attacker = whiteToMove ? 'K' : 'k';
+
+        char victim = 0;
+        unsigned long long opp = whiteToMove ? b.blacks : b.whites;
+        if ((b.pawns   & opp) & (1ULL << to)) victim = whiteToMove ? 'p' : 'P';
+        else if ((b.knights & opp) & (1ULL << to)) victim = whiteToMove ? 'n' : 'N';
+        else if ((b.bishops & opp) & (1ULL << to)) victim = whiteToMove ? 'b' : 'B';
+        else if ((b.rooks   & opp) & (1ULL << to)) victim = whiteToMove ? 'r' : 'R';
+        else if ((b.queens  & opp) & (1ULL << to)) victim = whiteToMove ? 'q' : 'Q';
+        else if (!b.enPassant.empty() && b.enPassant != "-") {
+            int epsq = Lib::getBitnumFromCoordinates(b.enPassant);
+            if (to == epsq) victim = whiteToMove ? 'p' : 'P';
+        }
+
+        int score = 0;
+        if (victim) score += 10000 + 10 * val(victim) - val(attacker);
+        if (move.size() >= 5) score += 900;
+        return score;
+}
+
+// --------------- Quiescence ---------------
+int Engine::quiescence(Board& board,
+                       int alpha,
+                       int beta,
+                       const std::function<bool()>& timeExceeded,
+                       int ply)
+{
+        if (this->stopRequested || timeExceeded())
+                return ABORT_SCORE;
+
+        this->nodes++;
+
+        int stand_pat = Evaluation::evaluate(board);
+        if (stand_pat >= beta) return beta;
+        if (stand_pat > alpha) alpha = stand_pat;
+
+        MoveGenerator gen;
+        std::vector<std::string> moves = gen.getAllMoves(board);
+        bool whiteToMove = board.getPlayerToMove() == 'w';
+
+        std::vector<std::pair<int,std::string>> captures;
+        captures.reserve(moves.size());
+        for (const auto& m : moves)
+        {
+                if (is_capture_move(board, m, whiteToMove))
+                {
+                        int s = mvv_lva_score(board, m, whiteToMove);
+                        captures.emplace_back(s, m);
+                }
+        }
+        std::sort(captures.begin(), captures.end(),
+                  [](const auto& a, const auto& b){ return a.first > b.first; });
+
+        for (const auto& sm : captures)
+        {
+                const std::string& move = sm.second;
+                Board next(board);
+                next.executeMove(move);
+                int score = quiescence(next, -beta, -alpha, timeExceeded, ply+1);
+                if (score == ABORT_SCORE) return ABORT_SCORE;
+                score = -score;
+
+                if (score >= beta) return beta;
+                if (score > alpha) alpha = score;
+        }
+        return alpha;
+}
+
+// --------------- Minimax ---------------
 SearchResult Engine::minimax(Board& board,
                              int depth,
                              int alpha,
@@ -327,40 +227,25 @@ SearchResult Engine::minimax(Board& board,
                              const std::function<bool()>& timeExceeded,
                              int ply)
 {
-        if (this->stopRequested)
-        {
-                return {ABORT_SCORE, {}};
-        }
-        if (timeExceeded())
-        {
-                return {ABORT_SCORE, {}};
-        }
+        if (this->stopRequested) return {ABORT_SCORE, {}};
+        if (timeExceeded())      return {ABORT_SCORE, {}};
+
         this->nodes++;
 
         MoveGenerator moveGenerator;
         std::vector<std::string> moves = moveGenerator.getAllMoves(board);
         bool maximizingPlayer = board.getPlayerToMove() == 'w';
 
-        unsigned long long king_bb = maximizingPlayer ? (board.kings & board.whites)
-                                                       : (board.kings & board.blacks);
-        if (king_bb == 0)
-        {
-                int mateScore = CHECKMATE_SCORE - ply;
-                return {maximizingPlayer ? -mateScore : mateScore, {}};
-        }
-        unsigned long long opponent_king_bb = maximizingPlayer ? (board.kings & board.blacks)
-                                                               : (board.kings & board.whites);
-        if (opponent_king_bb == 0)
-        {
-                int mateScore = CHECKMATE_SCORE - ply;
-                return {maximizingPlayer ? mateScore : -mateScore, {}};
-        }
+        unsigned long long myKing   = maximizingPlayer ? (board.kings & board.whites) : (board.kings & board.blacks);
+        unsigned long long oppKing  = maximizingPlayer ? (board.kings & board.blacks) : (board.kings & board.whites);
+        if (myKing == 0)  { int ms = CHECKMATE_SCORE - ply; return { maximizingPlayer ? -ms : ms, {} }; }
+        if (oppKing == 0) { int ms = CHECKMATE_SCORE - ply; return { maximizingPlayer ?  ms : -ms, {} }; }
+
         char opponent = maximizingPlayer ? 'b' : 'w';
         int king_sq = -1;
         bool inCheck = false;
-        if (king_bb)
-        {
-                king_sq = __builtin_ffsll(king_bb) - 1;
+        if (myKing) {
+                king_sq = __builtin_ffsll(myKing) - 1;
                 inCheck = moveGenerator.isSquareAttacked(board, king_sq, opponent);
         }
 
@@ -368,87 +253,341 @@ SearchResult Engine::minimax(Board& board,
         {
                 if (moves.empty())
                 {
-                        if (inCheck)
-                        {
-                                int mateScore = CHECKMATE_SCORE - ply;
-                                return {maximizingPlayer ? -mateScore : mateScore, {}};
+                        if (inCheck) {
+                                int ms = CHECKMATE_SCORE - ply;
+                                return { maximizingPlayer ? -ms : ms, {} };
                         }
-                        return {0, {}};
+                        return { 0, {} }; // stalemate
                 }
-                return {Evaluation::evaluate(board), {}};
+                return { quiescence(board, alpha, beta, timeExceeded, ply), {} };
         }
+
+        // Null-Move-Pruning
+        if (!inCheck)
+        {
+                int R = (depth >= 6) ? 3 : 2;
+                if (depth >= R + 1)
+                {
+                        unsigned long long myPieces = maximizingPlayer ? board.whites : board.blacks;
+                        unsigned long long nonPawns = (board.knights | board.bishops | board.rooks | board.queens) & myPieces;
+                        if (__builtin_popcountll(nonPawns) > 0)
+                        {
+                                Board nullBoard(board);
+                                nullBoard.playerToMove = maximizingPlayer ? 'b' : 'w';
+                                nullBoard.enPassant = "-";
+                                nullBoard.halfmoves++;
+
+                                int alphaNZ = beta - 1;
+                                int betaNZ  = beta;
+                                SearchResult nres = minimax(nullBoard, depth - 1 - R, alphaNZ, betaNZ, timeExceeded, ply + 1);
+                                if (this->stopRequested || nres.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                if (nres.score >= beta) return { nres.score, {} }; // fail-high
+                        }
+                }
+        }
+
+        // TT probe
+        int alphaOrig = alpha;
+        int betaOrig = beta;
+
+        std::uint64_t key = computeZobristKey(board);
+        auto it = tt.find(key);
+        std::string ttBestMove;
+        if (it != tt.end() && it->second.depth >= depth)
+        {
+                const TTEntry& e = it->second;
+                if (e.flag == TTEntry::FLAG_EXACT) {
+                        return {e.score, {e.bestMove}};
+                } else if (e.flag == TTEntry::FLAG_ALPHA && e.score <= alpha) {
+                        return {e.score, {e.bestMove}};
+                } else if (e.flag == TTEntry::FLAG_BETA && e.score >= beta) {
+                        return {e.score, {e.bestMove}};
+                }
+                ttBestMove = e.bestMove;
+        }
+
+        // Move ordering
+        bool whiteToMove = maximizingPlayer;
+        std::vector<std::pair<int,std::string>> ordered;
+        ordered.reserve(moves.size());
+        for (const auto& mv : moves)
+        {
+                int s = 0;
+                if (!ttBestMove.empty() && mv == ttBestMove) s += 2'000'000;
+                bool isCap = is_capture_move(board, mv, whiteToMove);
+                if (isCap) s += 1'000'000 + mvv_lva_score(board, mv, whiteToMove);
+                else if (ply < MAX_PLY) {
+                        if (mv == killerMoves[ply][0]) s += 500'000;
+                        else if (mv == killerMoves[ply][1]) s += 400'000;
+                        int sideIdx = whiteToMove ? 0 : 1;
+                        int from = Lib::getBitnumFromCoordinates(mv.substr(0,2));
+                        int to   = Lib::getBitnumFromCoordinates(mv.substr(2,2));
+                        s += history[sideIdx][from][to];
+                }
+                ordered.emplace_back(s, mv);
+        }
+        std::sort(ordered.begin(), ordered.end(), [](const auto& a, const auto& b){ return a.first > b.first; });
 
         if (maximizingPlayer)
         {
-                int maxEval = std::numeric_limits<int>::min();
+                int best = std::numeric_limits<int>::min();
                 std::vector<std::string> bestLine;
-                for (const auto& move : moves)
+                for (const auto& scored : ordered)
                 {
-                        Board nextBoard(board);
-                        nextBoard.executeMove(move);
-                                SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, timeExceeded, ply + 1);
-                        if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
-                        if (result.score > maxEval)
+                        const std::string& move = scored.second;
+                        Board next(board);
+                        next.executeMove(move);
+
+                        int moveIdx = int(&scored - &ordered[0]);
+                        bool cap = is_capture_move(board, move, whiteToMove);
+                        SearchResult res;
+                        if (!inCheck && !cap && depth >= 3 && moveIdx >= 3 && move != ttBestMove) {
+                                int R = 1 + (depth >= 5);
+                                res = minimax(next, depth - 1 - R, alpha, beta, timeExceeded, ply + 1);
+                                if (this->stopRequested || res.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                if (res.score > alpha) {
+                                        res = minimax(next, depth - 1, alpha, beta, timeExceeded, ply + 1);
+                                        if (this->stopRequested || res.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                }
+                        } else {
+                                res = minimax(next, depth - 1, alpha, beta, timeExceeded, ply + 1);
+                                if (this->stopRequested || res.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                        }
+
+                        if (res.score > best)
                         {
-                                maxEval = result.score;
-                                bestLine = result.moves;
+                                best = res.score;
+                                bestLine = res.moves;
                                 bestLine.insert(bestLine.begin(), move);
                         }
-                        if (result.score > alpha) alpha = result.score;
-                        if (beta <= alpha) break;
+                        if (res.score > alpha) alpha = res.score;
+
+                        if (beta <= alpha) {
+                                if (!cap && ply < MAX_PLY)
+                                {
+                                        if (killerMoves[ply][0] != move) {
+                                                killerMoves[ply][1] = killerMoves[ply][0];
+                                                killerMoves[ply][0] = move;
+                                        }
+                                        int sideIdx = whiteToMove ? 0 : 1;
+                                        int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+                                        int to   = Lib::getBitnumFromCoordinates(move.substr(2,2));
+                                        history[sideIdx][from][to] += depth * depth;
+                                }
+                                break;
+                        }
                 }
-                return {maxEval, bestLine};
+                // TT store
+                {
+                        TTEntry e;
+                        e.key = key; e.depth = depth; e.score = best;
+                        if (best <= alphaOrig) e.flag = TTEntry::FLAG_ALPHA;
+                        else if (best >= betaOrig) e.flag = TTEntry::FLAG_BETA;
+                        else e.flag = TTEntry::FLAG_EXACT;
+                        e.bestMove = bestLine.empty() ? (ordered.empty() ? std::string() : ordered.front().second) : bestLine.front();
+                        if (tt.size() > ttMaxEntries) tt.clear();
+                        tt[key] = e;
+                }
+                return {best, bestLine};
         }
         else
         {
-                int minEval = std::numeric_limits<int>::max();
+                int best = std::numeric_limits<int>::max();
                 std::vector<std::string> bestLine;
-                for (const auto& move : moves)
+                for (const auto& scored : ordered)
                 {
-                        Board nextBoard(board);
-                        nextBoard.executeMove(move);
-                                SearchResult result = minimax(nextBoard, depth - 1, alpha, beta, timeExceeded, ply + 1);
-                        if (this->stopRequested || result.score == ABORT_SCORE) return {ABORT_SCORE, {}};
-                        if (result.score < minEval)
+                        const std::string& move = scored.second;
+                        Board next(board);
+                        next.executeMove(move);
+
+                        int moveIdx = int(&scored - &ordered[0]);
+                        bool cap = is_capture_move(board, move, whiteToMove);
+                        SearchResult res;
+                        if (!inCheck && !cap && depth >= 3 && moveIdx >= 3 && move != ttBestMove) {
+                                int R = 1 + (depth >= 5);
+                                res = minimax(next, depth - 1 - R, alpha, beta, timeExceeded, ply + 1);
+                                if (this->stopRequested || res.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                if (res.score < beta) {
+                                        res = minimax(next, depth - 1, alpha, beta, timeExceeded, ply + 1);
+                                        if (this->stopRequested || res.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                                }
+                        } else {
+                                res = minimax(next, depth - 1, alpha, beta, timeExceeded, ply + 1);
+                                if (this->stopRequested || res.score == ABORT_SCORE) return {ABORT_SCORE, {}};
+                        }
+
+                        if (res.score < best)
                         {
-                                minEval = result.score;
-                                bestLine = result.moves;
+                                best = res.score;
+                                bestLine = res.moves;
                                 bestLine.insert(bestLine.begin(), move);
                         }
-                        if (result.score < beta) beta = result.score;
-                        if (beta <= alpha) break;
+                        if (res.score < beta) beta = res.score;
+
+                        if (beta <= alpha) {
+                                if (!cap && ply < MAX_PLY)
+                                {
+                                        if (killerMoves[ply][0] != move) {
+                                                killerMoves[ply][1] = killerMoves[ply][0];
+                                                killerMoves[ply][0] = move;
+                                        }
+                                        int sideIdx = whiteToMove ? 0 : 1;
+                                        int from = Lib::getBitnumFromCoordinates(move.substr(0,2));
+                                        int to   = Lib::getBitnumFromCoordinates(move.substr(2,2));
+                                        history[sideIdx][from][to] += depth * depth;
+                                }
+                                break;
+                        }
                 }
-                return {minEval, bestLine};
+                // TT store
+                {
+                        TTEntry e;
+                        e.key = key; e.depth = depth; e.score = best;
+                        if (best <= alphaOrig) e.flag = TTEntry::FLAG_ALPHA;
+                        else if (best >= betaOrig) e.flag = TTEntry::FLAG_BETA;
+                        else e.flag = TTEntry::FLAG_EXACT;
+                        e.bestMove = bestLine.empty() ? (ordered.empty() ? std::string() : ordered.front().second) : bestLine.front();
+                        if (tt.size() > ttMaxEntries) tt.clear();
+                        tt[key] = e;
+                }
+                return {best, bestLine};
         }
 }
 
-void Engine::perft(int depth)
+// --------------- go() with 3+2 time mgmt ---------------
+void Engine::go(GoParams params)
 {
-        std::cout << "info string [Engine::perft] starting perft(" << depth << ")" << std::endl;
-        PerftResult result = this->perft_runner.perft(this->board, depth);
-        std::ostringstream output;
-        output << "info string [Engine::perft] nodes " << Lib::formatThousands(result.nodes) << std::endl
-                << "info string [Engine::perft] captures " << Lib::formatThousands(result.captures) << std::endl
-                << "info string [Engine::perft] ep " << Lib::formatThousands(result.en_passant) << std::endl
-                << "info string [Engine::perft] castles " << Lib::formatThousands(result.castles) << std::endl
-                << "info string [Engine::perft] promotions " << Lib::formatThousands(result.promotions) << std::endl
-                << "info string [Engine::perft] checks " << Lib::formatThousands(result.checks) << std::endl
-                << "info string [Engine::perft] checkmates " << Lib::formatThousands(result.checkmates) << std::endl;
-	this->comm->uciOutput(output.str());
+        this->stopRequested = false;
+        this->nodes = 0;
+
+        int movetime = params.movetime;
+        if (movetime <= 0)
+        {
+                char player = this->board.getPlayerToMove();
+                int time = (player == 'w') ? params.wtime : params.btime;    // ms
+                int inc  = (player == 'w') ? params.winc  : params.binc;     // ms
+
+                int reserve = std::max(2500, time / 20); // keep at least 2.5s or 5%
+
+                int pieceCount = __builtin_popcountll(this->board.whites | this->board.blacks);
+                int mtg = (pieceCount > 16) ? 30 : (pieceCount > 8 ? 20 : 12);
+
+                int base = time / std::max(1, mtg);
+                int incShare = (inc * 6) / 10;
+
+                long long target = base + incShare;
+
+                long long hardCap = std::max(50, time - reserve);
+                long long softCapEarly = time / 12 + 2LL * inc;
+                long long softCapLate  = time / 8  + 1LL * inc;
+
+                long long softCap = (pieceCount > 12) ? softCapEarly : softCapLate;
+                target = std::min(target, softCap);
+                target = std::min(target, hardCap);
+
+                if (time < 10 * std::max(1, inc)) {
+                        target = std::max( (long long)inc * 9 / 10, 30LL );
+                }
+
+                movetime = (int)std::max(30LL, std::min(target, 30000LL));
+        }
+
+        auto start = std::chrono::steady_clock::now();
+
+        auto elapsedMs = [&](){
+                auto now = std::chrono::steady_clock::now();
+                return (unsigned long long) std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+        };
+
+        auto timeExceeded = [&](){
+                return elapsedMs() >= (unsigned long long)movetime;
+        };
+
+        int bestScore = 0;
+        std::vector<std::string> bestPV;
+        int maxDepth = 128;
+
+        for (int depth = 1; depth <= maxDepth; ++depth)
+        {
+                int alpha = std::numeric_limits<int>::min() + 1;
+                int beta  = std::numeric_limits<int>::max() - 1;
+
+                SearchResult res = minimax(this->board, depth, alpha, beta, timeExceeded, /*ply*/0);
+                if (res.score == ABORT_SCORE) break;
+
+                bestScore = res.score;
+                bestPV    = res.moves;
+
+                unsigned long long ms   = elapsedMs();
+                unsigned long long nps  = ms ? (this->nodes * 1000ULL) / ms : 0ULL;
+
+                emitInfo(ms, this->nodes, nps, bestScore, bestPV);
+
+                if (timeExceeded()) break;
+        }
+
+        std::string bestmove = bestPV.empty() ? "" : bestPV.front();
+        if (bestmove.empty()) {
+                MoveGenerator gen;
+                auto moves = gen.getAllMoves(this->board);
+                if (!moves.empty()) bestmove = moves.front();
+        }
+        if (bestmove.empty()) bestmove = "0000";
+
+        this->comm->uciOutput("bestmove " + bestmove + "\n");
 }
 
-void Engine::perftDivide(int depth)
+// --------------- emitInfo ---------------
+void Engine::emitInfo(unsigned long long elapsed,
+                      unsigned long long nodes,
+                      unsigned long long nps,
+                      int score,
+                      const std::vector<std::string>& pv)
 {
-        std::cout << "info string [Engine::perftDivide] starting perftDivide(" << depth << ")" << std::endl;
-        this->perft_runner.perftDivide(this->board, depth);
+        std::ostringstream out;
+        out << "info time "  << elapsed
+            << " nodes "     << nodes
+            << " nps "       << nps
+            << " score ";
+
+        if (std::abs(score) > CHECKMATE_SCORE / 2) {
+                int m = (score > 0 ? CHECKMATE_SCORE - score : CHECKMATE_SCORE + score);
+                int mateIn = (m + 1) / 2;
+                if (mateIn < 0) mateIn = -mateIn;
+                out << "mate " << (score > 0 ? mateIn : -mateIn);
+        } else {
+                out << "cp " << score;
+        }
+
+        out << " pv";
+        for (const auto& m : pv) out << " " << m;
+        out << "\n";
+
+        this->comm->uciOutput(out.str());
+}
+
+// --------------- Perft wrappers ---------------
+void Engine::perft(int depth)
+{
+        PerftResult result = this->perft_runner.perft(this->board, depth);
+        std::ostringstream output;
+        output << "info string [Engine::perft] nodes "      << Lib::formatThousands(result.nodes)      << std::endl
+               << "info string [Engine::perft] captures "   << Lib::formatThousands(result.captures)   << std::endl
+               << "info string [Engine::perft] ep "         << Lib::formatThousands(result.en_passant) << std::endl
+               << "info string [Engine::perft] castles "    << Lib::formatThousands(result.castles)    << std::endl
+               << "info string [Engine::perft] promotions " << Lib::formatThousands(result.promotions) << std::endl
+               << "info string [Engine::perft] checks "     << Lib::formatThousands(result.checks)     << std::endl
+               << "info string [Engine::perft] checkmates " << Lib::formatThousands(result.checkmates) << std::endl;
+        this->comm->uciOutput(output.str());
 }
 
 unsigned long long Engine::perftNodes(int depth)
 {
         PerftResult result = this->perft_runner.perft(this->board, depth);
-        std::ostringstream output;
-        output << "info string [Engine::perftNodes] perft(" << depth
-               << ") nodes " << Lib::formatThousands(result.nodes) << std::endl;
-        this->comm->uciOutput(output.str());
         return result.nodes;
+}
+
+void Engine::perftDivide(int depth)
+{
+        this->perft_runner.perftDivide(this->board, depth);
 }

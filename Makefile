@@ -1,6 +1,6 @@
 GPP=g++
 
-GPPOPTS=-Wall -Werror -std=c++11 -O3 -pthread
+GPPOPTS=-Wall -Werror -std=c++17 -O3 -DNDEBUG -pthread
 
 .PHONY: all clean
 
